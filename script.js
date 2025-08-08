@@ -1,83 +1,60 @@
 document.addEventListener("DOMContentLoaded", () => {
-    const pages = document.querySelectorAll(".page");
-    const loadingPercent = document.querySelector(".loading-percent");
-    const loadingScreen = document.getElementById("loading-screen");
-    const noiseOverlay = document.querySelector(".noise-overlay");
-
     let percent = 0;
-    let speed = 200;
+    const percentElem = document.getElementById("loading-percent");
+    const loadingScreen = document.getElementById("loading-screen");
+    const nameScreen = document.getElementById("kaijin-name-screen");
+    const storyScreen = document.getElementById("story-screen");
 
-    // ページ切り替え
-    function switchPage(id) {
-        pages.forEach(page => page.classList.remove("active"));
-        document.getElementById(id).classList.add("active");
-    }
-
-    // ノイズ付きページ切り替え
-    function pageTransition(targetId) {
-        noiseOverlay.classList.add("active");
-        setTimeout(() => {
-            switchPage(targetId);
-            noiseOverlay.classList.remove("active");
-        }, 500);
-    }
-
-    // タイプライター演出
-    function typeWriter(element, text, speed = 50, callback) {
-        element.textContent = "";
-        let i = 0;
-        function typing() {
-            if (i < text.length) {
-                element.textContent += text.charAt(i);
-                i++;
-                setTimeout(typing, speed);
-            } else if (callback) {
-                callback();
-            }
-        }
-        typing();
-    }
-
-    // ロード画面パーセント更新
-    function updateLoading() {
-        percent++;
-        loadingPercent.textContent = percent + "%";
+    function updatePercent() {
+        let increment = percent < 50 ? 1 : (percent < 80 ? 2 : 5);
+        percent += increment;
+        if (percent > 100) percent = 100;
+        percentElem.textContent = percent + "%";
 
         if (percent < 100) {
-            speed = Math.max(20, speed * 0.85);
-            setTimeout(updateLoading, speed);
+            setTimeout(updatePercent, 100);
         } else {
             setTimeout(() => {
-                // フェードアウト開始
-                loadingScreen.classList.add("fade-out");
-                document.body.style.overflow = "hidden"; // ロード中はスクロール禁止
-
-                // フェード後にトランジションして発祥ストーリーへ
+                loadingScreen.style.display = "none";
+                nameScreen.classList.remove("hidden");
                 setTimeout(() => {
-                    document.body.style.overflow = "auto"; // スクロール解除
-                    pageTransition("origin-story");
-
-                    // 発祥ストーリーのタイプライター演出
-                    const storyParagraph = document.querySelector("#origin-story p");
-                    const originalText = storyParagraph.innerHTML.replace(/<br>/g, "\n");
-                    typeWriter(storyParagraph, originalText, 30);
-                }, 800); // フェード時間と合わせる
-            }, 300);
+                    nameScreen.classList.add("hidden");
+                    storyScreen.classList.remove("hidden");
+                    startTypewriter();
+                }, 2000);
+            }, 500);
         }
     }
-
-    updateLoading();
-
-    // ボタンの遷移イベント
-    document.getElementById("to-warning").addEventListener("click", () => {
-        pageTransition("warning");
-    });
-
-    document.getElementById("to-patients").addEventListener("click", () => {
-        pageTransition("patients");
-    });
-
-    document.getElementById("back-to-story").addEventListener("click", () => {
-        pageTransition("origin-story");
-    });
+    updatePercent();
 });
+
+function startTypewriter() {
+    const element = document.querySelector(".typewriter");
+    const text = element.innerHTML;
+    element.innerHTML = "";
+    let i = 0;
+
+    function type() {
+        if (i < text.length) {
+            element.innerHTML += text.charAt(i);
+            i++;
+            setTimeout(type, 50);
+        }
+    }
+    type();
+}
+
+function showWarning() {
+    document.getElementById("story-screen").classList.add("hidden");
+    document.getElementById("warning-screen").classList.remove("hidden");
+}
+
+function showRecords() {
+    document.getElementById("warning-screen").classList.add("hidden");
+    document.getElementById("records-screen").classList.remove("hidden");
+}
+
+function showStory() {
+    document.getElementById("records-screen").classList.add("hidden");
+    document.getElementById("story-screen").classList.remove("hidden");
+}
