@@ -63,3 +63,12 @@ th, td {
     text-align: center;
     white-space: nowrap;
 }
+
+/* ローディング画面用中央寄せ */
+#loading-screen {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh; /* 画面いっぱいの高さ */
+    flex-direction: column; /* 縦並び */
+}
