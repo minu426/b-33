@@ -83,3 +83,9 @@ button:hover {
     border-color: red;
 }
 
+/* ロード画面フェードアウト */
+#loading-screen.fade-out {
+    opacity: 0;
+    transition: opacity 0.8s ease;
+    pointer-events: none;
+}
