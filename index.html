@@ -140,19 +140,56 @@
   <button onclick="showKarte()">同意して閲覧する</button>
 </section>
 
+<style>
+  /* 黒塗り用 */
+  .blacked {
+    background: #000;
+    color: transparent;
+    padding: 0 4px;
+    border-radius: 2px;
+    display: inline-block;
+  }
+  /* モザイク風 */
+  .mosaic {
+    background: repeating-linear-gradient(
+      45deg,
+      #000,
+      #000 4px,
+      #111 4px,
+      #111 8px
+    );
+    color: transparent;
+    padding: 0 4px;
+    border-radius: 2px;
+    display: inline-block;
+  }
+</style>
+
 <!-- カルテ -->
 <section id="karte" style="display:none;">
   <h2>患者記録 No.666</h2>
   <div class="karte">
     <table>
-      <tr><th>患者名</th><td>■■■■（匿名）</td></tr>
+      <tr><th>患者名</th><td><span class="blacked">■■■■</span>（匿名）</td></tr>
       <tr><th>診断名</th><td>B-33型《バーバラさん》接触症</td></tr>
-      <tr><th>症状</th><td>赤い日記帳を所持後、夜間に複数回ドアノック音を確認。視覚的接触は回避。</td></tr>
-      <tr><th>処方</th><td>顔を見ずに背中に乗せ、窓から外へ送る儀式の継続。<br>怪異に関する情報を他人に口外しない。</td></tr>
+      <tr><th>症状</th>
+        <td>
+          赤い日記帳を所持後、夜間に複数回ドアノック音を確認。<br>
+          視覚的接触は回避したが、<span class="mosaic">発症前後の言動に著しい変化あり</span>。
+        </td>
+      </tr>
+      <tr><th>処方</th>
+        <td>
+          顔を見ずに背中に乗せ、窓から外へ送る儀式の継続。<br>
+          日記帳を閲覧しない。<br>
+          <span class="blacked">※この行は閲覧許可がありません</span>
+        </td>
+      </tr>
     </table>
     <p class="notice">※この処方箋は当院にてのみ有効です。</p>
   </div>
 </section>
+
 
 <script>
   // ロード画面
