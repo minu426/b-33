@@ -3,56 +3,79 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>怪異診断結果</title>
+    <title>B-33型《バーバラさん》診断結果</title>
+
+    <!-- Adobe Fonts（貂明朝） -->
+    <script>
+      (function(d) {
+        var config = {
+          kitId: 'ihm1ugg',
+          scriptTimeout: 3000,
+          async: true
+        },
+        h=d.documentElement,t=setTimeout(function(){h.className=h.className.replace(/\bwf-loading\b/g,"")+" wf-inactive";},config.scriptTimeout),tk=d.createElement("script"),f=false,s=d.getElementsByTagName("script")[0],a;h.className+=" wf-loading";tk.src='https://use.typekit.net/'+config.kitId+'.js';tk.async=true;tk.onload=tk.onreadystatechange=function(){a=this.readyState;if(f||a&&a!="complete"&&a!="loaded")return;f=true;clearTimeout(t);try{Typekit.load(config)}catch(e){}};s.parentNode.insertBefore(tk,s)
+      })(document);
+    </script>
+
+    <!-- CSS -->
     <link rel="stylesheet" href="style.css">
-    <script src="script.js" defer></script>
 </head>
 <body>
+    <!-- 常時ノイズ -->
+    <div class="noise-overlay"></div>
 
-    <!-- 1ページ目：ロード画面 -->
-    <section id="loading-screen" class="page active">
-        <div class="loading-text">
-            <p class="spaced-text">診断結果からデータを取得しています。<br>今しばらくお待ちください。</p>
+    <!-- ロード画面 -->
+    <div id="loading-screen" class="page active">
+        <div>
+            <p class="loading-text">診断結果からデータを取得しています。今しばらくお待ちください。</p>
             <p class="loading-percent">0%</p>
         </div>
-    </section>
+    </div>
 
-    <!-- 2ページ目：発祥ストーリー -->
-    <section id="origin-story" class="page">
-        <h1>B-33型《バーバラさん》</h1>
-        <p class="story-text">
-            昔、とある少女が惨殺され、その少女は赤い日記帳に日々の出来事を綴っていた。<br>
-            少女の死後、その赤い日記帳は忽然と姿を消し、どこを探しても見つからなかった。<br>
-            やがて、噂を聞いた者の家に見たことのない赤い日記帳が届くようになったが、決して開いてはならないと言われている。<br>
-            その日記帳が届いた夜、バーバラさんと呼ばれる存在が現れる。<br><br>
-            バーバラさんの顔を見ず、扉を開けて背中に乗せ、部屋の窓を開けて外に送り出さなければならない。<br>
-            日記帳を開いたり、バーバラさんの顔を見てしまった者の運命や、バーバラさんの正体は謎に包まれている。<br><br>
-            彼女は惨殺された少女の成れの果てなのか、犯人なのか、誰にもわからない。
-        </p>
-        <button id="to-warning">過去の患者記録を見る</button>
-    </section>
+    <!-- 発祥ストーリー画面 -->
+    <div id="origin-story" class="page">
+        <div class="story-block">
+            <h1>B-33型《バーバラさん》</h1>
+            <p>
+                昔、とある少女が惨殺され、その少女は赤い日記帳に日々の出来事を綴っていた。<br>
+                少女の死後、その赤い日記帳は忽然と姿を消し、どこを探しても見つからなかった。<br>
+                やがて、噂を聞いた者の家に見たことのない赤い日記帳が届くようになったが、<br>
+                決して開いてはならないと言われている。<br><br>
+                その日記帳が届いた夜、バーバラさんと呼ばれる存在が現れる。<br>
+                バーバラさんの顔を見ず、扉を開けて背中に乗せ、<br>
+                部屋の窓を開けて外に送り出さなければならない。<br>
+                日記帳を開いたり、バーバラさんの顔を見てしまった者の運命や、<br>
+                バーバラさんの正体は謎に包まれている。<br><br>
+                彼女は惨殺された少女の成れの果てなのか、犯人なのか、誰にもわからない。
+            </p>
+            <button id="to-warning">過去の患者カルテを見る</button>
+        </div>
+    </div>
 
-    <!-- 3ページ目：注意事項 -->
-    <section id="warning" class="page">
-        <p class="spaced-text">
-            以下の記録は、患者本人またはその関係者の同意を得た上で、<br>
-            個人情報を伏せて掲載しています。<br>
-            閲覧により精神的・身体的影響が生じた場合、当院は一切の責任を負いかねます。
-        </p>
-        <button id="to-patients">同意して閲覧</button>
-    </section>
+    <!-- 注意事項画面 -->
+    <div id="warning" class="page">
+        <div>
+            <p>これより表示される記録は、過去に当院で診断を受けた患者の実際の症例を含みます。<br>
+            閲覧による精神的・身体的影響について、当院は一切の責任を負いかねます。<br>
+            あなたの身の安全は保証されません。</p>
+            <button id="to-patients">同意して閲覧する</button>
+        </div>
+    </div>
 
-    <!-- 4ページ目：患者カルテ一覧 -->
-    <section id="patients" class="page">
-        <h2>患者記録一覧</h2>
-        <table>
-            <tr><th>患者名</th><th>診断名</th></tr>
-            <tr><td>██ ██</td><td>B-33型《バーバラさん》</td></tr>
-        </table>
-        <button id="back-to-story">発祥ストーリーに戻る</button>
-    </section>
+    <!-- カルテ画面 -->
+    <div id="patients" class="page">
+        <div class="card">
+            <table>
+                <tr><th>患者名</th><td>██ ███</td></tr>
+                <tr><th>診断名</th><td>B-33型《バーバラさん》感染症</td></tr>
+                <tr><th>症状</th><td>強い頭痛・吐き気・夜間に窓の外から声が聞こえる</td></tr>
+                <tr><th>備考</th><td>診断後、██日目に行方不明</td></tr>
+            </table>
+            <button id="back-to-story">発祥ストーリーに戻る</button>
+        </div>
+    </div>
 
+    <!-- JS -->
+    <script src="script.js"></script>
 </body>
 </html>
-
-
