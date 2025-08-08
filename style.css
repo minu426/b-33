@@ -1,0 +1,65 @@
+
+
+/* 全体設定 */
+body {
+    background-color: black;
+    color: white;
+    font-family: "ten-mincho-pr6n", serif; /* 貂明朝を使う場合 */
+    margin: 0;
+    padding: 0;
+}
+
+/* ページ切り替え制御 */
+.page {
+    display: none;
+    text-align: center;
+    padding: 20px;
+}
+
+.page.active {
+    display: block;
+}
+
+/* 文字間隔広め */
+.spaced-text {
+    letter-spacing: 0.2em;
+    line-height: 1.8em;
+    font-size: 1rem;
+}
+
+/* ロードパーセント */
+.loading-percent {
+    font-size: 0.8rem;
+    margin-top: 10px;
+}
+
+/* ボタン */
+button {
+    margin-top: 20px;
+    padding: 10px 20px;
+    background: none;
+    border: 1px solid white;
+    color: white;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.2s ease;
+}
+
+button:hover {
+    background-color: darkred;
+    color: white;
+}
+
+/* テーブル */
+table {
+    margin: 0 auto;
+    border-collapse: collapse;
+    width: 90%;
+}
+
+th, td {
+    border: 1px solid white;
+    padding: 8px;
+    text-align: center;
+    white-space: nowrap;
+}
