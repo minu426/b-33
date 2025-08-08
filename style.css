@@ -1,74 +1,85 @@
-
-
-/* 全体設定 */
 body {
+    margin: 0;
+    font-family: "ten-mincho", serif;
     background-color: black;
     color: white;
-    font-family: "ten-mincho-pr6n", serif; /* 貂明朝を使う場合 */
-    margin: 0;
-    padding: 0;
 }
 
-/* ページ切り替え制御 */
+/* ページ共通設定 */
 .page {
     display: none;
+    height: 100vh;
+    background-color: black;
     text-align: center;
-    padding: 20px;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    padding: 0 5%;
 }
 
 .page.active {
-    display: block;
+    display: flex;
 }
 
-/* 文字間隔広め */
-.spaced-text {
-    letter-spacing: 0.2em;
-    line-height: 1.8em;
-    font-size: 1rem;
+/* ロード画面文字 */
+.loading-text {
+    letter-spacing: 0.3em;
+    font-size: 14px;
+    max-width: 90%;
+    margin: auto;
 }
 
-/* ロードパーセント */
 .loading-percent {
-    font-size: 0.8rem;
+    font-size: 12px;
     margin-top: 10px;
 }
 
-/* ボタン */
+/* ノイズ演出 */
+.noise-overlay {
+    pointer-events: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('noise.gif'); /* 白黒ノイズGIF */
+    background-size: cover;
+    opacity: 0.05;
+    z-index: 9999;
+    transition: opacity 0.2s ease;
+}
+
+.noise-overlay.active {
+    opacity: 0.3;
+}
+
+/* カルテテーブル */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 0 auto;
+}
+
+th, td {
+    padding: 5px 10px;
+    text-align: left;
+}
+
+th {
+    white-space: nowrap;
+}
+
 button {
     margin-top: 20px;
-    padding: 10px 20px;
+    padding: 8px 16px;
     background: none;
     border: 1px solid white;
     color: white;
     cursor: pointer;
-    font-family: inherit;
-    transition: all 0.2s ease;
 }
 
 button:hover {
-    background-color: darkred;
-    color: white;
+    color: red;
+    border-color: red;
 }
 
-/* テーブル */
-table {
-    margin: 0 auto;
-    border-collapse: collapse;
-    width: 90%;
-}
-
-th, td {
-    border: 1px solid white;
-    padding: 8px;
-    text-align: center;
-    white-space: nowrap;
-}
-
-/* ローディング画面用中央寄せ */
-#loading-screen {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh; /* 画面いっぱいの高さ */
-    flex-direction: column; /* 縦並び */
-}
