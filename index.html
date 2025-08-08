@@ -1,217 +1,95 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>B-33型《バーバラさん》診断結果</title>
-  
-  <!-- Adobe Fonts 貂明朝 -->
-  <script>
-    (function(d) {
-      var config = {
-        kitId: 'ihm1ugg',
-        scriptTimeout: 3000,
-        async: true
-      },
-      h=d.documentElement,t=setTimeout(function(){
-        h.className=h.className.replace(/\bwf-loading\b/g,"")+" wf-inactive";
-      },config.scriptTimeout),tk=d.createElement("script"),f=false,
-      s=d.getElementsByTagName("script")[0],a;
-      h.className+=" wf-loading";
-      tk.src='https://use.typekit.net/'+config.kitId+'.js';
-      tk.async=true;
-      tk.onload=tk.onreadystatechange=function(){
-        a=this.readyState;
-        if(f||a&&a!="complete"&&a!="loaded")return;
-        f=true;clearTimeout(t);
-        try{Typekit.load(config)}catch(e){}
-      };
-      s.parentNode.insertBefore(tk,s)
-    })(document);
-  </script>
-
-  <style>
-    body {
-      margin: 0;
-      background-color: #000;
-      color: #fff;
-      font-family: "ten-mincho", serif;
-      overflow-x: hidden;
-    }
-    /* ロード画面 */
-    #loading {
-      position: fixed;
-      width: 100%;
-      height: 100%;
-      background: #000;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      letter-spacing: 0.2em;
-      font-size: 1.2rem;
-      z-index: 9999;
-    }
-    /* セクション共通 */
-    section {
-      padding: 20px;
-      opacity: 0;
-      transition: opacity 1.2s ease;
-      max-width: 600px;
-      margin: auto;
-    }
-    section.visible {
-      opacity: 1;
-    }
-    h1, h2, h3 {
-      text-align: center;
-      margin-bottom: 15px;
-    }
-    /* カルテ部分 */
-    .karte {
-      background: #111;
-      border: 1px solid #555;
-      padding: 15px;
-      border-radius: 8px;
-    }
-    .karte table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 0.9rem;
-    }
-    .karte td, .karte th {
-      border: 1px solid #555;
-      padding: 6px;
-      vertical-align: top;
-    }
-    .notice {
-      color: #ff5555;
-      font-size: 0.85rem;
-      letter-spacing: 0.1em;
-    }
-    button {
-      display: block;
-      margin: 20px auto;
-      background: #222;
-      color: #fff;
-      border: 1px solid #666;
-      padding: 10px 15px;
-      cursor: pointer;
-      letter-spacing: 0.1em;
-    }
-    button:hover {
-      background: #333;
-    }
-    img {
-      display: block;
-      max-width: 100%;
-      margin: 0 auto 15px;
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>B-33型《バーバラさん》診断結果</title>
+<link rel="stylesheet" href="style.css">
+<script src="script.js" defer></script>
+<!-- Adobe Fonts -->
+<script>
+  (function(d) {
+    var config = { kitId: 'ihm1ugg', scriptTimeout: 3000, async: true },
+    h=d.documentElement,t=setTimeout(function(){h.className=h.className.replace(/\bwf-loading\b/g,"")+" wf-inactive";},config.scriptTimeout),
+    tk=d.createElement("script"),f=false,s=d.getElementsByTagName("script")[0],a;
+    h.className+=" wf-loading";tk.src='https://use.typekit.net/'+config.kitId+'.js';
+    tk.async=true;tk.onload=tk.onreadystatechange=function(){a=this.readyState;if(f||a&&a!="complete"&&a!="loaded")return;
+    f=true;clearTimeout(t);try{Typekit.load(config)}catch(e){}};s.parentNode.insertBefore(tk,s)
+  })(document);
+</script>
 </head>
 <body>
 
 <!-- ロード画面 -->
-<div id="loading">診断結果からデータを取得しています。<br>
-  今しばらくお待ちください。</div>
-
-<!-- 怪異情報 -->
-<section id="kaiji">
-  <h1>B-33型《バーバラさん》</h1>
-  <img src="barbara.gif" alt="バーバラさんの姿（仮）">
-  <p>
-    昔、とある少女が惨殺され、その少女は赤い日記帳に日々の出来事を綴っていた。<br>
-    少女の死後、その赤い日記帳は忽然と姿を消し、どこを探しても見つからなかった。<br>
-    やがて、噂を聞いた者の家に見たことのない赤い日記帳が届くようになったが、決して開いてはならないと言われている。<br>
-    その日記帳が届いた夜、バーバラさんと呼ばれる存在が現れる。<br>
-    バーバラさんの顔を見ず、扉を開けて背中に乗せ、部屋の窓を開けて外に送り出さなければならない。<br>
-    日記帳を開いたり、バーバラさんの顔を見てしまった者の運命や、バーバラさんの正体は謎に包まれている。
-  </p>
-  <button onclick="showNotice()">過去の患者カルテを見る</button>
-</section>
-
-<!-- 注意事項 -->
-<section id="notice" style="display:none;">
-  <h2>【注意事項】</h2>
-  <p class="notice">
-    以下の記録は、精神的安全性を一切保証できません。<br>
-    閲覧後、現実と虚構の境界が曖昧になる恐れがあります。<br>
-    閲覧は自己責任で行ってください。
-  </p>
-  <button onclick="showKarte()">同意して閲覧する</button>
-</section>
-
-<style>
-  /* 黒塗り用 */
-  .blacked {
-    background: #000;
-    color: transparent;
-    padding: 0 4px;
-    border-radius: 2px;
-    display: inline-block;
-  }
-  /* モザイク風 */
-  .mosaic {
-    background: repeating-linear-gradient(
-      45deg,
-      #000,
-      #000 4px,
-      #111 4px,
-      #111 8px
-    );
-    color: transparent;
-    padding: 0 4px;
-    border-radius: 2px;
-    display: inline-block;
-  }
-</style>
-
-<!-- カルテ -->
-<section id="karte" style="display:none;">
-  <h2>患者記録 No.666</h2>
-  <div class="karte">
-    <table>
-      <tr><th>患者名</th><td><span class="blacked">■■■■</span>（匿名）</td></tr>
-      <tr><th>診断名</th><td>B-33型《バーバラさん》接触症</td></tr>
-      <tr><th>症状</th>
-        <td>
-          赤い日記帳を所持後、夜間に複数回ドアノック音を確認。<br>
-          視覚的接触は回避したが、<span class="mosaic">発症前後の言動に著しい変化あり</span>。
-        </td>
-      </tr>
-      <tr><th>処方</th>
-        <td>
-          顔を見ずに背中に乗せ、窓から外へ送る儀式の継続。<br>
-          日記帳を閲覧しない。<br>
-          <span class="blacked">※この行は閲覧許可がありません</span>
-        </td>
-      </tr>
-    </table>
-    <p class="notice">※この処方箋は当院にてのみ有効です。</p>
+<section id="loading-screen" class="full-screen center">
+  <div>
+    <p class="spaced-text">診断結果からデータを取得しています。<br>今しばらくお待ちください。</p>
+    <p id="loading-percent">0%</p>
   </div>
 </section>
 
+<!-- 怪異出現ページ -->
+<section id="kaiki-screen" class="full-screen center hidden">
+  <div>
+    <img src="kaiki.gif" alt="B-33型バーバラさん" class="kaiki-img">
+    <h1>B-33型《バーバラさん》</h1>
+    <div class="story-window">
+      <p id="origin-story">
+        昔、とある少女が惨殺され、その少女は赤い日記帳に日々の出来事を綴っていた。<br>
+        少女の死後、その赤い日記帳は忽然と姿を消し、どこを探しても見つからなかった。<br>
+        やがて、噂を聞いた者の家に見たことのない赤い日記帳が届くようになったが、決して開いてはならないと言われている。<br>
+        その日記帳が届いた夜、バーバラさんと呼ばれる存在が現れる。<br>
+        バーバラさんの顔を見ず、扉を開けて背中に乗せ、部屋の窓を開けて外に送り出さなければならない。<br>
+        日記帳を開いたり、バーバラさんの顔を見てしまった者の運命や、バーバラさんの正体は謎に包まれている。<br>
+        彼女は惨殺された少女の成れの果てなのか、犯人なのか、誰にもわからない。
+      </p>
+    </div>
+    <button class="main-btn" onclick="showSection('notice-screen')">患者カルテを見る</button>
+  </div>
+</section>
 
-<script>
-  // ロード画面
-  window.addEventListener("load", () => {
-    setTimeout(() => {
-      document.getElementById("loading").style.display = "none";
-      document.getElementById("kaiji").classList.add("visible");
-    }, 2000);
-  });
+<!-- 注意事項ページ -->
+<section id="notice-screen" class="full-screen center hidden">
+  <div>
+    <p class="spaced-text">
+      これより表示される内容は一部の方に強い恐怖や不安を与える可能性があります。<br>
+      閲覧により生じた心身の変調、事故、その他いかなる損害についても当院は一切の責任を負いかねます。<br>
+      あなたがこれより先に進む場合、それらすべてに同意したものとみなします。
+    </p>
+    <button class="main-btn" onclick="showSection('loading-patients')">同意して閲覧</button>
+  </div>
+</section>
 
-  function showNotice(){
-    document.getElementById("kaiji").style.display = "none";
-    document.getElementById("notice").style.display = "block";
-    document.getElementById("notice").classList.add("visible");
-  }
+<!-- 患者カルテロード画面 -->
+<section id="loading-patients" class="full-screen center hidden">
+  <div>
+    <p class="spaced-text">カルテ情報を取得中...</p>
+    <p id="patients-percent">0%</p>
+  </div>
+</section>
 
-  function showKarte(){
-    document.getElementById("notice").style.display = "none";
-    document.getElementById("karte").style.display = "block";
-    document.getElementById("karte").classList.add("visible");
-  }
-</script>
+<!-- 患者カルテ一覧 -->
+<section id="patients-list" class="full-screen center hidden">
+  <div>
+    <h2>過去の患者カルテ</h2>
+    <ul class="patients-ul">
+      <!-- ここに患者リストがJSで追加される -->
+    </ul>
+  </div>
+</section>
+
+<!-- カルテ詳細ページ -->
+<section id="patient-detail" class="full-screen center hidden">
+  <div>
+    <h2>患者カルテ詳細</h2>
+    <table class="karte-table">
+      <tr><th>患者名</th><td>██████</td></tr>
+      <tr><th>診断名</th><td>██████</td></tr>
+      <tr><th>症状</th><td>幻聴、発熱、赤い日記帳を持ち帰られる</td></tr>
+    </table>
+    <button class="main-btn" onclick="showSection('kaiki-screen')">発祥ストーリーに戻る</button>
+  </div>
+</section>
 
 </body>
 </html>
