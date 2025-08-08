@@ -3,34 +3,47 @@ document.addEventListener("DOMContentLoaded", () => {
     const loadingPercent = document.querySelector(".loading-percent");
 
     let percent = 0;
+    let speed = 200; // 最初は遅い
 
-    // ローディングアニメーション
-    const loadingInterval = setInterval(() => {
+    function updateLoading() {
         percent++;
         loadingPercent.textContent = percent + "%";
 
-        if (percent >= 100) {
-            clearInterval(loadingInterval);
-            switchPage("origin-story"); // ローディング完了後、発祥ストーリーへ
+        if (percent < 100) {
+            speed = Math.max(20, speed * 0.85); // 徐々に加速
+            setTimeout(updateLoading, speed);
+        } else {
+            setTimeout(() => {
+                switchPage("origin-story");
+            }, 300);
         }
-    }, 30); // 3秒くらいで100%
+    }
 
-    // ページ切り替え関数
+    updateLoading();
+
     function switchPage(id) {
         pages.forEach(page => page.classList.remove("active"));
         document.getElementById(id).classList.add("active");
     }
 
-    // ボタン操作
+    function pageTransition(targetId) {
+        const noiseOverlay = document.querySelector(".noise-overlay");
+        noiseOverlay.classList.add("active");
+        setTimeout(() => {
+            switchPage(targetId);
+            noiseOverlay.classList.remove("active");
+        }, 500);
+    }
+
     document.getElementById("to-warning").addEventListener("click", () => {
-        switchPage("warning");
+        pageTransition("warning");
     });
 
     document.getElementById("to-patients").addEventListener("click", () => {
-        switchPage("patients");
+        pageTransition("patients");
     });
 
     document.getElementById("back-to-story").addEventListener("click", () => {
-        switchPage("origin-story");
+        pageTransition("origin-story");
     });
 });
