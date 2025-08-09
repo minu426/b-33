@@ -1,137 +1,112 @@
-/* ---------- 基本 ---------- */
-:root{
-  --bg:#000;
-  --fg:#eee;
-  --accent:#8b0000; /* 暗めの血色 */
-  --muted:#222;
+body {
+    margin: 0;
+    font-family: "Yu Gothic", sans-serif;
+    background-color: #000;
+    color: white;
 }
-*{box-sizing:border-box}
-html,body{height:100%;}
-body{
-  margin:0;
-  background:var(--bg);
-  color:var(--fg);
-  font-family:"ten-mincho", serif;
-  -webkit-font-smoothing:antialiased;
-  -moz-osx-font-smoothing:grayscale;
-  text-rendering:optimizeLegibility;
-}
-
-/* 全画面セクション */
-.screen{
-  display:none;
-  height:100vh;
-  width:100%;
-  padding:0 6%;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  text-align:center;
-}
-.screen.active{display:flex}
-.hidden{display:none}
-
-/* 中央ブロック */
-.center-block{max-width:720px;width:100%}
-
-/* ノイズレイヤー（背景） */
-#noise-layer{
-  position:fixed;left:0;top:0;width:100%;height:100%;pointer-events:none;z-index:900;
-  background-image:url('assets/noise.gif');background-size:cover;opacity:0.04;
-  transition:opacity .25s linear;
-}
-/* トランジション時に濃度上げる（JSでclass toggle） */
-#noise-layer.strong{opacity:0.35}
 
 /* ロード画面 */
-.loading-text{letter-spacing:0.28em;font-size:1.05rem;margin:0}
-.loading-percent{margin-top:10px;font-size:0.95rem;color:var(--muted)}
-
-/* 怪異名 */
-.kaiki-name{
-  font-size:2.1rem;
-  color:var(--accent);
-  letter-spacing:.18em;
-  margin:0;
-  text-shadow:0 0 12px rgba(139,0,0,0.3);
+#loading-screen {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background-color: black;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 3rem;
+    z-index: 9999;
+}
+.hidden {
+    display: none;
 }
 
-/* ストーリーウィンドウ（ウィンドウ風ブロック） */
-.story-window{
-  width:100%;
-  max-width:720px;
-  background:rgba(255,255,255,0.02);
-  border:1px solid rgba(255,255,255,0.06);
-  padding:18px;
-  border-radius:6px;
-  position:relative;
-  box-shadow:0 0 40px rgba(0,0,0,0.6);
+/* ブラウザ風UI */
+.browser-bar {
+    background-color: #1e3a5f;
+    display: flex;
+    align-items: center;
+    padding: 5px 10px;
+}
+.browser-buttons {
+    display: flex;
+    gap: 6px;
+}
+.circle {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    display: inline-block;
+}
+.red { background-color: #ff5f56; }
+.yellow { background-color: #ffbd2e; }
+.green { background-color: #27c93f; }
+.browser-title {
+    flex: 1;
+    text-align: center;
+    color: white;
 }
 
-/* typewriter */
-.typewriter{
-  display:block;
-  text-align:left;
-  font-size:0.98rem;
-  line-height:1.9;
-  white-space:pre-wrap;
-  word-break:break-word;
-  color:var(--fg);
-  margin:0;
-  padding:6px;
-  border-right:.12em solid rgba(255,255,255,0.9);
-  animation:blink 1s steps(1) infinite;
+/* ストーリー本文 */
+.story-content {
+    padding: 20px;
 }
-@keyframes blink{50%{border-color:transparent}}
-
-/* 次へボタン */
-.btn{
-  background:transparent;
-  border:1px solid rgba(255,255,255,0.12);
-  color:var(--fg);
-  padding:.55rem 1rem;
-  margin-top:14px;
-  cursor:pointer;
-  transition:transform .12s ease, color .2s ease, border-color .2s ease, background .12s;
-  border-radius:4px;
-  font-size:0.95rem;
+#kaiji-name {
+    font-size: 2rem;
+    margin-bottom: 20px;
 }
-.btn:active{transform:scale(.98)}
-.next-btn:hover{color:var(--accent);border-color:var(--accent);transform:scale(1.04)}
+#story-text {
+    font-size: 1.1rem;
+    white-space: pre-wrap;
+    border-right: 2px solid white;
+    display: inline-block;
+    animation: blinkCursor 0.8s steps(2, start) infinite;
+}
 
-/* 注意文（赤） */
-.warning-text{color:var(--accent);font-size:1rem;letter-spacing:.12em;line-height:1.8}
+@keyframes blinkCursor {
+    to {
+        border-color: transparent;
+    }
+}
 
-/* レコード一覧 */
-.records-wrap{width:100%;max-width:800px;margin:0 auto;text-align:left}
-.section-title{color:var(--accent);text-align:center;letter-spacing:.12em}
-.record-card{background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.05);padding:12px;margin:12px 0;border-radius:6px}
-.karte-table{width:100%;border-collapse:collapse}
-.karte-table th{width:30%;padding:8px;border-bottom:1px dashed rgba(255,255,255,0.06);vertical-align:top;white-space:nowrap}
-.karte-table td{padding:8px;border-bottom:1px dashed rgba(255,255,255,0.03)}
+#open-record {
+    margin: 20px;
+    padding: 10px 20px;
+    background: red;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
 
-/* ボタンアニメ - クリックで拡大（JSでclass追加) */
-.btn.click-scale{transform:scale(1.06)}
-
-/* モーダル（詳細） */
-.modal{position:fixed;inset:0;background:rgba(0,0,0,0.85);display:flex;justify-content:center;align-items:center;z-index:1000}
-.modal-inner{width:92%;max-width:640px;background:#0b0b0b;border:1px solid rgba(255,255,255,0.04);padding:16px;border-radius:6px}
-.modal-inner h3{margin:0 0 12px 0;color:var(--accent)}
-.detail-body{font-size:0.95rem;line-height:1.6}
-
-/* 黒塗り（検閲） */
-.blacked{background:#000;color:transparent;border-radius:2px;padding:0 6px;display:inline-block}
-/* マッキー塗りっぽい薄透け黒（うっすら文字見える） */
-.marker-black{background:linear-gradient(90deg, rgba(0,0,0,0.95), rgba(0,0,0,0.85));color:transparent;padding:0 6px;display:inline-block;border-radius:2px;opacity:0.95}
-
-/* 文字化け風（ランダム記号で上書きする） */
-.garbled{font-family:monospace;letter-spacing:0.08em;opacity:0.9}
-
-/* ----- レスポンシブ調整 ----- */
-@media (max-width:420px){
-  .story-window{padding:12px}
-  .typewriter{font-size:0.92rem;line-height:1.8}
-  .kaiki-name{font-size:1.6rem}
-  .loading-text{font-size:0.95rem}
-  body{padding:0 4%}
+/* モーダル */
+#record-modal {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background-color: rgba(0,0,0,0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+}
+.modal-content {
+    background-color: #111;
+    padding: 20px;
+    border-radius: 8px;
+}
+.modal-title {
+    color: red;
+}
+.warning {
+    color: red;
+}
+table {
+    border-collapse: collapse;
+    margin: 10px 0;
+}
+th, td {
+    border: 1px solid white;
+    padding: 5px 10px;
+}
+button {
+    margin-top: 10px;
 }
