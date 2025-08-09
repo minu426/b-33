@@ -14,8 +14,16 @@ body{
 .spaced{letter-spacing:.22em;line-height:1.9}
 .percent{margin-top:.6rem;color:#777}
 .kaiki{font-size:2.2rem;color:#8b0000;letter-spacing:.14em;text-shadow:0 0 12px rgba(139,0,0,.35)}
-.kaiki-sub{margin:.2rem 0 10px 0;color:#8b0000;letter-spacing:.08em}
+.kaiki-sub{margin:.2rem 0 10px 0;color:#8b0000;letter-spacing:.16em;font-size:1rem}
 .warning{color:#8b0000}
+
+/* Adobe Fonts ロード後の確認用（必要なら外してOK） */
+/* html.wf-active body{ font-family: var(--ui-gothic) !important; } */
+
+/* ========== フォント変数（AdobeのCSS名に合わせて！） ========== */
+:root{
+  --ui-gothic: "dnp-shuei-gothic-kin-std","Yu Gothic","Hiragino Kaku Gothic ProN",Meiryo,sans-serif;
+}
 
 /* ========== 背景ノイズ ========== */
 #noise{
@@ -23,6 +31,15 @@ body{
   opacity:.05;pointer-events:none;z-index:1;transition:opacity .25s;
 }
 #noise.strong{opacity:.35}
+
+/* ========== 画面歪み（warp） ========== */
+.warp { animation: warpSqueeze .35s ease both; }
+@keyframes warpSqueeze {
+  0%{ transform: scaleY(1) skewX(0deg); filter: contrast(1) }
+  35%{ transform: scaleY(0.92) skewX(3deg); filter: contrast(1.15) }
+  70%{ transform: scaleY(1.04) skewX(-2deg) }
+  100%{ transform: scaleY(1) skewX(0deg); filter: contrast(1) }
+}
 
 /* ========== レトロ（Win98風）ブラウザUI ========== */
 .browser.retro{
@@ -33,7 +50,7 @@ body{
 .retro-titlebar{
   display:flex;align-items:center;justify-content:space-between;
   background:#000080;color:#fff;padding:6px 8px;
-  font-family:"MS Gothic","Yu Gothic",monospace;letter-spacing:.02em;font-size:.95rem;cursor:default;user-select:none;
+  font-family:var(--ui-gothic);letter-spacing:.3em;font-size:.9rem;cursor:default;user-select:none;
 }
 .retro-title{font-weight:bold}
 .retro-controls{display:flex;gap:6px}
@@ -46,17 +63,24 @@ body{
   box-shadow:0 0 0 1px #808080 inset, 0 0 0 2px #fff inset, 0 0 0 3px #808080 inset;
 }
 .retro-controls .ctrl.close{color:#800000}
-.retro-pane{padding:12px;text-align:left;color:#000;background:#c0c0c0}
+.retro-pane{
+  padding:12px;text-align:left;color:#000;background:#c0c0c0;
+  font-family:var(--ui-gothic);
+}
 
-/* 文章（縦線カーソルなし） */
-.typewriter{color:#111;line-height:1.9;font-size:1rem;white-space:pre-wrap;word-break:break-word}
+/* 文章（タイプライター：段落化＆改行バランス） */
+.typewriter{
+  color:#111;line-height:1.9;font-size:1rem;
+  white-space:normal;word-break:keep-all;text-wrap:balance;
+  font-family:var(--ui-gothic);
+}
+.typewriter p{margin:0 0 1.2em 0}
 
 /* スクロールボックス */
 .scrollbox{
   max-height:55vh;overflow:auto;padding:10px;background:#fff;color:#111;border:2px solid #000;
   box-shadow:0 0 0 1px #fff inset, 0 0 0 2px #808080 inset, 0 0 0 3px #fff inset;
 }
-/* スクロールバー(webkit) */
 .scrollbox::-webkit-scrollbar{width:10px}
 .scrollbox::-webkit-scrollbar-track{background:#c0c0c0;box-shadow:inset 1px 1px 0 #fff, inset -1px -1px 0 #808080}
 .scrollbox::-webkit-scrollbar-thumb{
@@ -76,11 +100,11 @@ body{
 @keyframes crtFlicker{0%,98%{opacity:.35}99%{opacity:.42}100%{opacity:.35}}
 .chromatic{text-shadow:1px 0 rgba(255,0,0,.25), -1px 0 rgba(0,255,255,.25)}
 
-/* ボタン：98風の凹凸＋押し感 */
+/* ボタン（98風） */
 .btn{
   background:#c0c0c0;color:#000;border:2px solid #000;
   box-shadow:0 0 0 1px #fff inset, 0 0 0 2px #808080 inset, 0 0 0 3px #fff inset;
-  font-family:"MS Gothic","Yu Gothic",monospace;border-radius:2px;
+  font-family:var(--ui-gothic);border-radius:2px;
   margin-top:16px;padding:.55rem 1rem;cursor:pointer;transition:transform .1s,color .2s,border-color .2s,box-shadow .12s;
 }
 .btn:hover{color:#8b0000}
@@ -100,6 +124,18 @@ body{
 .karte th,.karte td{padding:8px;border-bottom:1px dashed rgba(255,255,255,.08);vertical-align:top}
 .karte th{white-space:nowrap;width:30%}
 
+/* 自動更新の演出 */
+.card.updated { animation: updateBlink 1.2s ease 1 }
+@keyframes updateBlink {
+  0%{ box-shadow:0 0 0 rgba(139,0,0,0) }
+  20%{ box-shadow:0 0 24px rgba(139,0,0,.45) }
+  100%{ box-shadow:0 0 0 rgba(139,0,0,0) }
+}
+.badge-update{
+  display:inline-block;margin-left:.4em;padding:.1em .4em;background:#8b0000;color:#fff;
+  font-size:.75em;border-radius:3px;font-family:var(--ui-gothic);
+}
+
 /* モーダル（ぬるっと開閉） */
 #modal{
   position:fixed;inset:0;background:rgba(0,0,0,.86);z-index:9999;
@@ -117,14 +153,40 @@ body{
 .modal-body{line-height:1.8}
 .modal-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:12px}
 
-/* 黒塗り/マーカー/文字化け */
+/* 黒塗り/マーカー/斜めしましまモザイク/文字化け */
 .blacked{background:#000;color:transparent;border-radius:2px;padding:0 6px;display:inline-block}
 .marker{background:linear-gradient(90deg, rgba(0,0,0,.96), rgba(0,0,0,.88));color:transparent;padding:0 6px;border-radius:2px}
+.mosaic{position:relative;display:inline-block;color:transparent;}
+.mosaic::after{
+  content:"";position:absolute;inset:0;border-radius:2px;
+  background:repeating-linear-gradient(135deg, rgba(0,0,0,.96) 0 6px, rgba(0,0,0,.7) 6px 12px);
+  opacity:.96;animation:mosaicPulse 3s ease-in-out infinite;
+}
+@keyframes mosaicPulse { 0%,100%{opacity:.96} 50%{opacity:.88} }
 .garbled{font-family:monospace;letter-spacing:.08em;opacity:.9}
+
+/* 局所グリッチ */
+.glitch{position:relative;animation:glitchFlash .22s steps(1) 1}
+@keyframes glitchFlash{
+  0%{filter:none;transform:none}
+  30%{filter:hue-rotate(8deg) saturate(1.2);transform:translateX(1px)}
+  60%{filter:invert(.08) contrast(1.1);transform:translateX(-1px)}
+  100%{filter:none;transform:none}
+}
+
+/* 微振動 */
+.shake{animation:microShake .18s linear 1}
+@keyframes microShake{
+  0%{transform:translateX(0)}25%{transform:translateX(1px)}50%{transform:translateX(-1px)}75%{transform:translateX(1px)}100%{transform:translateX(0)}
+}
+
+/* “たすけて” 追記 */
+.help-chant{color:#8b0000;margin-top:.8em;opacity:0;transition:opacity .6s ease}
+.help-chant.show{opacity:1}
 
 /* スマホ調整 */
 @media (max-width:430px){
   .scrollbox{max-height:60vh}
-  .retro-titlebar{font-size:.9rem}
+  .retro-titlebar{font-size:.85rem}
   .kaiki{font-size:1.8rem}
 }
