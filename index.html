@@ -1,158 +1,50 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>B-33型《バーバラさん》診断記録</title>
-
-  <!-- Adobe Fonts（貂明朝） -->
-  <script src="https://use.typekit.net/ihm1ugg.js"></script>
-  <script>try{Typekit.load({ async: true });}catch(e){}</script>
-
-  <link rel="stylesheet" href="style.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>怪異ストーリー</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-  <!-- 常時ノイズレイヤー（背景ノイズ） -->
-  <div id="noise-layer" aria-hidden="true"></div>
+<!-- ロード画面 -->
+<div id="loading-screen">
+    <div id="loading-text">0%</div>
+</div>
 
-  <!-- ロード画面 -->
-  <section id="loading-screen" class="screen active">
-    <div class="center-block">
-      <p class="loading-text spaced">診断結果からデータを取得しています。<br>今しばらくお待ちください。</p>
-      <p id="loading-percent" class="loading-percent">0%</p>
+<!-- ブラウザ風ストーリー画面 -->
+<div id="story-container" class="hidden">
+    <div class="browser-bar">
+        <div class="browser-buttons">
+            <span class="circle red"></span>
+            <span class="circle yellow"></span>
+            <span class="circle green"></span>
+        </div>
+        <div class="browser-title">怪異ストーリー</div>
     </div>
-  </section>
-
-  <!-- 怪異名 2秒表示 -->
-  <section id="name-screen" class="screen hidden">
-    <div class="center-block">
-      <h1 class="kaiki-name">B-33型《バーバラさん》</h1>
+    <div class="story-content">
+        <h1 id="kaiji-name">赤い日記帳の少女</h1>
+        <p id="story-text"></p>
     </div>
-  </section>
+    <button id="open-record">患者記録を見る</button>
+</div>
 
-  <!-- 発祥ストーリー（タイプライター表示） -->
-  <section id="story-screen" class="screen hidden">
-    <div class="story-window">
-      <!-- data-text に HTML をそのまま入れておく（<br>含む） -->
-      <div id="story-text" class="typewriter spaced" data-text='昔、とある少女が惨殺され、その少女は赤い日記帳に日々の出来事を綴っていた。<br><br>少女の死後、その赤い日記帳は忽然と姿を消し、どこを探しても見つからなかった。<br><br>やがて、噂を聞いた者の家に見たことのない赤い日記帳が届くようになったが、決して開いてはならないと言われている。<br><br>その日記帳が届いた夜、バーバラさんと呼ばれる存在が現れる。<br><br>バーバラさんの顔を見ず、扉を開けて背中に乗せ、部屋の窓を開けて外に送り出さなければならない。<br><br>日記帳を開いたり、バーバラさんの顔を見てしまった者の運命や、バーバラさんの正体は謎に包まれている。<br><br>彼女は惨殺された少女の成れの果てなのか、犯人なのか、誰にもわからない。'></div>
-
-      <button class="btn next-btn" id="btn-to-warning" aria-label="過去の患者カルテを見る">過去の患者カルテを見る</button>
-    </div>
-  </section>
-
-  <!-- 注意事項 -->
-  <section id="warning-screen" class="screen hidden">
-    <div class="center-block">
-      <p class="warning-text spaced">
-        これから表示される内容は極めて危険です。<br>
-        閲覧によって発生したいかなる事象についても、当院は責任を負いかねます。<br>
-        同意する場合は「同意して閲覧」を押してください（自己責任）。
-      </p>
-      <button class="btn next-btn" id="btn-agree">同意して閲覧</button>
-    </div>
-  </section>
-
-  <!-- カルテロード（短い％表示） -->
-  <section id="records-loading" class="screen hidden">
-    <div class="center-block">
-      <p class="spaced">カルテ情報を取得しています…</p>
-      <p id="records-percent" class="loading-percent">0%</p>
-    </div>
-  </section>
-
-  <!-- カルテ一覧 -->
-  <section id="records-screen" class="screen hidden">
-    <div class="records-wrap">
-      <h2 class="section-title">患者記録一覧</h2>
-
-      <!-- 自分のカルテ（代表例） -->
-      <article class="record-card">
-        <table class="karte-table">
-          <tbody>
-            <tr><th>患者番号</th><td>No.333</td></tr>
-            <tr><th>患者名</th><td>████</td></tr>
-            <tr><th>診断名</th><td>B-33型《バーバラさん》接触症</td></tr>
-            <tr><th>症状</th><td>頭痛、悪夢、窓の外の気配</td></tr>
-            <tr><th>経過</th><td>赤い日記帳が届いた夜から症状出現。夜間に窓から赤い日記が持ち去られるのを確認。</td></tr>
-          </tbody>
+<!-- 患者記録モーダル -->
+<div id="record-modal" class="hidden">
+    <div class="modal-content">
+        <h2 class="modal-title">患者記録</h2>
+        <table>
+            <tr><th>名前</th><td>山田花子</td></tr>
+            <tr><th>年齢</th><td>16歳</td></tr>
+            <tr><th>症状</th><td>幻覚、記憶障害</td></tr>
         </table>
-        <button class="btn record-open" data-id="333">詳細を見る</button>
-      </article>
-
-      <!-- 過去患者サンプル（+5名） -->
-      <article class="record-card">
-        <table class="karte-table">
-          <tbody>
-            <tr><th>患者番号</th><td>No.444</td></tr>
-            <tr><th>患者名</th><td>██</td></tr>
-            <tr><th>診断名</th><td>窓辺幻視症</td></tr>
-            <tr><th>症状</th><td>吐き気、視線恐怖</td></tr>
-            <tr><th>経過</th><td>赤い日記を窓辺で確認。以後睡眠障害が悪化。</td></tr>
-          </tbody>
-        </table>
-        <button class="btn record-open" data-id="444">詳細を見る</button>
-      </article>
-
-      <article class="record-card">
-        <table class="karte-table">
-          <tbody>
-            <tr><th>患者番号</th><td>No.666</td></tr>
-            <tr><th>患者名</th><td>███</td></tr>
-            <tr><th>診断名</th><td>呼称追跡性障害</td></tr>
-            <tr><th>症状</th><td>耳鳴り、名を呼ばれる幻聴</td></tr>
-            <tr><th>経過</th><td>呼ばれた翌日、窓に赤い日記が置かれていた。</td></tr>
-          </tbody>
-        </table>
-        <button class="btn record-open" data-id="666">詳細を見る</button>
-      </article>
-
-      <article class="record-card">
-        <table class="karte-table">
-          <tbody>
-            <tr><th>患者番号</th><td>No.777</td></tr>
-            <tr><th>患者名</th><td>█</td></tr>
-            <tr><th>診断名</th><td>夜間接触症候群</td></tr>
-            <tr><th>症状</th><td>過度の不安、失神</td></tr>
-            <tr><th>経過</th><td>窓を開けた際、背中に何かを感じ赤い日記が消失。</td></tr>
-          </tbody>
-        </table>
-        <button class="btn record-open" data-id="777">詳細を見る</button>
-      </article>
-
-      <article class="record-card">
-        <table class="karte-table">
-          <tbody>
-            <tr><th>患者番号</th><td>No.999</td></tr>
-            <tr><th>患者名</th><td>██</td></tr>
-            <tr><th>診断名</th><td>急性幻視性不安</td></tr>
-            <tr><th>症状</th><td>視覚異常、記憶欠落</td></tr>
-            <tr><th>経過</th><td>記録保持者の証言と合わない箇所が多発。赤い日記帳を最後に所持。</td></tr>
-          </tbody>
-        </table>
-        <button class="btn record-open" data-id="999">詳細を見る</button>
-      </article>
-
-      <div class="controls">
-        <button class="btn" id="btn-back-to-story">発祥ストーリーに戻る</button>
-      </div>
+        <p class="warning">※ 閲覧は自己責任でお願いします</p>
+        <button id="close-record">閉じる</button>
+        <button id="back-to-story">発祥ストーリーに戻る</button>
     </div>
-  </section>
+</div>
 
-  <!-- モーダル風 詳細（黒塗り／モザイク演出） -->
-  <div id="detail-modal" class="modal hidden" role="dialog" aria-hidden="true">
-    <div class="modal-inner">
-      <h3 id="detail-num">患者記録</h3>
-      <div class="detail-body" id="detail-body">
-        <!-- 詳細はJSで注入 -->
-      </div>
-      <div class="modal-actions">
-        <button class="btn" id="modal-close">閉じる</button>
-        <button class="btn" id="modal-return">発祥ストーリーに戻る</button>
-      </div>
-    </div>
-  </div>
-
-  <script src="script.js"></script>
+<script src="script.js"></script>
 </body>
 </html>
