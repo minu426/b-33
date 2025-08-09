@@ -1,4 +1,4 @@
-/* ===== 基本 ===== */
+/* ===== 安全策（先頭で定義：黒画面防止） ===== */
 *{box-sizing:border-box}
 html{height:100%;-webkit-text-size-adjust:100%}
 body{
@@ -6,17 +6,17 @@ body{
   font-family:"dnp-shuei-gothic-kin-std","Yu Gothic","Hiragino Kaku Gothic ProN",Meiryo,sans-serif;
   -webkit-font-smoothing:antialiased;
 }
-
-/* 画面 */
 .screen{display:none;min-height:100vh;width:100%;padding:2vh 6% 6%;
   justify-content:flex-start;align-items:flex-start;text-align:center;position:relative}
 .screen.active{display:flex}
 .hidden{display:none}
+
+/* ===== 共通 ===== */
 .center{max-width:760px;width:100%;margin:0 auto}
 .spaced{letter-spacing:.22em;line-height:1.9}
 .percent{margin-top:.6rem;color:#777}
 
-/* 見出し（モバイル安全） */
+/* 見出し（溢れ防止） */
 .kaiki{color:#8b0000;text-shadow:0 0 12px rgba(139,0,0,.35);
   font-size:clamp(22px,9vw,40px);letter-spacing:.06em;text-wrap:balance}
 .kaiki-sub{margin:.2rem 0 10px;color:#8b0000;letter-spacing:.11em;font-size:clamp(12px,3.6vw,16px)}
@@ -45,7 +45,7 @@ body{
   opacity:0;transform:translateY(-120%)} .fx-rollbar.run{animation:fxRoll 2.2s linear 1}
 @keyframes fxRoll{0%{opacity:0;transform:translateY(-120%)}10%{opacity:.35}90%{opacity:.35}100%{opacity:0;transform:translateY(120%)}}
 
-/* CRT（強め・安定） */
+/* レトロUI＋CRT */
 .browser.retro{position:relative;z-index:2;width:100%;max-width:900px;background:#c0c0c0;border:2px solid #000;
   box-shadow:0 0 0 1px #fff inset,0 0 0 2px #808080 inset,0 0 0 3px #fff inset;overflow:hidden}
 .retro-titlebar{display:flex;align-items:center;justify-content:space-between;background:#000080;color:#fff;padding:6px 8px;letter-spacing:.3em;font-size:.9rem;user-select:none}
@@ -86,12 +86,15 @@ body{
 .scrollbox::-webkit-scrollbar-track{background:#c0c0c0;box-shadow:inset 1px 1px 0 #fff,inset -1px -1px 0 #808080}
 .scrollbox::-webkit-scrollbar-thumb{background:#e0e0e0;border:2px solid #000;box-shadow:inset 0 0 0 1px #fff,inset 0 0 0 2px #808080,inset 0 0 0 3px #fff}
 
-/* 発祥ストーリー：行間詰め（縦の字間） */
+/* 発祥ストーリー：行間を詰める */
 #story-text p{ line-height:1.45; margin:0 0 .55em 0; font-size:clamp(14px,3.9vw,18px) }
 
 /* “たすけて” */
 .help-chant{color:#8b0000;letter-spacing:0;font-weight:600;opacity:0;transition:opacity .25s}
 .help-chant.show{opacity:1}
+
+/* 警告（赤字） */
+.warning{color:#8b0000}
 
 /* ボタン */
 .btn{
@@ -110,7 +113,7 @@ body{
 #nick-input:focus{outline:none;border-color:#8b0000}
 .entry-note{color:#333;font-size:.85rem;margin:.2rem 0 0}
 
-/* カルテ一覧 */
+/* カード・一覧 */
 .records{position:relative;z-index:2;width:100%;max-width:900px;text-align:left;margin:0 auto}
 .records-title{text-align:center;color:#8b0000;letter-spacing:.12em}
 .card{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:8px;padding:12px;margin:12px 0}
@@ -132,7 +135,7 @@ body{
 .modal-body{line-height:1.85}
 .modal-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:12px}
 
-/* モザイク */
+/* モザイク・黒塗り */
 .mosaic{position:relative;display:inline-block;color:transparent;padding:0 .25em;border-radius:2px;outline:1px solid rgba(255,255,255,.12)}
 .mosaic::after{content:"";position:absolute;inset:0;border-radius:2px;
   background:repeating-linear-gradient(135deg,rgba(20,20,20,1) 0 6px,rgba(0,0,0,.78) 6px 12px),
@@ -145,10 +148,6 @@ body{
 /* 下からフェードイン */
 .fade-up{opacity:0;transform:translateY(24px)}
 .fade-up.show{opacity:1;transform:translateY(0);transition:opacity .36s ease, transform .36s ease}
-
-/* 微振動 */
-@keyframes microShake{0%{transform:translateX(0)}25%{transform:translateX(1px)}50%{transform:translateX(-1px)}75%{transform:translateX(1px)}100%{transform:translateX(0)}}
-.entry-error{animation:microShake .18s linear 1}
 
 /* スマホ */
 @media (max-width:430px){
