@@ -8,7 +8,7 @@
 </head>
 <body>
 
-  <!-- 背景ノイズ（常時・クリック不可） -->
+  <!-- 常時ノイズ（クリック不可） -->
   <div id="noise" aria-hidden="true"></div>
 
   <!-- 1) ロード -->
@@ -26,21 +26,24 @@
     </div>
   </section>
 
-  <!-- 3) 発祥ストーリー（ブラウザUI風 + タイプライター） -->
+  <!-- 3) 発祥ストーリー（レトロUI + スクロールボックス） -->
   <section id="screen-story" class="screen hidden">
-    <div class="browser">
-      <div class="bar">
-        <div class="dots">
-          <span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span>
+    <div class="browser retro crt">
+      <div class="retro-titlebar">
+        <span class="retro-title">診断記録ビューア</span>
+        <div class="retro-controls">
+          <span class="ctrl">_</span>
+          <span class="ctrl">□</span>
+          <span class="ctrl close">×</span>
         </div>
-        <div class="title">診断記録ビューア</div>
       </div>
-      <div class="pane">
-        <h2 class="kaiki-sub">B-33型《バーバラさん》</h2>
 
-        <!-- タイプライターは text と caret を分離して制御 -->
-        <div class="typewriter">
-          <span id="story-text"></span><span class="caret" aria-hidden="true"></span>
+      <div class="retro-pane">
+        <h2 class="kaiki-sub chromatic">B-33型《バーバラさん》</h2>
+
+        <!-- 文章はここでスクロール -->
+        <div id="story-scroll" class="scrollbox">
+          <div id="story-text" class="typewriter"></div>
         </div>
 
         <button id="btn-to-warning" class="btn">過去の患者カルテを見る</button>
@@ -70,10 +73,9 @@
 
   <!-- 6) カルテ一覧 -->
   <section id="screen-records" class="screen hidden">
-    <div class="records">
-      <h3 class="records-title">患者記録一覧</h3>
+    <div class="records crt">
+      <h3 class="records-title chromatic">患者記録一覧</h3>
 
-      <!-- 自分のカルテ＋過去5名 -->
       <article class="card">
         <table class="karte">
           <tr><th>患者番号</th><td>No.333</td></tr>
@@ -146,8 +148,8 @@
     </div>
   </section>
 
-  <!-- 7) 詳細モーダル（初期は display:none で完全非表示） -->
-  <div id="modal" style="display:none" role="dialog" aria-hidden="true">
+  <!-- 7) 詳細モーダル（初期は display:none） -->
+  <div id="modal" role="dialog" aria-hidden="true">
     <div class="modal-inner">
       <h4 id="modal-title" class="modal-title">患者記録</h4>
       <div id="modal-body" class="modal-body"></div>
