@@ -1,179 +1,110 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>B-33型《バーバラさん》 診断記録</title>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>B-33型《バーバラさん》 診断記録</title>
 
-  <!-- Adobe Fonts: 秀英角ゴシック金（キットID: ouz3iep） -->
-  <script>
-    (function(d){var config={kitId:'ouz3iep',scriptTimeout:3000,async:true},
-    h=d.documentElement,t=setTimeout(function(){h.className=h.className.replace(/\bwf-loading\b/g,"")+" wf-inactive";},config.scriptTimeout),
-    tk=d.createElement("script"),f=false,s=d.getElementsByTagName("script")[0],a;h.className+=" wf-loading";
-    tk.src='https://use.typekit.net/'+config.kitId+'.js';tk.async=true;
-    tk.onload=tk.onreadystatechange=function(){a=this.readyState;if(f||a&&a!="complete"&&a!="loaded")return;
-    f=true;clearTimeout(t);try{Typekit.load(config)}catch(e){}};
-    s.parentNode.insertBefore(tk,s)})(document);
-  </script>
+<!-- Adobe Fonts: 秀英角ゴシック金（キットID: ouz3iep） -->
+<script>
+  (function(d){var config={kitId:'ouz3iep',scriptTimeout:3000,async:true},
+  h=d.documentElement,t=setTimeout(function(){h.className=h.className.replace(/\bwf-loading\b/g,"")+" wf-inactive";},config.scriptTimeout),
+  tk=d.createElement("script"),f=false,s=d.getElementsByTagName("script")[0],a;h.className+=" wf-loading";
+  tk.src='https://use.typekit.net/'+config.kitId+'.js';tk.async=true;
+  tk.onload=tk.onreadystatechange=function(){a=this.readyState;if(f||a&&a!="complete"&&a!="loaded")return;
+  f=true;clearTimeout(t);try{Typekit.load(config)}catch(e){}};
+  s.parentNode.insertBefore(tk,s)})(document);
+</script>
 
-  <link rel="stylesheet" href="style.css" />
+<link rel="stylesheet" href="style.css?v=7" />
 </head>
 <body>
 
-  <!-- 常時ノイズ -->
-  <div id="noise" aria-hidden="true"></div>
+<!-- 全体ノイズ（弱め・任意。強すぎならdisplay:noneでもOK） -->
+<div id="noise" aria-hidden="true"></div>
 
-  <!-- 1) ロード -->
-  <section id="screen-loading" class="screen active">
-    <div class="center">
-      <p class="spaced">診断結果からデータを取得しています。<br>今しばらくお待ちください。</p>
-      <p id="load-per" class="percent">0%</p>
-    </div>
-  </section>
+<!-- 1) ロード -->
+<section id="screen-loading" class="screen active">
+  <div class="center">
+    <p class="spaced">診断結果からデータを取得しています。<br>今しばらくお待ちください。</p>
+    <p id="load-per" class="percent">0%</p>
+  </div>
+</section>
 
-  <!-- 2) 怪異名（2秒） -->
-  <section id="screen-name" class="screen hidden">
-    <div class="center">
-      <h1 class="kaiki">B-33型《バーバラさん》</h1>
-    </div>
-  </section>
+<!-- 2) 怪異名（2秒） -->
+<section id="screen-name" class="screen hidden">
+  <div class="center">
+    <h1 class="kaiki">B-33型《バーバラさん》</h1>
+  </div>
+</section>
 
-  <!-- 3) 発祥（レトロUI + 縦スクロールのみ） -->
-  <section id="screen-story" class="screen hidden">
-    <div class="browser retro crt">
-      <div class="retro-titlebar">
-        <span class="retro-title">発　　祥</span>
-        <div class="retro-controls">
-          <span class="ctrl">_</span>
-          <span class="ctrl">□</span>
-          <span class="ctrl close">×</span>
-        </div>
-      </div>
-
-      <div class="retro-pane">
-        <h2 class="kaiki-sub chromatic">“B-33型《バーバラさん》”</h2>
-
-        <!-- スクロール領域（縦のみ） -->
-        <div id="story-scroll" class="scrollbox phosphor">
-          <div id="story-text" class="typewriter"></div>
-        </div>
-
-        <button id="btn-to-warning" class="btn">過去の患者カルテを見る</button>
+<!-- 3) 発祥（レトロUI + 縦スクロールのみ + CRT + 画面別ノイズ） -->
+<section id="screen-story" class="screen hidden">
+  <div class="browser retro crt">
+    <div class="retro-titlebar">
+      <span class="retro-title">発　　祥</span>
+      <div class="retro-controls">
+        <span class="ctrl">_</span><span class="ctrl">□</span><span class="ctrl close">×</span>
       </div>
     </div>
-  </section>
-
-  <!-- 4) 注意事項 -->
-  <section id="screen-warning" class="screen hidden">
-    <div class="center">
-      <p class="warning spaced">
-        これから表示される内容は極めて危険です。<br>
-        閲覧によって発生したいかなる事象についても当院は責任を負いかねます。<br>
-        自己責任で閲覧してください。
-      </p>
-      <button id="btn-agree" class="btn">同意して閲覧</button>
-    </div>
-  </section>
-
-  <!-- 5) カルテ取得 -->
-  <section id="screen-records-loading" class="screen hidden">
-    <div class="center">
-      <p class="spaced">カルテ情報を取得しています…</p>
-      <p id="rec-per" class="percent">0%</p>
-    </div>
-  </section>
-
-  <!-- 6) カルテ一覧 -->
-  <section id="screen-records" class="screen hidden">
-    <div class="records crt">
-      <h3 class="records-title chromatic">患者記録一覧</h3>
-
-      <!-- 自分 -->
-      <article class="card">
-        <table class="karte">
-          <tr><th>患者番号</th><td>No.333</td></tr>
-          <tr><th>患者名</th><td><span class="mosaic">████</span></td></tr>
-          <tr><th>診断名</th><td>B-33型《バーバラさん》接触症</td></tr>
-          <tr><th>症状</th><td>頭痛、悪夢、窓の外の気配</td></tr>
-          <tr><th>経過</th><td>赤い日記帳が届いた夜から症状出現。夜間、窓から赤い日記が持ち去られるのを確認。</td></tr>
-        </table>
-        <button class="btn open-detail" data-id="333">詳細を見る</button>
-      </article>
-
-      <!-- 444（モザイクなし） -->
-      <article class="card">
-        <table class="karte">
-          <tr><th>患者番号</th><td>No.444</td></tr>
-          <tr><th>患者名</th><td>██</td></tr>
-          <tr><th>診断名</th><td>窓辺幻視症</td></tr>
-          <tr><th>症状</th><td>吐き気、視線恐怖</td></tr>
-          <tr><th>経過</th><td>窓辺で赤い日記を確認。以後、睡眠障害が悪化。</td></tr>
-        </table>
-        <button class="btn open-detail" data-id="444">詳細を見る</button>
-      </article>
-
-      <!-- 666（モザイク） -->
-      <article class="card">
-        <table class="karte">
-          <tr><th>患者番号</th><td>No.666</td></tr>
-          <tr><th>患者名</th><td><span class="mosaic">███</span></td></tr>
-          <tr><th>診断名</th><td>呼称追跡性障害</td></tr>
-          <tr><th>症状</th><td>耳鳴り、名を呼ばれる幻聴</td></tr>
-          <tr><th>経過</th><td>呼ばれた翌日、窓に赤い日記が置かれていた。</td></tr>
-        </table>
-        <button class="btn open-detail" data-id="666">詳細を見る</button>
-      </article>
-
-      <article class="card">
-        <table class="karte">
-          <tr><th>患者番号</th><td>No.777</td></tr>
-          <tr><th>患者名</th><td>█</td></tr>
-          <tr><th>診断名</th><td>夜間接触症候群</td></tr>
-          <tr><th>症状</th><td>過度の不安、失神</td></tr>
-          <tr><th>経過</th><td>窓を開けた際、背中に何かを感じ赤い日記が消失。体調急変。</td></tr>
-        </table>
-        <button class="btn open-detail" data-id="777">詳細を見る</button>
-      </article>
-
-      <article class="card">
-        <table class="karte">
-          <tr><th>患者番号</th><td>No.888</td></tr>
-          <tr><th>患者名</th><td><span class="mosaic">████</span></td></tr>
-          <tr><th>診断名</th><td>視覚残像症</td></tr>
-          <tr><th>症状</th><td>視覚異常、残像</td></tr>
-          <tr><th>経過</th><td>赤い日記帳の残像を複数回確認。頭痛増悪。</td></tr>
-        </table>
-        <button class="btn open-detail" data-id="888">詳細を見る</button>
-      </article>
-
-      <article class="card">
-        <table class="karte">
-          <tr><th>患者番号</th><td>No.999</td></tr>
-          <tr><th>患者名</th><td>██</td></tr>
-          <tr><th>診断名</th><td>急性幻視性不安</td></tr>
-          <tr><th>症状</th><td>視覚異常、記憶欠落</td></tr>
-          <tr><th>経過</th><td>証言と記録の齟齬が多発。最後に赤い日記帳を所持。</td></tr>
-        </table>
-        <button class="btn open-detail" data-id="999">詳細を見る</button>
-      </article>
-
-      <div class="controls">
-        <button id="btn-back-story" class="btn">発祥ストーリーに戻る</button>
+    <div class="retro-pane">
+      <h2 class="kaiki-sub chromatic">“B-33型《バーバラさん》”</h2>
+      <div id="story-scroll" class="scrollbox phosphor">
+        <div id="story-text" class="typewriter"></div>
+        <!-- “たすけて”がここにタイプライターで追記されます -->
       </div>
-    </div>
-  </section>
-
-  <!-- 7) 詳細モーダル（閉じるのみ） -->
-  <div id="modal" role="dialog" aria-hidden="true">
-    <div class="modal-inner">
-      <h4 id="modal-title" class="modal-title">患者記録</h4>
-      <div id="modal-body" class="modal-body"></div>
-      <div class="modal-actions">
-        <button id="modal-close" class="btn">閉じる</button>
-      </div>
+      <button id="btn-to-warning" class="btn">過去の患者カルテを見る</button>
     </div>
   </div>
+</section>
 
-  <script src="script.js"></script>
+<!-- 4) 注意事項 -->
+<section id="screen-warning" class="screen hidden">
+  <div class="center">
+    <p class="warning spaced">
+      これから表示される内容は極めて危険です。<br>
+      閲覧によって発生したいかなる事象についても当院は責任を負いかねます。<br>
+      自己責任で閲覧してください。
+    </p>
+    <button id="btn-agree" class="btn">同意して閲覧</button>
+  </div>
+</section>
+
+<!-- 5) カルテ取得 -->
+<section id="screen-records-loading" class="screen hidden">
+  <div class="center">
+    <p class="spaced">カルテ情報を取得しています…</p>
+    <p id="rec-per" class="percent">0%</p>
+  </div>
+</section>
+
+<!-- 6) カルテ一覧（CRT + 画面別ノイズ） -->
+<section id="screen-records" class="screen hidden">
+  <div class="records crt">
+    <h3 class="records-title chromatic">患者記録一覧</h3>
+
+    <!-- 以降はJSで自動生成でもOK。ここではサンプルを直書きしておく -->
+    <div id="records-list">
+      <!-- JSでカード群が生成されます -->
+    </div>
+
+    <div class="controls">
+      <button id="btn-back-story" class="btn">発祥ストーリーに戻る</button>
+    </div>
+  </div>
+</section>
+
+<!-- 7) 詳細モーダル -->
+<div id="modal" role="dialog" aria-hidden="true">
+  <div class="modal-inner">
+    <h4 id="modal-title" class="modal-title">患者記録</h4>
+    <div id="modal-body" class="modal-body"></div>
+    <div class="modal-actions">
+      <button id="modal-close" class="btn">閉じる</button>
+    </div>
+  </div>
+</div>
+
+<script src="script.js?v=7"></script>
 </body>
 </html>
