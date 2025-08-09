@@ -36,26 +36,25 @@ document.addEventListener("DOMContentLoaded", () => {
   const modalBody  = document.getElementById("modal-body");
   const modalClose = document.getElementById("modal-close");
 
-  // FX (ノイズ・ロールバー)
+  // FX (ノイズ・ロールバー・ブレイク)
   const FX = {
     roll: document.querySelector('#fx .fx-rollbar'),
     noise: document.getElementById('noise')
   };
   const flashNoise = (ms=260)=>{FX.noise.classList.add('strong');setTimeout(()=>FX.noise.classList.remove('strong'),ms)};
-  const rollBarOnce= ()=>{
-    if(!FX.roll)return;FX.roll.classList.remove('run');void FX.roll.offsetWidth;FX.roll.classList.add('run');
-  };
-  const rgbSplitPulse=()=>{
-    const a=document.querySelector('.screen.active'); if(!a)return;
-    a.classList.add('rgb-split'); setTimeout(()=>a.classList.remove('rgb-split'),300);
-  };
-  const globalBreak=()=>{
-    const a=document.querySelector('.screen.active'); if(!a)return;
-    a.classList.add('global-break'); rollBarOnce(); rgbSplitPulse(); flashNoise(320);
-    setTimeout(()=>a.classList.remove('global-break'),360);
-  };
+  const rollBarOnce= ()=>{ if(!FX.roll)return; FX.roll.classList.remove('run'); void FX.roll.offsetWidth; FX.roll.classList.add('run'); };
+  const rgbSplitPulse=()=>{ const a=document.querySelector('.screen.active'); if(!a)return; a.classList.add('rgb-split'); setTimeout(()=>a.classList.remove('rgb-split'),300); };
+  const globalBreak=()=>{ const a=document.querySelector('.screen.active'); if(!a)return; a.classList.add('global-break'); rollBarOnce(); rgbSplitPulse(); flashNoise(320); setTimeout(()=>a.classList.remove('global-break'),360); };
 
-  /* ========== 受付 → ロード → 見出し → 発祥 ========== */
+  function showScreen(screen){
+    document.querySelectorAll(".screen").forEach(s=>{
+      s.classList.remove("active"); s.classList.add("hidden");
+      s.querySelectorAll('.fade-up').forEach(n=>n.classList.remove('show'));
+    });
+    screen.classList.remove("hidden"); screen.classList.add("active");
+  }
+
+  /* ===== 受付 → ロード → 見出し → 発祥 ===== */
   btnStart.addEventListener("click", ()=>{
     const val = (nickInput.value||"").trim();
     if (!val){ nickInput.classList.add("entry-error"); setTimeout(()=>nickInput.classList.remove("entry-error"),220); return; }
@@ -68,12 +67,11 @@ document.addEventListener("DOMContentLoaded", () => {
       setTimeout(()=>{
         globalBreak();
         showScreen(scrStory);
-        // フェードアップ表示
         requestAnimationFrame(()=>{
           winMain.classList.add('show');
-          setTimeout(()=>{ winChant.classList.remove('hidden'); winChant.classList.add('show'); startChant(); }, 1200);
+          setTimeout(()=>{ winChant.classList.remove('hidden'); winChant.classList.add('show'); startChant(); }, 1000);
         });
-      }, 1500);
+      }, 1400);
     });
   });
 
@@ -91,15 +89,7 @@ document.addEventListener("DOMContentLoaded", () => {
     })();
   }
 
-  function showScreen(screen){
-    document.querySelectorAll(".screen").forEach(s=>{
-      s.classList.remove("active"); s.classList.add("hidden");
-      s.querySelectorAll('.fade-up').forEach(n=>n.classList.remove('show'));
-    });
-    screen.classList.remove("hidden"); screen.classList.add("active");
-  }
-
-  /* ========== “たすけて” ========== */
+  /* ===== “たすけて”タイプライター ===== */
   function typeText(el, text, speed=16){
     return new Promise(resolve=>{
       let i=0;(function step(){
@@ -115,7 +105,7 @@ document.addEventListener("DOMContentLoaded", () => {
     let running = true;
     btnWarning.addEventListener("click", ()=> running=false, {once:true});
     (async function loop(){
-      await new Promise(r=>setTimeout(r,600)); // 少し間を置く
+      await new Promise(r=>setTimeout(r,600));
       while(running){
         const burst = 1 + Math.floor(Math.random()*3);
         for(let i=0;i<burst;i++){ await typeText(chantText, "たすけて", 12); }
@@ -125,9 +115,9 @@ document.addEventListener("DOMContentLoaded", () => {
     })();
   }
 
-  /* ========== 注意 → カルテロード ========== */
+  /* ===== 注意 → カルテロード ===== */
   btnWarning.addEventListener("click", ()=>{ globalBreak(); showScreen(scrWarn); });
-  btnAgree.addEventListener("click", ()=>{ globalBreak(); startRecordLoading(); });
+  btnAgree  .addEventListener("click", ()=>{ globalBreak(); startRecordLoading(); });
 
   function startRecordLoading(){
     showScreen(scrRecLoad);
@@ -138,7 +128,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
   btnBack.addEventListener("click", ()=>{ globalBreak(); showScreen(scrStory); });
 
-  /* ========== カルテ：データ / 生成 ========== */
+  /* ===== カルテ：データ（番号バラけ） ===== */
   const recordsData = [
     { no:"058", name:"<span class='mosaic'>██</span>", diag:"接触後不安反応", sym:"頭痛・悪夢", prog:"日記帳到着当夜より症状出現。窓外の気配が継続。", mosaic:true },
     { no:"102", name:"匿名", diag:"窓辺幻視症", sym:"吐き気・視線恐怖", prog:"窓辺で赤い日記を確認後、睡眠障害が悪化。", mosaic:false },
@@ -148,9 +138,7 @@ document.addEventListener("DOMContentLoaded", () => {
     { no:"666", name:"<span class='mosaic'>██</span>", diag:"B-33型《バーバラさん》接触症", sym:"視線恐怖・悪夢", prog:"夜間、窓から赤い日記が持ち去られるのを確認。", mosaic:true }, /* ←据え置き */
     { no:"712", name:"<span class='mosaic'>██</span>", diag:"急性幻視性不安", sym:"記憶欠落", prog:"証言と記録の齟齬が多発。最後に日記を所持。", mosaic:true },
     { no:"835", name:"匿名", diag:"夜間接触症候群", sym:"失神・不安", prog:"窓を開けた際、背中の圧迫感と共に日記が消失。", mosaic:false }
-  ];
-  // 昇順で描画（既に昇順だが保険で）
-  recordsData.sort((a,b)=> Number(a.no)-Number(b.no));
+  ].sort((a,b)=> Number(a.no)-Number(b.no));
 
   function buildRecords(){
     recordsList.innerHTML = "";
@@ -167,14 +155,12 @@ document.addEventListener("DOMContentLoaded", () => {
         </table>
         <button class="btn open-detail" data-id="${rec.no}">詳細を見る</button>
       `;
-      card.querySelector(".open-detail").addEventListener("click", ()=>{
-        openDetailModal(rec);
-      });
+      card.querySelector(".open-detail").addEventListener("click", ()=> openDetailModal(rec));
       recordsList.appendChild(card);
     });
   }
 
-  /* ========== 詳細モーダル（控えめ文字化け） ========== */
+  /* ===== 詳細モーダル（控えめ文字化け） ===== */
   let corruptTimer=null, corruptSession=[];
   const GLITCH_SET="◆※#＠▓░╳■□△◎◢◣";
   const HOMO = { "ー":"—","-":"－","・":"･","。":"｡","、":"､","口":"□","日":"■","〇":"○","○":"◯","人":"入","田":"亩","カ":"力","へ":"∧","ン":"ソ","テ":"ﾃ","タ":"ﾀ" };
@@ -183,8 +169,7 @@ document.addEventListener("DOMContentLoaded", () => {
       if(!n.nodeValue||!n.nodeValue.trim())return NodeFilter.FILTER_REJECT;
       let p=n.parentElement; while(p){ if(p.classList&&(p.classList.contains('mosaic')||p.dataset.noCorrupt!==undefined)) return NodeFilter.FILTER_REJECT; p=p.parentElement; }
       return NodeFilter.FILTER_ACCEPT;
-    }});
-    let n; while((n=w.nextNode())) out.push(n); return out;
+    }}); let n; while((n=w.nextNode())) out.push(n); return out;
   }
   const corruptString=(src,rate)=>{
     let out=""; for(let i=0;i<src.length;i++){ const ch=src[i]; if(/\s/.test(ch)){out+=ch;continue;}
@@ -226,7 +211,7 @@ document.addEventListener("DOMContentLoaded", () => {
     stopModalCorruption(); modal.classList.remove("open"); modal.setAttribute("aria-hidden","true");
   });
 
-  /* ========== 自動更新（一覧の1件） ========== */
+  /* ===== 自動更新（一覧の1件を勝手に更新） ===== */
   let autoUpdatedOnce=false;
   function triggerAutoUpdate(){
     if(autoUpdatedOnce) return; autoUpdatedOnce=true;
@@ -239,7 +224,7 @@ document.addEventListener("DOMContentLoaded", () => {
     target.classList.add("updated"); globalBreak();
   }
 
-  /* ========== ランダム小グリッチ ========== */
+  /* ===== ランダム小グリッチ ===== */
   (function randomFxLoop(){
     const choice=Math.random();
     if (choice < 0.35) rollBarOnce();
