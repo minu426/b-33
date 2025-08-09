@@ -1,4 +1,4 @@
-/* ========== 基本 ========== */
+/* ===== 基本 ===== */
 *{box-sizing:border-box}
 html{height:100%;-webkit-text-size-adjust:100%}
 body{
@@ -7,83 +7,45 @@ body{
   -webkit-font-smoothing:antialiased;
 }
 
-/* 画面（displayはactive/hiddenで制御） */
-.screen{display:none;min-height:100vh;width:100%;padding:0 6%;
-  justify-content:center;align-items:center;text-align:center;position:relative}
+/* 画面 */
+.screen{display:none;min-height:100vh;width:100%;padding:2vh 6% 6%;
+  justify-content:flex-start;align-items:flex-start;text-align:center;position:relative}
 .screen.active{display:flex}
 .hidden{display:none}
-.center{max-width:760px;width:100%}
+.center{max-width:760px;width:100%;margin:0 auto}
 .spaced{letter-spacing:.22em;line-height:1.9}
 .percent{margin-top:.6rem;color:#777}
 
-/* 見出し（改行抑制） */
-.kaiki{
-  color:#8b0000;text-shadow:0 0 12px rgba(139,0,0,.35);
-  font-size:clamp(22px,8.2vw,40px);letter-spacing:.08em;
-  text-wrap:balance;white-space:nowrap;
-}
-@media (max-width:430px){ .kaiki{letter-spacing:.04em} }
-.kaiki-sub{margin:.2rem 0 10px;color:#8b0000;letter-spacing:.12em;font-size:1rem}
+/* 見出し（モバイル安全） */
+.kaiki{color:#8b0000;text-shadow:0 0 12px rgba(139,0,0,.35);
+  font-size:clamp(22px,9vw,40px);letter-spacing:.06em;text-wrap:balance}
+.kaiki-sub{margin:.2rem 0 10px;color:#8b0000;letter-spacing:.11em;font-size:clamp(12px,3.6vw,16px)}
 .who-line{color:#aaa;letter-spacing:.18em;margin:.2rem 0 .8rem;font-size:clamp(12px,3.6vw,14px)}
 
-/* 全体薄ノイズ */
-#noise{position:fixed;inset:0;background:rgba(255,255,255,.03);opacity:.05;pointer-events:none;z-index:1;transition:opacity .25s}
+/* 薄ノイズ */
+#noise{position:fixed;inset:0;background:rgba(255,255,255,.03);opacity:.06;pointer-events:none;z-index:1;transition:opacity .25s}
 #noise.strong{opacity:.35}
 
-/* 追加：全画面FXレイヤ */
+/* 全画面FX */
 #fx{position:fixed;inset:0;pointer-events:none;z-index:12;mix-blend-mode:overlay}
 .fx-grain,.fx-scratches,.fx-rollbar{position:absolute;inset:0}
-.fx-grain{
-  background-image:
-    radial-gradient(circle at 20% 30%, rgba(255,255,255,.05), rgba(0,0,0,0) 38%),
-    radial-gradient(circle at 70% 60%, rgba(255,255,255,.04), rgba(0,0,0,0) 42%),
-    repeating-conic-gradient(from 0deg, rgba(255,255,255,.06) 0 .5deg, rgba(0,0,0,0) .5deg 1deg);
-  opacity:.22;animation:fxGrainShift 1.2s steps(2) infinite
-}
+.fx-grain{background-image:
+  radial-gradient(circle at 20% 30%, rgba(255,255,255,.05), rgba(0,0,0,0) 38%),
+  radial-gradient(circle at 70% 60%, rgba(255,255,255,.04), rgba(0,0,0,0) 42%),
+  repeating-conic-gradient(from 0deg, rgba(255,255,255,.06) 0 .5deg, rgba(0,0,0,0) .5deg 1deg);
+  opacity:.22;animation:fxGrainShift 1.2s steps(2) infinite}
 @keyframes fxGrainShift{0%{transform:translate(0,0)}50%{transform:translate(-1px,1px)}100%{transform:translate(0,0)}}
 .fx-scratches{
   background:
     repeating-linear-gradient(to right, rgba(255,255,255,.08) 0 1px, rgba(0,0,0,0) 1px 4px),
     repeating-linear-gradient(to right, rgba(255,255,255,.03) 0 2px, rgba(0,0,0,0) 2px 7px);
-  opacity:.12;animation:fxScratchDrift 12s linear infinite
-}
+  opacity:.12;animation:fxScratchDrift 12s linear infinite}
 @keyframes fxScratchDrift{0%{transform:translateX(0)}100%{transform:translateX(-60px)}}
-.fx-rollbar{background:linear-gradient(to bottom,rgba(255,255,255,0),rgba(255,255,255,.18) 50%,rgba(255,255,255,0));opacity:0;transform:translateY(-120%)}
-.fx-rollbar.run{animation:fxRoll 2.2s linear 1}
+.fx-rollbar{background:linear-gradient(to bottom,rgba(255,255,255,0),rgba(255,255,255,.18) 50%,rgba(255,255,255,0));
+  opacity:0;transform:translateY(-120%)} .fx-rollbar.run{animation:fxRoll 2.2s linear 1}
 @keyframes fxRoll{0%{opacity:0;transform:translateY(-120%)}10%{opacity:.35}90%{opacity:.35}100%{opacity:0;transform:translateY(120%)}}
 
-/* RGBずれ・ドリフト・スクリーンティア・強グリッチ */
-.rgb-split *{text-shadow:1px 0 rgba(255,0,0,.35),-1px 0 rgba(0,255,255,.35);filter:contrast(1.05) saturate(1.05)}
-.vsync-drift{animation:vsyncDrift 6s ease-in-out infinite alternate}
-@keyframes vsyncDrift{0%{transform:translateY(0)}100%{transform:translateY(1.6px)}}
-.screen-tear::after{
-  content:"";position:absolute;left:0;right:0;height:14px;top:40%;
-  background:linear-gradient(to right,rgba(255,255,255,.1),rgba(0,0,0,0));mix-blend-mode:screen;opacity:0;transform:translateX(-8px);
-  animation:screenTear .22s steps(1) 1
-}
-@keyframes screenTear{0%{opacity:0}20%{opacity:.35;transform:translateX(8px)}100%{opacity:0;transform:translateX(0)}}
-.global-break{
-  animation:globalBreakA .18s steps(1) 1, globalBreakB .28s ease 1;
-  filter:invert(.06) contrast(1.2) saturate(1.15) hue-rotate(6deg)
-}
-@keyframes globalBreakA{
-  0%{transform:none}
-  50%{transform:skewX(3deg) translateX(2px)}
-  100%{transform:none}
-}
-@keyframes globalBreakB{
-  0%{box-shadow:inset 0 0 0 rgba(255,0,0,0)}
-  50%{box-shadow:inset 0 0 48px rgba(255,255,255,.06)}
-  100%{box-shadow:inset 0 0 0 rgba(255,0,0,0)}
-}
-
-/* “ガガガ” */
-@keyframes jolt{0%{transform:none;filter:none}15%{transform:skewX(2deg) translateX(1px)}
-30%{transform:skewX(-2deg) translateX(-1px);filter:contrast(1.08)}45%{transform:skewY(1deg)}
-60%{transform:skewY(-1deg)}75%{transform:translateX(1px)}100%{transform:none;filter:none}}
-.jolt{animation:jolt .22s steps(1) 1}
-
-/* レトロUI */
+/* CRT（強め・安定） */
 .browser.retro{position:relative;z-index:2;width:100%;max-width:900px;background:#c0c0c0;border:2px solid #000;
   box-shadow:0 0 0 1px #fff inset,0 0 0 2px #808080 inset,0 0 0 3px #fff inset;overflow:hidden}
 .retro-titlebar{display:flex;align-items:center;justify-content:space-between;background:#000080;color:#fff;padding:6px 8px;letter-spacing:.3em;font-size:.9rem;user-select:none}
@@ -95,47 +57,25 @@ body{
 .retro-controls .ctrl.close{color:#800000}
 .retro-pane{padding:12px;text-align:left;color:#000;background:#c0c0c0;position:relative}
 
-/* CRT 質感 */
 .browser.retro.crt,.records.crt{position:relative;isolation:isolate;overflow:hidden;filter:contrast(1.03) saturate(0.98)}
 .browser.retro.crt::before,.records.crt::before{
-  content:"";position:absolute;inset:-4%;z-index:8;pointer-events:none;
-  background:radial-gradient(ellipse at center,rgba(255,255,255,.02) 0%,rgba(255,255,255,0) 60%,rgba(0,0,0,.38) 100%);
-  border-radius:2.6%/1.9%;transform:perspective(1000px) scale(1.018)
+  content:"";position:absolute;inset:-3%;z-index:8;pointer-events:none;border-radius:2.6%/1.9%;
+  background:radial-gradient(ellipse at center,rgba(255,255,255,.04) 0%,rgba(255,255,255,0) 60%,rgba(0,0,0,.44) 100%);
 }
 .browser.retro.crt::after,.records.crt::after{
   content:"";position:absolute;inset:0;z-index:8;pointer-events:none;
-  background:repeating-linear-gradient(to bottom,rgba(255,255,255,.045),rgba(255,255,255,.045) 1px,transparent 1px,transparent 3px);
-  mix-blend-mode:overlay;opacity:.5;animation:crtFlicker 4.5s steps(1) infinite
-}
-@keyframes crtFlicker{0%,98%{opacity:.5}99%{opacity:.56}100%{opacity:.5}}
+  background:repeating-linear-gradient(to bottom,rgba(255,255,255,.055),rgba(255,255,255,.055) 1px,transparent 1px,transparent 3px);
+  mix-blend-mode:overlay;opacity:.55;animation:crtFlicker 4.5s steps(1) infinite}
+@keyframes crtFlicker{0%,98%{opacity:.55}99%{opacity:.62}100%{opacity:.55}}
 
-/* 画面別ノイズ（JPEG） */
-#screen-story::before{
-  content:"";position:absolute;inset:0;z-index:10;pointer-events:none;
-  background:url('assets/noise_story.gif') repeat;background-size:320px auto;mix-blend-mode:lighten;opacity:.32;
-  animation:noisePanX 1.4s steps(6) infinite,noisePanY 1.2s steps(5) infinite,noiseFlicker .18s steps(2) infinite
-}
+/* 画面別ノイズGIF（ブレンド無しで安定） */
+#screen-story::before,
 #screen-records::before{
   content:"";position:absolute;inset:0;z-index:10;pointer-events:none;
-  background:url('assets/noise_records.gif') repeat;background-size:280px auto;mix-blend-mode:overlay;opacity:.26;
-  animation:noisePanX 1.1s steps(7) infinite reverse,noisePanY 1.6s steps(6) infinite,noiseFlicker .20s steps(3) infinite
+  background-size:300px auto;opacity:.28;mix-blend-mode:normal;
 }
-@keyframes noisePanX{0%{background-position:0 0}100%{background-position:-40px 0}}
-@keyframes noisePanY{0%{background-position:0 0}100%{background-position:0 -30px}}
-@keyframes noiseFlicker{0%{opacity:.22}50%{opacity:.34}100%{opacity:.22}}
-
-/* 発祥ウィンドウ配置 */
-.stack{display:flex;flex-direction:column;gap:12px}
-.win-main{z-index:2}
-.win-mini{z-index:3;width:min(480px,100%);margin-left:auto}
-.win-mini.hidden{display:none}
-
-/* 本文（改行崩れ対策） */
-.typewriter{
-  color:#111;line-height:2.02;font-size:clamp(14px,3.9vw,18px);letter-spacing:.005em;
-  white-space:normal;word-break:normal;overflow-wrap:anywhere;line-break:strict;text-wrap:balance;
-}
-.typewriter p{margin:0 0 1.2em 0}
+#screen-story::before{ background-image:url('assets/noise_story.gif'); }
+#screen-records::before{ background-image:url('assets/noise_records.gif'); }
 
 /* スクロールボックス */
 .scrollbox{
@@ -146,8 +86,11 @@ body{
 .scrollbox::-webkit-scrollbar-track{background:#c0c0c0;box-shadow:inset 1px 1px 0 #fff,inset -1px -1px 0 #808080}
 .scrollbox::-webkit-scrollbar-thumb{background:#e0e0e0;border:2px solid #000;box-shadow:inset 0 0 0 1px #fff,inset 0 0 0 2px #808080,inset 0 0 0 3px #fff}
 
+/* 発祥ストーリー：行間詰め（縦の字間） */
+#story-text p{ line-height:1.45; margin:0 0 .55em 0; font-size:clamp(14px,3.9vw,18px) }
+
 /* “たすけて” */
-.help-chant{color:#8b0000;letter-spacing:0;font-weight:600;opacity:0;transition:opacity .25s ease}
+.help-chant{color:#8b0000;letter-spacing:0;font-weight:600;opacity:0;transition:opacity .25s}
 .help-chant.show{opacity:1}
 
 /* ボタン */
@@ -160,16 +103,15 @@ body{
 .btn:active{box-shadow:0 0 0 1px #808080 inset,0 0 0 2px #fff inset,0 0 0 3px #808080 inset;transform:translateY(1px) scale(.99)}
 
 /* 受付 */
-.entry-form{display:flex;gap:10px;align-items:center;margin:.6rem 0 .4rem}
+.entry-form{display:flex;gap:10px;align-items:center;margin:.6rem 0 .4rem;justify-content:center}
 #nick-input{
   width:100%;max-width:360px;padding:.5rem .6rem;background:#fff;color:#111;border:2px solid #000;
-  box-shadow:0 0 0 1px #fff inset,0 0 0 2px #808080 inset,0 0 0 3px #fff inset
-}
+  box-shadow:0 0 0 1px #fff inset,0 0 0 2px #808080 inset,0 0 0 3px #fff inset}
 #nick-input:focus{outline:none;border-color:#8b0000}
 .entry-note{color:#333;font-size:.85rem;margin:.2rem 0 0}
 
 /* カルテ一覧 */
-.records{position:relative;z-index:2;width:100%;max-width:900px;text-align:left}
+.records{position:relative;z-index:2;width:100%;max-width:900px;text-align:left;margin:0 auto}
 .records-title{text-align:center;color:#8b0000;letter-spacing:.12em}
 .card{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:8px;padding:12px;margin:12px 0}
 .karte{width:100%;border-collapse:collapse;table-layout:fixed}
@@ -187,24 +129,22 @@ body{
 .modal-inner{width:92%;max-width:680px;background:#0b0b0b;border:1px solid rgba(255,255,255,.08);border-radius:8px;padding:16px;transform:scale(.96) translateY(8px);transition:transform .22s,box-shadow .22s;box-shadow:0 18px 50px rgba(0,0,0,.55)}
 #modal.open .modal-inner{transform:scale(1) translateY(0);box-shadow:0 22px 60px rgba(0,0,0,.65)}
 .modal-title{margin:0 0 10px;color:#8b0000}
-.modal-body{line-height:1.9}
+.modal-body{line-height:1.85}
 .modal-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:12px}
 
-/* モザイク等 */
+/* モザイク */
 .mosaic{position:relative;display:inline-block;color:transparent;padding:0 .25em;border-radius:2px;outline:1px solid rgba(255,255,255,.12)}
-.mosaic::after{
-  content:"";position:absolute;inset:0;border-radius:2px;
+.mosaic::after{content:"";position:absolute;inset:0;border-radius:2px;
   background:repeating-linear-gradient(135deg,rgba(20,20,20,1) 0 6px,rgba(0,0,0,.78) 6px 12px),
              linear-gradient(to bottom,rgba(255,255,255,.05),rgba(0,0,0,.0));
-  opacity:.96;animation:mosaicPulse 3s ease-in-out infinite
-}
+  opacity:.96;animation:mosaicPulse 3s ease-in-out infinite}
 @keyframes mosaicPulse{0%,100%{opacity:.96}50%{opacity:.86}}
 .blacked{background:#000;color:transparent;border-radius:2px;padding:0 6px;display:inline-block}
 .marker{background:linear-gradient(90deg,rgba(0,0,0,.96),rgba(0,0,0,.88));color:transparent;padding:0 6px;border-radius:2px}
 
-/* 文字化けフラッシュ */
-.corrupt-flash{animation:corruptFlash .18s steps(1) 1}
-@keyframes corruptFlash{0%{filter:none}50%{filter:contrast(1.15) saturate(1.1)}100%{filter:none}}
+/* 下からフェードイン */
+.fade-up{opacity:0;transform:translateY(24px)}
+.fade-up.show{opacity:1;transform:translateY(0);transition:opacity .36s ease, transform .36s ease}
 
 /* 微振動 */
 @keyframes microShake{0%{transform:translateX(0)}25%{transform:translateX(1px)}50%{transform:translateX(-1px)}75%{transform:translateX(1px)}100%{transform:translateX(0)}}
