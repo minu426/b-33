@@ -1,77 +1,118 @@
-/* 基本 */
+/* ========== 基本 ========== */
 *{box-sizing:border-box}
 html,body{height:100%}
 body{
   margin:0;background:#000;color:#eee;
-  font-family: "Hiragino Mincho ProN","Yu Mincho",serif;
+  font-family:"Hiragino Mincho ProN","Yu Mincho",serif;
   -webkit-font-smoothing:antialiased;
 }
-
-/* 画面制御 */
 .screen{display:none;min-height:100vh;width:100%;padding:0 6%;
   display:flex;justify-content:center;align-items:center;text-align:center}
 .screen.active{display:flex}
 .hidden{display:none}
-
 .center{max-width:760px;width:100%}
 .spaced{letter-spacing:.22em;line-height:1.9}
 .percent{margin-top:.6rem;color:#777}
-
 .kaiki{font-size:2.2rem;color:#8b0000;letter-spacing:.14em;text-shadow:0 0 12px rgba(139,0,0,.35)}
-.kaiki-sub{margin:.2rem 0 1rem 0;color:#8b0000;letter-spacing:.08em}
+.kaiki-sub{margin:.2rem 0 10px 0;color:#8b0000;letter-spacing:.08em}
+.warning{color:#8b0000}
 
-/* 背景ノイズ */
+/* ========== 背景ノイズ ========== */
 #noise{
   position:fixed;inset:0;background:url('assets/noise.gif');background-size:cover;
   opacity:.05;pointer-events:none;z-index:1;transition:opacity .25s;
 }
 #noise.strong{opacity:.35}
 
-/* ブラウザUI風 */
-.browser{position:relative;z-index:2;width:100%;max-width:900px;
-  background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);
-  border-radius:8px;overflow:hidden;box-shadow:0 0 40px rgba(0,0,0,.6)}
-.bar{display:flex;align-items:center;gap:8px;background:#0f1a2b;padding:8px 12px}
-.dots .dot{display:inline-block;width:11px;height:11px;border-radius:50%}
-.dot.red{background:#ff5f56}.dot.yellow{background:#ffbd2e}.dot.green{background:#27c93f}
-.title{flex:1;text-align:center;color:#cfd8ea;font-size:.9rem;letter-spacing:.08em}
-.pane{padding:14px 14px 18px}
-
-/* タイプライター（caretは別要素） */
-.typewriter{
-  text-align:left;line-height:1.9;font-size:1rem;min-height:10rem;
-  display:flex;align-items:flex-start;gap:0;
+/* ========== レトロ（Win98風）ブラウザUI ========== */
+.browser.retro{
+  position:relative;z-index:2;width:100%;max-width:900px;
+  background:#c0c0c0;border:2px solid #000;
+  box-shadow:0 0 0 1px #fff inset, 0 0 0 2px #808080 inset, 0 0 0 3px #fff inset;
 }
-#story-text{white-space:pre-wrap;word-break:break-word}
-.caret{
-  width:8px; height:1.2em; align-self:flex-start; margin-left:2px;
-  background:rgba(255,255,255,.9); animation:blink .9s steps(1) infinite;
+.retro-titlebar{
+  display:flex;align-items:center;justify-content:space-between;
+  background:#000080;color:#fff;padding:6px 8px;
+  font-family:"MS Gothic","Yu Gothic",monospace;letter-spacing:.02em;font-size:.95rem;cursor:default;user-select:none;
 }
-@keyframes blink{50%{opacity:0}}
+.retro-title{font-weight:bold}
+.retro-controls{display:flex;gap:6px}
+.retro-controls .ctrl{
+  display:inline-block;min-width:22px;text-align:center;padding:2px 4px;cursor:default;
+  background:#c0c0c0;color:#000;border:2px solid #000;
+  box-shadow:0 0 0 1px #fff inset, 0 0 0 2px #808080 inset, 0 0 0 3px #fff inset;
+}
+.retro-controls .ctrl:active{
+  box-shadow:0 0 0 1px #808080 inset, 0 0 0 2px #fff inset, 0 0 0 3px #808080 inset;
+}
+.retro-controls .ctrl.close{color:#800000}
+.retro-pane{padding:12px;text-align:left;color:#000;background:#c0c0c0}
 
+/* 文章（縦線カーソルなし） */
+.typewriter{color:#111;line-height:1.9;font-size:1rem;white-space:pre-wrap;word-break:break-word}
+
+/* スクロールボックス */
+.scrollbox{
+  max-height:55vh;overflow:auto;padding:10px;background:#fff;color:#111;border:2px solid #000;
+  box-shadow:0 0 0 1px #fff inset, 0 0 0 2px #808080 inset, 0 0 0 3px #fff inset;
+}
+/* スクロールバー(webkit) */
+.scrollbox::-webkit-scrollbar{width:10px}
+.scrollbox::-webkit-scrollbar-track{background:#c0c0c0;box-shadow:inset 1px 1px 0 #fff, inset -1px -1px 0 #808080}
+.scrollbox::-webkit-scrollbar-thumb{
+  background:#e0e0e0;border:2px solid #000;
+  box-shadow:inset 0 0 0 1px #fff, inset 0 0 0 2px #808080, inset 0 0 0 3px #fff;
+}
+
+/* CRT風スキャンライン＋ビネット＋色ズレ */
+.crt{position:relative;filter:contrast(1.01) saturate(0.98)}
+.crt::after{
+  content:"";position:absolute;inset:0;z-index:1;pointer-events:none;
+  background:
+    radial-gradient(ellipse at center, rgba(0,0,0,.22) 0%, rgba(0,0,0,0) 55%, rgba(0,0,0,.35) 100%),
+    repeating-linear-gradient(to bottom, rgba(255,255,255,.03), rgba(255,255,255,.03) 1px, transparent 1px, transparent 3px);
+  mix-blend-mode:overlay;opacity:.35;animation:crtFlicker 4.5s steps(1) infinite;
+}
+@keyframes crtFlicker{0%,98%{opacity:.35}99%{opacity:.42}100%{opacity:.35}}
+.chromatic{text-shadow:1px 0 rgba(255,0,0,.25), -1px 0 rgba(0,255,255,.25)}
+
+/* ボタン：98風の凹凸＋押し感 */
 .btn{
-  margin-top:16px;padding:.55rem 1rem;background:transparent;border:1px solid rgba(255,255,255,.18);
-  color:#eee;border-radius:4px;cursor:pointer;transition:transform .1s,color .2s,border-color .2s,background .1s;z-index:2
+  background:#c0c0c0;color:#000;border:2px solid #000;
+  box-shadow:0 0 0 1px #fff inset, 0 0 0 2px #808080 inset, 0 0 0 3px #fff inset;
+  font-family:"MS Gothic","Yu Gothic",monospace;border-radius:2px;
+  margin-top:16px;padding:.55rem 1rem;cursor:pointer;transition:transform .1s,color .2s,border-color .2s,box-shadow .12s;
 }
-.btn:hover{color:#8b0000;border-color:#8b0000;transform:scale(1.04)}
-.btn:active{transform:scale(.98)}
-
-.warning{color:#8b0000}
+.btn:hover{color:#8b0000}
+.btn:active{
+  box-shadow:0 0 0 1px #808080 inset, 0 0 0 2px #fff inset, 0 0 0 3px #808080 inset;
+  transform:translateY(1px) scale(.99);
+}
 
 /* カルテ一覧 */
 .records{position:relative;z-index:2;width:100%;max-width:900px;text-align:left}
 .records-title{text-align:center;color:#8b0000;letter-spacing:.12em}
-.card{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);
-  border-radius:8px;padding:12px;margin:12px 0}
+.card{
+  background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);
+  border-radius:8px;padding:12px;margin:12px 0
+}
 .karte{width:100%;border-collapse:collapse}
 .karte th,.karte td{padding:8px;border-bottom:1px dashed rgba(255,255,255,.08);vertical-align:top}
 .karte th{white-space:nowrap;width:30%}
 
-/* モーダル */
-#modal{position:fixed;inset:0;background:rgba(0,0,0,.86);z-index:9999;display:none;
-  justify-content:center;align-items:center;padding:20px;text-align:left}
-.modal-inner{width:92%;max-width:680px;background:#0b0b0b;border:1px solid rgba(255,255,255,.08);
-  border-radius:8px;padding:16px}
+/* モーダル（ぬるっと開閉） */
+#modal{
+  position:fixed;inset:0;background:rgba(0,0,0,.86);z-index:9999;
+  display:flex;justify-content:center;align-items:center;padding:20px;text-align:left;
+  opacity:0;pointer-events:none;transition:opacity .22s ease;
+}
+#modal.open{opacity:1;pointer-events:auto}
+.modal-inner{
+  width:92%;max-width:680px;background:#0b0b0b;border:1px solid rgba(255,255,255,.08);
+  border-radius:8px;padding:16px;transform:scale(.96) translateY(8px);
+  transition:transform .22s ease, box-shadow .22s ease;box-shadow:0 18px 50px rgba(0,0,0,.55)
+}
+#modal.open .modal-inner{transform:scale(1) translateY(0);box-shadow:0 22px 60px rgba(0,0,0,.65)}
 .modal-title{margin:0 0 10px 0;color:#8b0000}
 .modal-body{line-height:1.8}
 .modal-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:12px}
@@ -83,7 +124,7 @@ body{
 
 /* スマホ調整 */
 @media (max-width:430px){
-  .pane{padding:12px}
-  .typewriter{font-size:.95rem}
-  .kaiki{font-size:1.7rem}
+  .scrollbox{max-height:60vh}
+  .retro-titlebar{font-size:.9rem}
+  .kaiki{font-size:1.8rem}
 }
