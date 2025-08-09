@@ -1,112 +1,89 @@
-body {
-    margin: 0;
-    font-family: "Yu Gothic", sans-serif;
-    background-color: #000;
-    color: white;
+/* 基本 */
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;background:#000;color:#eee;
+  font-family: "Hiragino Mincho ProN","Yu Mincho",serif;
+  -webkit-font-smoothing:antialiased;
 }
 
-/* ロード画面 */
-#loading-screen {
-    position: fixed;
-    top: 0; left: 0; width: 100%; height: 100%;
-    background-color: black;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 3rem;
-    z-index: 9999;
-}
-.hidden {
-    display: none;
-}
+/* 画面制御 */
+.screen{display:none;min-height:100vh;width:100%;padding:0 6%;
+  display:flex;justify-content:center;align-items:center;text-align:center}
+.screen.active{display:flex}
+.hidden{display:none}
 
-/* ブラウザ風UI */
-.browser-bar {
-    background-color: #1e3a5f;
-    display: flex;
-    align-items: center;
-    padding: 5px 10px;
-}
-.browser-buttons {
-    display: flex;
-    gap: 6px;
-}
-.circle {
-    width: 12px;
-    height: 12px;
-    border-radius: 50%;
-    display: inline-block;
-}
-.red { background-color: #ff5f56; }
-.yellow { background-color: #ffbd2e; }
-.green { background-color: #27c93f; }
-.browser-title {
-    flex: 1;
-    text-align: center;
-    color: white;
-}
+.center{max-width:760px;width:100%}
+.spaced{letter-spacing:.22em;line-height:1.9}
+.percent{margin-top:.6rem;color:#777}
 
-/* ストーリー本文 */
-.story-content {
-    padding: 20px;
-}
-#kaiji-name {
-    font-size: 2rem;
-    margin-bottom: 20px;
-}
-#story-text {
-    font-size: 1.1rem;
-    white-space: pre-wrap;
-    border-right: 2px solid white;
-    display: inline-block;
-    animation: blinkCursor 0.8s steps(2, start) infinite;
-}
+.kaiki{font-size:2.2rem;color:#8b0000;letter-spacing:.14em;text-shadow:0 0 12px rgba(139,0,0,.35)}
+.kaiki-sub{margin:.2rem 0 1rem 0;color:#8b0000;letter-spacing:.08em}
 
-@keyframes blinkCursor {
-    to {
-        border-color: transparent;
-    }
+/* 背景ノイズ */
+#noise{
+  position:fixed;inset:0;background:url('assets/noise.gif');background-size:cover;
+  opacity:.05;pointer-events:none;z-index:1;transition:opacity .25s;
 }
+#noise.strong{opacity:.35}
 
-#open-record {
-    margin: 20px;
-    padding: 10px 20px;
-    background: red;
-    color: white;
-    border: none;
-    cursor: pointer;
+/* ブラウザUI風 */
+.browser{position:relative;z-index:2;width:100%;max-width:900px;
+  background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);
+  border-radius:8px;overflow:hidden;box-shadow:0 0 40px rgba(0,0,0,.6)}
+.bar{display:flex;align-items:center;gap:8px;background:#0f1a2b;padding:8px 12px}
+.dots .dot{display:inline-block;width:11px;height:11px;border-radius:50%}
+.dot.red{background:#ff5f56}.dot.yellow{background:#ffbd2e}.dot.green{background:#27c93f}
+.title{flex:1;text-align:center;color:#cfd8ea;font-size:.9rem;letter-spacing:.08em}
+.pane{padding:14px 14px 18px}
+
+/* タイプライター（caretは別要素） */
+.typewriter{
+  text-align:left;line-height:1.9;font-size:1rem;min-height:10rem;
+  display:flex;align-items:flex-start;gap:0;
 }
+#story-text{white-space:pre-wrap;word-break:break-word}
+.caret{
+  width:8px; height:1.2em; align-self:flex-start; margin-left:2px;
+  background:rgba(255,255,255,.9); animation:blink .9s steps(1) infinite;
+}
+@keyframes blink{50%{opacity:0}}
+
+.btn{
+  margin-top:16px;padding:.55rem 1rem;background:transparent;border:1px solid rgba(255,255,255,.18);
+  color:#eee;border-radius:4px;cursor:pointer;transition:transform .1s,color .2s,border-color .2s,background .1s;z-index:2
+}
+.btn:hover{color:#8b0000;border-color:#8b0000;transform:scale(1.04)}
+.btn:active{transform:scale(.98)}
+
+.warning{color:#8b0000}
+
+/* カルテ一覧 */
+.records{position:relative;z-index:2;width:100%;max-width:900px;text-align:left}
+.records-title{text-align:center;color:#8b0000;letter-spacing:.12em}
+.card{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);
+  border-radius:8px;padding:12px;margin:12px 0}
+.karte{width:100%;border-collapse:collapse}
+.karte th,.karte td{padding:8px;border-bottom:1px dashed rgba(255,255,255,.08);vertical-align:top}
+.karte th{white-space:nowrap;width:30%}
 
 /* モーダル */
-#record-modal {
-    position: fixed;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    background-color: rgba(0,0,0,0.8);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 2000;
-}
-.modal-content {
-    background-color: #111;
-    padding: 20px;
-    border-radius: 8px;
-}
-.modal-title {
-    color: red;
-}
-.warning {
-    color: red;
-}
-table {
-    border-collapse: collapse;
-    margin: 10px 0;
-}
-th, td {
-    border: 1px solid white;
-    padding: 5px 10px;
-}
-button {
-    margin-top: 10px;
+#modal{position:fixed;inset:0;background:rgba(0,0,0,.86);z-index:9999;display:none;
+  justify-content:center;align-items:center;padding:20px;text-align:left}
+.modal-inner{width:92%;max-width:680px;background:#0b0b0b;border:1px solid rgba(255,255,255,.08);
+  border-radius:8px;padding:16px}
+.modal-title{margin:0 0 10px 0;color:#8b0000}
+.modal-body{line-height:1.8}
+.modal-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:12px}
+
+/* 黒塗り/マーカー/文字化け */
+.blacked{background:#000;color:transparent;border-radius:2px;padding:0 6px;display:inline-block}
+.marker{background:linear-gradient(90deg, rgba(0,0,0,.96), rgba(0,0,0,.88));color:transparent;padding:0 6px;border-radius:2px}
+.garbled{font-family:monospace;letter-spacing:.08em;opacity:.9}
+
+/* スマホ調整 */
+@media (max-width:430px){
+  .pane{padding:12px}
+  .typewriter{font-size:.95rem}
+  .kaiki{font-size:1.7rem}
 }
