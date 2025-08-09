@@ -112,12 +112,12 @@ body{
 /* 画面別ノイズ（JPEG） */
 #screen-story::before{
   content:"";position:absolute;inset:0;z-index:10;pointer-events:none;
-  background:url('assets/noise_story.jpg') repeat;background-size:320px auto;mix-blend-mode:lighten;opacity:.32;
+  background:url('assets/noise_story.gif') repeat;background-size:320px auto;mix-blend-mode:lighten;opacity:.32;
   animation:noisePanX 1.4s steps(6) infinite,noisePanY 1.2s steps(5) infinite,noiseFlicker .18s steps(2) infinite
 }
 #screen-records::before{
   content:"";position:absolute;inset:0;z-index:10;pointer-events:none;
-  background:url('assets/noise_records.jpg') repeat;background-size:280px auto;mix-blend-mode:overlay;opacity:.26;
+  background:url('assets/noise_records.gif') repeat;background-size:280px auto;mix-blend-mode:overlay;opacity:.26;
   animation:noisePanX 1.1s steps(7) infinite reverse,noisePanY 1.6s steps(6) infinite,noiseFlicker .20s steps(3) infinite
 }
 @keyframes noisePanX{0%{background-position:0 0}100%{background-position:-40px 0}}
