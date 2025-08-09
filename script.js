@@ -34,8 +34,14 @@ document.addEventListener("DOMContentLoaded", () => {
   function show(el){ el.classList.remove("hidden"); el.classList.add("active"); }
   function hide(el){ el.classList.add("hidden"); el.classList.remove("active"); }
   function flashNoise(ms=260){ noise.classList.add("strong"); setTimeout(()=>noise.classList.remove("strong"), ms); }
-  function warpFlash(target=document.body){ target.classList.add("warp"); setTimeout(()=>target.classList.remove("warp"), 380); }
   function microShake(el){ el.classList.add("shake"); setTimeout(()=> el.classList.remove("shake"), 200); }
+  function joltOnce(target=document.body){ target.classList.add("jolt"); setTimeout(()=>target.classList.remove("jolt"), 240); }
+
+  // ランダム歪み（ガガガ）を不定期に発火
+  (function scheduleJolt(){
+    const next = 2600 + Math.random()*5200; // 2.6〜7.8秒のどこか
+    setTimeout(()=>{ joltOnce(document.querySelector(".browser.retro") || document.body); scheduleJolt(); }, next);
+  })();
 
   // ===== ロード（遅→速） =====
   let p = 0, base = 120;
@@ -49,15 +55,15 @@ document.addEventListener("DOMContentLoaded", () => {
     } else {
       scrLoading.style.transition = "opacity .7s ease";
       scrLoading.style.opacity = "0";
-      flashNoise(220); warpFlash();
+      flashNoise(220);
       setTimeout(()=>{
         hide(scrLoading);
         show(scrName);
         setTimeout(()=>{
           hide(scrName);
           show(scrStory);
-          flashNoise(180); warpFlash();
-          startTypewriterParagraphs(storyTextRoot, storyParagraphs, 24)
+          flashNoise(180);
+          startTypewriterParagraphs(storyTextRoot, storyParagraphs, 22)
             .then(()=> startHelpChant("story-text"));
         }, 2000);
       }, 720);
@@ -66,7 +72,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // ストーリー → 注意
   document.getElementById("btn-to-warning").addEventListener("click", ()=>{
-    flashNoise(220); warpFlash();
+    flashNoise(220);
     hide(scrStory);
     show(scrWarn);
     setTimeout(()=> microShake(document.querySelector("#screen-warning .center")), 280);
@@ -86,7 +92,7 @@ document.addEventListener("DOMContentLoaded", () => {
         setTimeout(()=>{
           hide(scrRecLoad);
           show(scrRecords);
-          flashNoise(220); warpFlash();
+          flashNoise(220);
           // 一覧表示後に一度だけ自動更新
           setTimeout(triggerAutoUpdate, 1000 + Math.random()*1500);
         }, 180);
@@ -96,7 +102,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // 一覧 ←→ ストーリー
   document.getElementById("btn-back-story").addEventListener("click", ()=>{
-    flashNoise(220); warpFlash();
+    flashNoise(220);
     hide(scrRecords);
     show(scrStory);
   });
@@ -157,8 +163,8 @@ document.addEventListener("DOMContentLoaded", () => {
       }
       modalBody.innerHTML = injected;
 
-      // オープン演出：ノイズ＋歪み＋局所グリッチ＋微振動
-      flashNoise(160); warpFlash();
+      // オープン演出：ノイズ＋局所ジョルト＋微振動
+      flashNoise(160);
       const inner = modal.querySelector(".modal-inner");
       inner.classList.add("glitch");
       setTimeout(()=> inner.classList.remove("glitch"), 260);
@@ -168,17 +174,26 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-  // ===== 段落タイプライター（ランダム速度＋スクロール追従） =====
-  function typeOneParagraph(pEl, text, base=24){
+  // ===== 段落タイプライター（ランダム速度＋スクロール追従＋末尾一文字回避） =====
+  function typeOneParagraph(pEl, text, base=22){
     return new Promise(resolve=>{
       pEl.textContent = "";
       let i = 0;
       (function step(){
-        if (i >= text.length){ resolve(); return; }
+        if (i >= text.length){
+          // 末尾一文字改行を避けるため、最後の2文字の間に「ワード結合子(Ｕ+2060)」を入れる
+          try{
+            const t = pEl.textContent;
+            if (t.length > 2){
+              pEl.textContent = t.slice(0, -2) + "\u2060" + t.slice(-2);
+            }
+          }catch(e){}
+          resolve(); return;
+        }
         pEl.textContent += text.charAt(i);
         i++;
         const jitter = Math.random()*14 - 7; // -7〜+7ms
-        const delay  = Math.max(8, base + jitter);
+        const delay  = Math.max(6, base + jitter);
         const scrollBox = document.getElementById("story-scroll");
         if (scrollBox) scrollBox.scrollTop = scrollBox.scrollHeight;
         setTimeout(step, delay);
@@ -186,7 +201,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  async function startTypewriterParagraphs(root, paragraphs, base=24){
+  async function startTypewriterParagraphs(root, paragraphs, base=22){
     root.innerHTML = "";
     for (let idx=0; idx<paragraphs.length; idx++){
       const p = document.createElement("p");
@@ -195,24 +210,29 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  // “たすけて” 自動追記
+  // “たすけて” 自動追記（勢い＆字間詰め）
   function startHelpChant(containerId="story-text"){
     const root = document.getElementById(containerId);
     const line = document.createElement("p");
     line.className = "help-chant";
     root.appendChild(line);
-    setTimeout(()=> line.classList.add("show"), 30);
+    setTimeout(()=> line.classList.add("show"), 10);
 
     let running = true;
     document.getElementById("btn-to-warning").addEventListener("click", ()=> running = false, { once:true });
 
     (function loop(){
       if(!running) return;
-      line.textContent += (line.textContent ? "　" : "") + "たすけて";
-      if (Math.random() < 0.25) line.textContent += "、たすけて、たすけて";
+      // 1ループで複数回 たすけて を叩き込む
+      const burst = 1 + Math.floor(Math.random()*3); // 1〜3個
+      let chunk = "";
+      for(let i=0;i<burst;i++){ chunk += (chunk ? "　" : "") + "たすけて"; }
+      line.textContent += (line.textContent ? "　" : "") + chunk;
+
       const scrollBox = document.getElementById("story-scroll");
       if (scrollBox) scrollBox.scrollTop = scrollBox.scrollHeight;
-      setTimeout(loop, 900 + Math.random()*1200);
+
+      setTimeout(loop, 380 + Math.random()*420); // 速め
     })();
   }
 
@@ -223,7 +243,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const cards = Array.from(document.querySelectorAll("#screen-records .card"));
     if (cards.length <= 1) return;
-    // 先頭以外からランダム
     const target = cards[1 + Math.floor(Math.random()*(cards.length-1))];
     const tdList = target.querySelectorAll("td");
     if (!tdList.length) return;
