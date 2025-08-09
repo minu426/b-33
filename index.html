@@ -15,19 +15,14 @@ s.onload=s.onreadystatechange=function(){a=this.readyState;if(f||a&&a!="complete
 f=true;clearTimeout(t);try{Typekit.load(c)}catch(e){}};x.parentNode.insertBefore(s,x)})(document);
 </script>
 
-<link rel="stylesheet" href="style.css?v=50" />
-<style>
-  /* safety: 画面が消える時の一時対策 */
-  .screen{display:none}
-  .screen.active{display:flex}
-</style>
+<link rel="stylesheet" href="style.css?v=60" />
 </head>
 <body>
 
 <!-- 薄い常時ノイズ -->
 <div id="noise" aria-hidden="true"></div>
 
-<!-- 全画面エフェクト -->
+<!-- 全画面FX（粒子・傷・ロールバー） -->
 <div id="fx" aria-hidden="true">
   <div class="fx-grain"></div>
   <div class="fx-scratches"></div>
@@ -49,7 +44,7 @@ f=true;clearTimeout(t);try{Typekit.load(c)}catch(e){}};x.parentNode.insertBefore
       <div class="entry-form">
         <input id="nick-input" type="text" autocomplete="off" autocapitalize="off" maxlength="20"
                placeholder="例）ミヌ／M.N.／来訪者" aria-label="お名前（渾名）">
-        <button id="btn-start" class="btn">データの照合</button>
+        <button id="btn-start" class="btn">診断を開始</button>
       </div>
       <p class="entry-note" data-no-corrupt>入力されたお名前は画面表示のみに使用され、保存されません。</p>
     </div>
@@ -151,6 +146,6 @@ f=true;clearTimeout(t);try{Typekit.load(c)}catch(e){}};x.parentNode.insertBefore
   </div>
 </div>
 
-<script src="script.js?v=50"></script>
+<script src="script.js?v=60"></script>
 </body>
 </html>
