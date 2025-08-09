@@ -1,233 +1,107 @@
 /* ========== 基本 ========== */
-*{box-sizing:border-box}
-html,body{height:100%}
+*{ box-sizing:border-box }
+html{ height:100%; -webkit-text-size-adjust:100%; }
 body{
-  margin:0;background:#000;color:#eee;
-  font-family:"Hiragino Mincho ProN","Yu Mincho",serif;
+  margin:0; background:#000; color:#eee;
+  font-family:"dnp-shuei-gothic-kin-std","Yu Gothic","Hiragino Kaku Gothic ProN",Meiryo,sans-serif;
   -webkit-font-smoothing:antialiased;
 }
-.screen{display:none;min-height:100vh;width:100%;padding:0 6%;
-  display:flex;justify-content:center;align-items:center;text-align:center}
-.screen.active{display:flex}
-.hidden{display:none}
-.center{max-width:760px;width:100%}
-.spaced{letter-spacing:.22em;line-height:1.9}
-.percent{margin-top:.6rem;color:#777}
-.kaiki{font-size:2.2rem;color:#8b0000;letter-spacing:.14em;text-shadow:0 0 12px rgba(139,0,0,.35)}
-.kaiki-sub{margin:.2rem 0 10px 0;color:#8b0000;letter-spacing:.16em;font-size:1rem}
-.warning{color:#8b0000}
-
-/* ========== フォント変数（AdobeのCSS名に合わせて！） ========== */
-:root{
-  --ui-gothic: "dnp-shuei-gothic-kin-std","Yu Gothic","Hiragino Kaku Gothic ProN",Meiryo,sans-serif;
+.screen{
+  display:none; min-height:100vh; width:100%; padding:0 6%;
+  display:flex; justify-content:center; align-items:center; text-align:center; position:relative;
 }
+.screen.active{ display:flex }
+.hidden{ display:none }
+.center{ max-width:760px; width:100% }
+.spaced{ letter-spacing:.22em; line-height:1.9 }
+.percent{ margin-top:.6rem; color:#777 }
 
-/* ========== 背景ノイズ ========== */
+/* 見出し（変な改行対策）*/
+.kaiki{
+  color:#8b0000; text-shadow:0 0 12px rgba(139,0,0,.35);
+  font-size: clamp(22px, 8.2vw, 40px);
+  letter-spacing:.08em;
+  text-wrap: balance;      /* iOS17+ で行のバランスをとる */
+  white-space: nowrap;     /* 小画面では1行で保持 */
+}
+@media (max-width:430px){
+  .kaiki{ letter-spacing:.04em; }
+}
+.kaiki-sub{ margin:.2rem 0 10px 0; color:#8b0000; letter-spacing:.12em; font-size:1rem }
+.who-line{ color:#aaa; letter-spacing:.18em; margin:.2rem 0 .8rem 0; font-size: clamp(12px, 3.6vw, 14px) }
+
+/* 背景薄ノイズ（全体） */
 #noise{
-  position:fixed;inset:0;background:url('assets/noise.gif');background-size:cover;
-  opacity:.05;pointer-events:none;z-index:1;transition:opacity .25s;
+  position:fixed; inset:0;
+  background:radial-gradient(circle at 30% 30%, rgba(255,255,255,.05), rgba(0,0,0,0) 40%);
+  opacity:.05; pointer-events:none; z-index:1; transition:opacity .25s;
 }
-#noise.strong{opacity:.35}
+#noise.strong{ opacity:.35 }
 
-/* ========== ランダム“ガガガ”歪み（小刻みジョルト） ========== */
+/* ランダム“ガガガ” */
 @keyframes jolt {
   0%{transform:none;filter:none}
   15%{transform:skewX(2deg) translateX(1px)}
-  30%{transform:skewX(-2deg) translateX(-1px);filter:contrast(1.1)}
+  30%{transform:skewX(-2deg) translateX(-1px);filter:contrast(1.08)}
   45%{transform:skewY(1deg)}
   60%{transform:skewY(-1deg)}
   75%{transform:translateX(1px)}
   100%{transform:none;filter:none}
 }
-.jolt{animation:jolt .22s steps(1) 1}
+.jolt{ animation:jolt .22s steps(1) 1 }
 
-/* ========== レトロ（Win98風）ブラウザUI ========== */
+/* レトロ（Win98風）ブラウザUI */
 .browser.retro{
-  position:relative;z-index:2;width:100%;max-width:900px;
-  background:#c0c0c0;border:2px solid #000;
+  position:relative; z-index:2; width:100%; max-width:900px;
+  background:#c0c0c0; border:2px solid #000;
   box-shadow:0 0 0 1px #fff inset, 0 0 0 2px #808080 inset, 0 0 0 3px #fff inset;
-  /* ブラウン管の樽型ゆがみ */
   overflow:hidden;
 }
 .retro-titlebar{
-  display:flex;align-items:center;justify-content:space-between;
-  background:#000080;color:#fff;padding:6px 8px;
-  font-family:var(--ui-gothic);letter-spacing:.3em;font-size:.9rem;cursor:default;user-select:none;
+  display:flex; align-items:center; justify-content:space-between;
+  background:#000080; color:#fff; padding:6px 8px;
+  letter-spacing:.3em; font-size:.9rem; user-select:none;
 }
-.retro-title{font-weight:bold}
-.retro-controls{display:flex;gap:6px}
+.retro-title{ font-weight:bold }
+.retro-controls{ display:flex; gap:6px }
 .retro-controls .ctrl{
-  display:inline-block;min-width:22px;text-align:center;padding:2px 4px;cursor:default;
-  background:#c0c0c0;color:#000;border:2px solid #000;
+  min-width:22px; text-align:center; padding:2px 4px; cursor:default;
+  background:#c0c0c0; color:#000; border:2px solid #000;
   box-shadow:0 0 0 1px #fff inset, 0 0 0 2px #808080 inset, 0 0 0 3px #fff inset;
 }
 .retro-controls .ctrl:active{
   box-shadow:0 0 0 1px #808080 inset, 0 0 0 2px #fff inset, 0 0 0 3px #808080 inset;
 }
-.retro-controls .ctrl.close{color:#800000}
+.retro-controls .ctrl.close{ color:#800000 }
 .retro-pane{
-  padding:12px;text-align:left;color:#000;background:#c0c0c0;
-  font-family:var(--ui-gothic); position:relative;
+  padding:12px; text-align:left; color:#000; background:#c0c0c0; position:relative;
 }
 
-/* ブラウン管質感（樽型＋ビネット＋走査線強化） */
-.crt{position:relative;filter:contrast(1.02) saturate(0.98)}
-.crt::before{
-  content:"";position:absolute;inset:-4%;z-index:1;pointer-events:none;
-  background:radial-gradient(ellipse at center, rgba(255,255,255,.02) 0%, rgba(255,255,255,0) 60%, rgba(0,0,0,.35) 100%);
-  transform:perspective(800px) translateZ(0) scale(1.02);
-  border-radius:2.5%/1.8%;
+/* CRT 質感（ノイズ層より下に） */
+.browser.retro.crt, .records.crt{
+  position:relative; isolation:isolate; overflow:hidden; filter:contrast(1.03) saturate(0.98);
 }
-.crt::after{
-  content:"";position:absolute;inset:0;z-index:1;pointer-events:none;
-  background:
-    repeating-linear-gradient(to bottom, rgba(255,255,255,.035), rgba(255,255,255,.035) 1px, transparent 1px, transparent 3px);
-  mix-blend-mode:overlay;opacity:.38;animation:crtFlicker 4.5s steps(1) infinite;
+.browser.retro.crt::before, .records.crt::before{
+  content:""; position:absolute; inset:-4%; z-index:8; pointer-events:none;
+  background:radial-gradient(ellipse at center, rgba(255,255,255,.02) 0%, rgba(255,255,255,0) 60%, rgba(0,0,0,.38) 100%);
+  border-radius:2.6%/1.9%; transform:perspective(1000px) scale(1.018);
 }
-@keyframes crtFlicker{0%,98%{opacity:.38}99%{opacity:.46}100%{opacity:.38}}
-.chromatic{text-shadow:1px 0 rgba(255,0,0,.25), -1px 0 rgba(0,255,255,.25)}
+.browser.retro.crt::after, .records.crt::after{
+  content:""; position:absolute; inset:0; z-index:8; pointer-events:none;
+  background:repeating-linear-gradient(to bottom, rgba(255,255,255,.045), rgba(255,255,255,.045) 1px, transparent 1px, transparent 3px);
+  mix-blend-mode:overlay; opacity:.44; animation:crtFlicker 4.5s steps(1) infinite;
+}
+@keyframes crtFlicker{0%,98%{opacity:.44}99%{opacity:.52}100%{opacity:.44}}
 
-/* 文章（タイプライター：段落化・改行改善） */
-.typewriter{
-  color:#111;line-height:1.95;font-size:1rem; letter-spacing:.005em;
-  /* 改行制御（JP）： */
-  white-space:normal; word-break:normal; overflow-wrap:anywhere;
-  line-break:strict; text-wrap:balance pretty;
-  font-family:var(--ui-gothic);
-}
-.typewriter p{margin:0 0 1.2em 0}
-
-/* スクロールボックス（縦のみ／横禁止） */
-.scrollbox{
-  max-height:55vh; overflow-y:auto; overflow-x:hidden;
-  padding:10px; background:#fff; color:#111; border:2px solid #000;
-  box-shadow:0 0 0 1px #fff inset, 0 0 0 2px #808080 inset, 0 0 0 3px #fff inset;
-}
-.scrollbox::-webkit-scrollbar{width:10px}
-.scrollbox::-webkit-scrollbar-track{background:#c0c0c0;box-shadow:inset 1px 1px 0 #fff, inset -1px -1px 0 #808080}
-.scrollbox::-webkit-scrollbar-thumb{
-  background:#e0e0e0;border:2px solid #000;
-  box-shadow:inset 0 0 0 1px #fff, inset 0 0 0 2px #808080, inset 0 0 0 3px #fff;
-}
-
-/* フォスファ（発光） */
-.phosphor{
-  text-shadow:0 0 .4px rgba(0,0,0,.35), 0 0 6px rgba(255,255,255,.08);
-}
-
-/* ボタン（98風） */
-.btn{
-  background:#c0c0c0;color:#000;border:2px solid #000;
-  box-shadow:0 0 0 1px #fff inset, 0 0 0 2px #808080 inset, 0 0 0 3px #fff inset;
-  font-family:var(--ui-gothic);border-radius:2px;
-  margin-top:16px;padding:.55rem 1rem;cursor:pointer;transition:transform .1s,color .2s,border-color .2s,box-shadow .12s;
-}
-.btn:hover{color:#8b0000}
-.btn:active{
-  box-shadow:0 0 0 1px #808080 inset, 0 0 0 2px #fff inset, 0 0 0 3px #808080 inset;
-  transform:translateY(1px) scale(.99);
-}
-
-/* カルテ一覧 */
-.records{position:relative;z-index:2;width:100%;max-width:900px;text-align:left}
-.records-title{text-align:center;color:#8b0000;letter-spacing:.12em}
-.card{
-  background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);
-  border-radius:8px;padding:12px;margin:12px 0
-}
-.karte{width:100%;border-collapse:collapse; table-layout:fixed}
-.karte th,.karte td{padding:8px;border-bottom:1px dashed rgba(255,255,255,.08);vertical-align:top; word-break:break-word}
-.karte th{white-space:nowrap;width:30%}
-
-/* 自動更新の演出 */
-.card.updated { animation: updateBlink 1.2s ease 1 }
-@keyframes updateBlink {
-  0%{ box-shadow:0 0 0 rgba(139,0,0,0) }
-  20%{ box-shadow:0 0 24px rgba(139,0,0,.45) }
-  100%{ box-shadow:0 0 0 rgba(139,0,0,0) }
-}
-.badge-update{
-  display:inline-block;margin-left:.4em;padding:.1em .4em;background:#8b0000;color:#fff;
-  font-size:.75em;border-radius:3px;font-family:var(--ui-gothic);
-}
-
-/* モーダル（ぬるっと開閉） */
-#modal{
-  position:fixed;inset:0;background:rgba(0,0,0,.86);z-index:9999;
-  display:flex;justify-content:center;align-items:center;padding:20px;text-align:left;
-  opacity:0;pointer-events:none;transition:opacity .22s ease;
-}
-#modal.open{opacity:1;pointer-events:auto}
-.modal-inner{
-  width:92%;max-width:680px;background:#0b0b0b;border:1px solid rgba(255,255,255,.08);
-  border-radius:8px;padding:16px;transform:scale(.96) translateY(8px);
-  transition:transform .22s ease, box-shadow .22s ease;box-shadow:0 18px 50px rgba(0,0,0,.55)
-}
-#modal.open .modal-inner{transform:scale(1) translateY(0);box-shadow:0 22px 60px rgba(0,0,0,.65)}
-.modal-title{margin:0 0 10px 0;color:#8b0000}
-.modal-body{line-height:1.9}
-.modal-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:12px}
-
-/* 黒塗り/マーカー/斜めしましまモザイク/文字化け */
-.blacked{background:#000;color:transparent;border-radius:2px;padding:0 6px;display:inline-block}
-.marker{background:linear-gradient(90deg, rgba(0,0,0,.96), rgba(0,0,0,.88));color:transparent;padding:0 6px;border-radius:2px}
-
-.mosaic{
-  position:relative;display:inline-block;color:transparent;padding:0 .25em;border-radius:2px;
-  outline:1px solid rgba(255,255,255,.12);
-}
-.mosaic::after{
-  content:"";position:absolute;inset:0;border-radius:2px;
-  background:
-    repeating-linear-gradient(135deg, rgba(20,20,20,1) 0 6px, rgba(0,0,0,.78) 6px 12px),
-    linear-gradient(to bottom, rgba(255,255,255,.05), rgba(0,0,0,.0));
-  opacity:.96;animation:mosaicPulse 3s ease-in-out infinite;
-}
-@keyframes mosaicPulse { 0%,100%{opacity:.96} 50%{opacity:.86} }
-.garbled{font-family:monospace;letter-spacing:.08em;opacity:.9}
-
-/* 局所グリッチ */
-.glitch{position:relative;animation:glitchFlash .22s steps(1) 1}
-@keyframes glitchFlash{
-  0%{filter:none;transform:none}
-  30%{filter:hue-rotate(8deg) saturate(1.2);transform:translateX(1px)}
-  60%{filter:invert(.08) contrast(1.1);transform:translateX(-1px)}
-  100%{filter:none;transform:none}
-}
-
-/* 微振動 */
-.shake{animation:microShake .18s linear 1}
-@keyframes microShake{
-  0%{transform:translateX(0)}25%{transform:translateX(1px)}50%{transform:translateX(-1px)}75%{transform:translateX(1px)}100%{transform:translateX(0)}
-}
-
-/* “たすけて” 追記（勢い・字間詰め） */
-.help-chant{
-  color:#8b0000;margin-top:.6em;opacity:0;transition:opacity .25s ease;
-  letter-spacing:-0.02em; font-weight:600;
-}
-.help-chant.show{opacity:1}
-
-/* スマホ調整 */
-@media (max-width:430px){
-  .scrollbox{max-height:60vh}
-  .retro-titlebar{font-size:.85rem}
-  .kaiki{font-size:1.8rem}
-}
-
-/* ===== 画面別ノイズ（JPEG）※各画面で違う質感に ===== */
-.screen{ position: relative; }  /* 疑似要素を重ねるため */
+/* 画面別ノイズ（JPEG） */
 #screen-story::before{
   content:""; position:absolute; inset:0; z-index:10; pointer-events:none;
   background:
     url('assets/noise_story.jpg') repeat,
     radial-gradient(circle at 30% 30%, rgba(255,255,255,.05), rgba(0,0,0,0) 40%);
   background-size: 320px auto, auto;
-  mix-blend-mode: lighten;
-  opacity:.28;
-  animation: noisePanX 1.4s steps(6) infinite,
-             noisePanY 1.2s steps(5) infinite,
-             noiseFlicker .18s steps(2) infinite;
+  mix-blend-mode: lighten; opacity:.28;
+  animation: noisePanX 1.4s steps(6) infinite, noisePanY 1.2s steps(5) infinite, noiseFlicker .18s steps(2) infinite;
 }
 #screen-records::before{
   content:""; position:absolute; inset:0; z-index:10; pointer-events:none;
@@ -235,58 +109,109 @@ body{
     url('assets/noise_records.jpg') repeat,
     radial-gradient(circle at 70% 60%, rgba(255,255,255,.04), rgba(0,0,0,0) 40%);
   background-size: 280px auto, auto;
-  mix-blend-mode: overlay;
-  opacity:.22;
-  animation: noisePanX 1.1s steps(7) infinite reverse,
-             noisePanY 1.6s steps(6) infinite,
-             noiseFlicker .20s steps(3) infinite;
+  mix-blend-mode: overlay; opacity:.22;
+  animation: noisePanX 1.1s steps(7) infinite reverse, noisePanY 1.6s steps(6) infinite, noiseFlicker .20s steps(3) infinite;
 }
 @keyframes noisePanX { 0%{background-position:0 0,0 0} 100%{background-position:-40px 0,0 0} }
 @keyframes noisePanY { 0%{background-position:0 0,0 0} 100%{background-position:0 -30px,0 0} }
 @keyframes noiseFlicker{0%{opacity:.22}50%{opacity:.3}100%{opacity:.22}}
 
-/* ===== CRTの層（ノイズより下に来るよう調整） ===== */
-.browser.retro.crt,
-.records.crt{
-  position:relative;
-  isolation:isolate;
-  overflow:hidden;
-  filter:contrast(1.03) saturate(0.98);
+/* 本文（改行崩れ対策） */
+.typewriter{
+  color:#111; line-height:2.02; font-size: clamp(14px, 3.9vw, 18px); letter-spacing:.005em;
+  white-space:normal; word-break:normal; overflow-wrap:anywhere; line-break:strict; text-wrap:balance;
 }
-.browser.retro.crt::before,
-.records.crt::before{
-  content:""; position:absolute; inset:-4%; z-index:8; pointer-events:none;
-  background:radial-gradient(ellipse at center, rgba(255,255,255,.02) 0%, rgba(255,255,255,0) 60%, rgba(0,0,0,.38) 100%);
-  border-radius:2.6%/1.9%;
-  transform:perspective(1000px) translateZ(0) scale(1.018);
-}
-.browser.retro.crt::after,
-.records.crt::after{
-  content:""; position:absolute; inset:0; z-index:8; pointer-events:none;
-  background:repeating-linear-gradient(to bottom, rgba(255,255,255,.045), rgba(255,255,255,.045) 1px, transparent 1px, transparent 3px);
-  mix-blend-mode:overlay; opacity:.44; animation:crtFlicker 4.5s steps(1) infinite;
-}
-@keyframes crtFlicker{0%,98%{opacity:.44}99%{opacity:.52}100%{opacity:.44}}
+.typewriter p{ margin:0 0 1.2em 0 }
 
-/* ===== 文字のガガガ（局所ゆがみ＆一時文字化け用） ===== */
-.text-jitter{ animation:textJitter .22s steps(1) 1; }
-@keyframes textJitter{
-  0%{transform:translateX(0)} 30%{transform:translateX(1px) skewX(1deg)}
-  60%{transform:translateX(-1px) skewX(-1deg)} 100%{transform:translateX(0)}
+/* スクロールボックス */
+.scrollbox{
+  max-height:55vh; overflow-y:auto; overflow-x:hidden;
+  padding:10px; background:#fff; color:#111; border:2px solid #000;
+  box-shadow:0 0 0 1px #fff inset, 0 0 0 2px #808080 inset, 0 0 0 3px #fff inset;
+}
+.scrollbox::-webkit-scrollbar{ width:10px }
+.scrollbox::-webkit-scrollbar-track{ background:#c0c0c0; box-shadow:inset 1px 1px 0 #fff, inset -1px -1px 0 #808080 }
+.scrollbox::-webkit-scrollbar-thumb{
+  background:#e0e0e0; border:2px solid #000;
+  box-shadow:inset 0 0 0 1px #fff, inset 0 0 0 2px #808080, inset 0 0 0 3px #fff;
 }
 
-/* ===== 「たすけて」タイプライター用の見た目（字間詰め） ===== */
-.help-chant{ letter-spacing:-0.03em; }
+/* “たすけて”ボックス */
+.help-box{ margin-top:10px }
+.help-chant{ color:#8b0000; letter-spacing:0; font-weight:600; opacity:0; transition:opacity .25s ease }
+.help-chant.show{ opacity:1 }
 
-/* ===== モーダルの土台（あなたの定義と整合） ===== */
+/* ボタン */
+.btn{
+  background:#c0c0c0; color:#000; border:2px solid #000;
+  box-shadow:0 0 0 1px #fff inset, 0 0 0 2px #808080 inset, 0 0 0 3px #fff inset;
+  border-radius:2px; margin-top:16px; padding:.55rem 1rem; cursor:pointer;
+  transition:transform .1s,color .2s,box-shadow .12s;
+}
+.btn:hover{ color:#8b0000 }
+.btn:active{ box-shadow:0 0 0 1px #808080 inset, 0 0 0 2px #fff inset, 0 0 0 3px #808080 inset; transform:translateY(1px) scale(.99) }
+
+/* 受付フォーム */
+.entry-form{ display:flex; gap:10px; align-items:center; margin:.6rem 0 0.4rem 0 }
+#nick-input{
+  width:100%; max-width:360px; padding:.5rem .6rem;
+  background:#fff; color:#111; border:2px solid #000;
+  box-shadow:0 0 0 1px #fff inset, 0 0 0 2px #808080 inset, 0 0 0 3px #fff inset;
+  font-family:"dnp-shuei-gothic-kin-std","Yu Gothic","Hiragino Kaku Gothic ProN",Meiryo,sans-serif;
+}
+#nick-input:focus{ outline:none; border-color:#8b0000 }
+.entry-note{ color:#333; font-size:.85rem; margin:.2rem 0 0 0 }
+
+/* カルテ一覧 */
+.records{ position:relative; z-index:2; width:100%; max-width:900px; text-align:left }
+.records-title{ text-align:center; color:#8b0000; letter-spacing:.12em }
+.card{
+  background:rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.08);
+  border-radius:8px; padding:12px; margin:12px 0;
+}
+.karte{ width:100%; border-collapse:collapse; table-layout:fixed }
+.karte th,.karte td{ padding:8px; border-bottom:1px dashed rgba(255,255,255,.08); vertical-align:top; word-break:break-word }
+.karte th{ white-space:nowrap; width:30% }
+
+/* 自動更新の演出 */
+.card.updated { animation: updateBlink 1.2s ease 1 }
+@keyframes updateBlink { 0%{box-shadow:0 0 0 rgba(139,0,0,0)} 20%{box-shadow:0 0 24px rgba(139,0,0,.45)} 100%{box-shadow:0 0 0 rgba(139,0,0,0)} }
+.badge-update{ display:inline-block; margin-left:.4em; padding:.1em .4em; background:#8b0000; color:#fff; font-size:.75em; border-radius:3px }
+
+/* モーダル */
 #modal{ position:fixed; inset:0; background:rgba(0,0,0,.86); z-index:9999;
   display:flex; justify-content:center; align-items:center; padding:20px; text-align:left;
-  opacity:0; pointer-events:none; transition:opacity .22s ease; }
-#modal.open{ opacity:1; pointer-events:auto; }
+  opacity:0; pointer-events:none; transition:opacity .22s ease }
+#modal.open{ opacity:1; pointer-events:auto }
 .modal-inner{ width:92%; max-width:680px; background:#0b0b0b; border:1px solid rgba(255,255,255,.08);
   border-radius:8px; padding:16px; transform:scale(.96) translateY(8px);
-  transition:transform .22s ease, box-shadow .22s ease; box-shadow:0 18px 50px rgba(0,0,0,.55); }
-#modal.open .modal-inner{ transform:scale(1) translateY(0); box-shadow:0 22px 60px rgba(0,0,0,.65); }
-.modal-title{ margin:0 0 10px 0; color:#8b0000; }
-.modal-body{ line-height:1.9; }
-.modal-actions{ display:flex; gap:10px; justify-content:flex-end; margin-top:12px; }
+  transition:transform .22s ease, box-shadow .22s ease; box-shadow:0 18px 50px rgba(0,0,0,.55) }
+#modal.open .modal-inner{ transform:scale(1) translateY(0); box-shadow:0 22px 60px rgba(0,0,0,.65) }
+.modal-title{ margin:0 0 10px 0; color:#8b0000 }
+.modal-body{ line-height:1.9 }
+.modal-actions{ display:flex; gap:10px; justify-content:flex-end; margin-top:12px }
+
+/* 斜めしましまモザイク／黒塗り・マーカー（必要なら使用） */
+.mosaic{ position:relative; display:inline-block; color:transparent; padding:0 .25em; border-radius:2px; outline:1px solid rgba(255,255,255,.12) }
+.mosaic::after{
+  content:""; position:absolute; inset:0; border-radius:2px;
+  background:repeating-linear-gradient(135deg, rgba(20,20,20,1) 0 6px, rgba(0,0,0,.78) 6px 12px),
+             linear-gradient(to bottom, rgba(255,255,255,.05), rgba(0,0,0,.0));
+  opacity:.96; animation:mosaicPulse 3s ease-in-out infinite;
+}
+@keyframes mosaicPulse { 0%,100%{opacity:.96} 50%{opacity:.86} }
+.blacked{ background:#000; color:transparent; border-radius:2px; padding:0 6px; display:inline-block }
+.marker{ background:linear-gradient(90deg, rgba(0,0,0,.96), rgba(0,0,0,.88)); color:transparent; padding:0 6px; border-radius:2px }
+
+/* 文字化けフラッシュ（モーダル用） */
+.corrupt-flash{ animation: corruptFlash .18s steps(1) 1 }
+@keyframes corruptFlash{ 0%{filter:none} 50%{filter:contrast(1.15) saturate(1.1)} 100%{filter:none} }
+
+/* 微振動・フォーム注意 */
+@keyframes microShake{ 0%{transform:translateX(0)}25%{transform:translateX(1px)}50%{transform:translateX(-1px)}75%{transform:translateX(1px)}100%{transform:translateX(0)} }
+.entry-error{ animation: microShake .18s linear 1 }
+
+/* スマホ微調整 */
+@media (max-width:430px){
+  .scrollbox{ max-height:60vh }
+}
