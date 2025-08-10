@@ -43,7 +43,7 @@ document.addEventListener("DOMContentLoaded", () => {
     noise: document.getElementById('noise')
   };
 
-  /* 画面切替 */
+  /* 画面切替（確実に非表示 -> 表示） */
   function showScreen(screen){
     document.querySelectorAll(".screen").forEach(s=>{
       s.classList.remove("active");
@@ -52,7 +52,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
     screen.classList.remove("hidden");
     screen.classList.add("active");
-    // ページ本体のスクロールは常に許可（section内部が長ければ自然に縦スクロール）
+    window.scrollTo({top:0,behavior:"instant"});
   }
 
   /* FX系 */
@@ -62,8 +62,8 @@ document.addEventListener("DOMContentLoaded", () => {
   function flashNoise(ms=260){ if(!FX.noise) return; FX.noise.classList.add('strong'); setTimeout(()=>FX.noise.classList.remove('strong'),ms); }
   function globalBreak(){ const a=document.querySelector('.screen.active'); if(!a) return; a.classList.add('global-break'); rollBarOnce(); rgbSplitPulse(); screenTearOnce(); flashNoise(360); setTimeout(()=>a.classList.remove('global-break'),360); }
 
-  /* ランダムFXループ（ロールバー45%） */
-  (function randomFxLoop(){
+  /* ランダムFXループ（ロールバー強化） */
+  ;(function randomFxLoop(){
     const c=Math.random();
     if (c < 0.45) rollBarOnce();
     else if (c < 0.70) rgbSplitPulse();
@@ -113,7 +113,7 @@ document.addEventListener("DOMContentLoaded", () => {
     })();
   }
 
-  /* 発祥テキスト（タイプライター→やめる：本文は完成文をフェードイン。たすけてはタイプライター継続） */
+  /* 発祥テキスト（本文=完成文フェードイン／たすけて=タイプライター） */
   const storyParagraphs = [
     "昔、とある少女が惨殺され、その少女は赤い日記帳に日々の出来事を綴っていた。",
     "少女の死後、その赤い日記帳は忽然と姿を消し、どこを探しても見つからなかった。",
@@ -125,10 +125,8 @@ document.addEventListener("DOMContentLoaded", () => {
   ];
 
   function startStorySequence(){
-    // 本文は完成文を置いて少し遅れてフェードイン
     storyText.innerHTML = storyParagraphs.map(t=>`<p>${t}</p>`).join("");
-    setTimeout(()=> storyText.classList.add("show"), 320); // 少し遅らせて
-    // “たすけて”ウィンドウを後出し表示
+    setTimeout(()=> storyText.classList.add("show"), 320);
     setTimeout(()=>{
       winChant.classList.remove("hidden");
       globalBreak();
@@ -167,6 +165,7 @@ document.addEventListener("DOMContentLoaded", () => {
   /* 注意 → カルテ */
   btnWarning.addEventListener("click", ()=>{ globalBreak(); showScreen(scrWarn); });
   btnAgree.addEventListener("click", ()=>{ globalBreak(); startRecordLoading(); });
+  btnBack.addEventListener("click", ()=>{ globalBreak(); showScreen(scrStory); });
 
   function startRecordLoading(){
     showScreen(scrRecLoad);
@@ -188,7 +187,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }, 90);
   }
 
-  /* カルテデータ（番号ばらけ／666は保持） */
+  /* カルテ（番号ばらけ／666保持） */
   const recordsData = [
     { no:"102", name:"<span class='mosaic'>██</span>",   diag:"B-33型《バーバラさん》接触症", sym:"頭痛、悪夢、窓の外の気配", prog:"赤い日記帳が届いた夜から症状出現。夜間、窓から赤い日記が持ち去られるのを確認。", mosaic:true },
     { no:"219", name:"██",                               diag:"窓辺幻視症",                 sym:"吐き気、視線恐怖",     prog:"窓辺で赤い日記を確認。以後、睡眠障害が悪化。", mosaic:false },
@@ -202,7 +201,7 @@ document.addEventListener("DOMContentLoaded", () => {
   function buildRecords(){
     recordsList.innerHTML = "";
     recordsData
-      .sort((a,b)=>Number(a.no)-Number(b.no)) // 若い番号から表示
+      .sort((a,b)=>Number(a.no)-Number(b.no))
       .forEach(rec=>{
         const card = document.createElement("article");
         card.className = "card";
