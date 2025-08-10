@@ -15,17 +15,18 @@ s.onload=s.onreadystatechange=function(){a=this.readyState;if(f||a&&a!="complete
 f=true;clearTimeout(t);try{Typekit.load(c)}catch(e){}};x.parentNode.insertBefore(s,x)})(document);
 </script>
 
-<link rel="stylesheet" href="style.css?v=61" />
+<link rel="stylesheet" href="style.css?v=62" />
 </head>
 <body>
 
 <!-- 薄ノイズ -->
 <div id="noise" aria-hidden="true"></div>
 
-<!-- 全画面FX -->
+<!-- 全画面FX（粒子・傷・ロールバー・モザイク格子） -->
 <div id="fx" aria-hidden="true">
   <div class="fx-grain"></div>
   <div class="fx-scratches"></div>
+  <div class="fx-grid"></div>       <!-- ← 追加：CRT格子（モザイク） -->
   <div class="fx-rollbar"></div>
 </div>
 
@@ -43,8 +44,9 @@ f=true;clearTimeout(t);try{Typekit.load(c)}catch(e){}};x.parentNode.insertBefore
       </p>
       <div class="entry-form">
         <input id="nick-input" type="text" autocomplete="off" autocapitalize="off" maxlength="20"
-               placeholder="例）花子／h.n.／来訪者" aria-label="お名前（渾名）">
-        <button id="btn-start" class="btn">診断を開始</button>
+               placeholder="例）ミヌ／M.N.／来訪者" aria-label="お名前（渾名）">
+        <!-- ▼ ボタン文言変更 -->
+        <button id="btn-start" class="btn">データの照合</button>
       </div>
       <p class="entry-note" data-no-corrupt>入力されたお名前は画面表示のみに使用され、保存されません。</p>
     </div>
@@ -78,7 +80,7 @@ f=true;clearTimeout(t);try{Typekit.load(c)}catch(e){}};x.parentNode.insertBefore
       </div>
       <div class="retro-pane">
         <h2 class="kaiki-sub chromatic">“B-33型《バーバラさん》”</h2>
-        <!-- 初期はコンテンツ非表示、あとからフェードイン -->
+        <!-- 初期は非表示、あとからフェードイン -->
         <div id="story-scroll" class="scrollbox phosphor content-hidden">
           <div id="story-text" class="story-text"></div>
         </div>
@@ -86,7 +88,7 @@ f=true;clearTimeout(t);try{Typekit.load(c)}catch(e){}};x.parentNode.insertBefore
       </div>
     </div>
 
-    <!-- “たすけて”ミニウィンドウ（最初は非表示） -->
+    <!-- “たすけて”ミニウィンドウ -->
     <div id="win-chant" class="browser retro crt win-mini hidden">
       <div class="retro-titlebar">
         <span class="retro-title">受 信 ロ グ</span>
@@ -101,10 +103,10 @@ f=true;clearTimeout(t);try{Typekit.load(c)}catch(e){}};x.parentNode.insertBefore
   </div>
 </section>
 
-<!-- 4) 注意 -->
+<!-- 4) 注意（赤文字強調） -->
 <section id="screen-warning" class="screen">
   <div class="center">
-    <p class="warning spaced">
+    <p class="warning spaced strong">
       これから表示される内容は極めて危険です。<br>
       閲覧によって発生したいかなる事象についても当院は責任を負いかねます。<br>
       自己責任で閲覧してください。
@@ -139,6 +141,6 @@ f=true;clearTimeout(t);try{Typekit.load(c)}catch(e){}};x.parentNode.insertBefore
   </div>
 </div>
 
-<script src="script.js?v=61"></script>
+<script src="script.js?v=62"></script>
 </body>
 </html>
