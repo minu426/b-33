@@ -1,33 +1,37 @@
 /* ===== 基本 ===== */
 *{box-sizing:border-box}
-html,body{height:100%;overflow:hidden;-webkit-text-size-adjust:100%}
+html{-webkit-text-size-adjust:100%}
 body{
   margin:0;background:#000;color:#eee;
   font-family:"dnp-shuei-gothic-kin-std","Yu Gothic","Hiragino Kaku Gothic ProN",Meiryo,sans-serif;
   -webkit-font-smoothing:antialiased;
+  min-height:100svh;
+  overflow-x:hidden; overflow-y:auto; -webkit-overflow-scrolling:touch;
 }
 
 /* 画面 */
-.screen{display:none;min-height:100vh;width:100%;padding:0 6%;
-  justify-content:center;align-items:center;text-align:center;position:relative}
+.screen{
+  display:none; min-height:100svh; width:100%;
+  padding:24px 6% 80px;
+  justify-content:center; align-items:flex-start;
+  text-align:center; position:relative;
+}
 .screen.active{display:flex}
-.hidden{display:none !important}
+.hidden{display:none}
 .center{max-width:760px;width:100%}
 .spaced{letter-spacing:.22em;line-height:1.9}
 .percent{margin-top:.6rem;color:#777}
 
-/* 見出し（改行抑制） */
+/* 見出し（はみ出し抑制） */
 .kaiki{
-  color:#8b0000;text-shadow:0 0 12px rgba(139,0,0,.35);
-  font-size:clamp(22px,8.2vw,40px);letter-spacing:.08em;
-  text-wrap:balance;white-space:nowrap;
+  color:#8b0000; text-shadow:0 0 12px rgba(139,0,0,.35);
+  font-size:clamp(20px,6.8vw,36px); letter-spacing:.06em;
+  text-wrap:balance; white-space:normal; word-break:keep-all; line-height:1.15;
 }
-@media (max-width:430px){ .kaiki{letter-spacing:.04em} }
 .kaiki-sub{margin:.2rem 0 10px;color:#8b0000;letter-spacing:.12em;font-size:1rem}
 .who-line{color:#aaa;letter-spacing:.18em;margin:.2rem 0 .8rem;font-size:clamp(12px,3.6vw,14px)}
-.warning{color:#8b0000}
 
-/* 常時薄ノイズ */
+/* 薄ノイズ */
 #noise{position:fixed;inset:0;background:rgba(255,255,255,.03);opacity:.05;pointer-events:none;z-index:1;transition:opacity .25s}
 #noise.strong{opacity:.35}
 
@@ -53,7 +57,7 @@ body{
 .fx-rollbar.run{animation:fxRoll 2.2s linear 1}
 @keyframes fxRoll{0%{opacity:0;transform:translateY(-120%)}10%{opacity:.35}90%{opacity:.35}100%{opacity:0;transform:translateY(120%)}}
 
-/* RGBずれ・ドリフト・スクリーンティア・強グリッチ */
+/* ガガガ/壊れ */
 .rgb-split *{text-shadow:1px 0 rgba(255,0,0,.35),-1px 0 rgba(0,255,255,.35);filter:contrast(1.05) saturate(1.05)}
 .vsync-drift{animation:vsyncDrift 6s ease-in-out infinite alternate}
 @keyframes vsyncDrift{0%{transform:translateY(0)}100%{transform:translateY(1.6px)}}
@@ -69,9 +73,9 @@ body{
 }
 @keyframes globalBreakA{0%{transform:none}50%{transform:skewX(3deg) translateX(2px)}100%{transform:none}}
 @keyframes globalBreakB{0%{box-shadow:inset 0 0 0 rgba(255,0,0,0)}50%{box-shadow:inset 0 0 48px rgba(255,255,255,.06)}100%{box-shadow:inset 0 0 0 rgba(255,0,0,0)}}
-
-/* ガガガ */
-@keyframes jolt{0%{transform:none;filter:none}15%{transform:skewX(2deg) translateX(1px)}30%{transform:skewX(-2deg) translateX(-1px);filter:contrast(1.08)}45%{transform:skewY(1deg)}60%{transform:skewY(-1deg)}75%{transform:translateX(1px)}100%{transform:none;filter:none}}
+@keyframes jolt{0%{transform:none;filter:none}15%{transform:skewX(2deg) translateX(1px)}
+30%{transform:skewX(-2deg) translateX(-1px);filter:contrast(1.08)}45%{transform:skewY(1deg)}
+60%{transform:skewY(-1deg)}75%{transform:translateX(1px)}100%{transform:none;filter:none}}
 .jolt{animation:jolt .22s steps(1) 1}
 
 /* レトロUI */
@@ -86,7 +90,7 @@ body{
 .retro-controls .ctrl.close{color:#800000}
 .retro-pane{padding:12px;text-align:left;color:#000;background:#c0c0c0;position:relative}
 
-/* CRT 質感 */
+/* CRT */
 .browser.retro.crt,.records.crt{position:relative;isolation:isolate;overflow:hidden;filter:contrast(1.03) saturate(0.98)}
 .browser.retro.crt::before,.records.crt::before{
   content:"";position:absolute;inset:-4%;z-index:8;pointer-events:none;
@@ -100,7 +104,7 @@ body{
 }
 @keyframes crtFlicker{0%,98%{opacity:.5}99%{opacity:.56}100%{opacity:.5}}
 
-/* 画面別ノイズ（GIF） */
+/* 画面別ノイズ（GIFでもJPGでもOK） */
 #screen-story::before{
   content:"";position:absolute;inset:0;z-index:10;pointer-events:none;
   background:url('assets/noise_story.gif') repeat;background-size:320px auto;mix-blend-mode:lighten;opacity:.32;
@@ -115,51 +119,38 @@ body{
 @keyframes noisePanY{0%{background-position:0 0}100%{background-position:0 -30px}}
 @keyframes noiseFlicker{0%{opacity:.22}50%{opacity:.34}100%{opacity:.22}}
 
-/* 発祥ウィンドウ配置 */
+/* 発祥の二段ウィンドウ配置 */
 .stack{display:flex;flex-direction:column;gap:12px}
 .win-main{z-index:2}
 .win-mini{z-index:3;width:min(480px,100%);margin-left:auto}
 .win-mini.hidden{display:none}
 
-/* 本文（行間・改行最適化） */
-.typewriter{
-  color:#111;line-height:1.84;font-size:clamp(14px,3.9vw,18px);letter-spacing:.005em;
-  white-space:normal;word-break:normal;overflow-wrap:anywhere;line-break:strict;text-wrap:balance;
-}
-.typewriter p{margin:0 0 1.05em 0}
+/* 発祥テキスト（タイプライターは使わない。行間を狭める） */
+.story-text{color:#111;line-height:1.85;font-size:clamp(14px,3.9vw,18px);letter-spacing:.005em}
+.story-text p{margin:0 0 1.1em 0}
 
 /* スクロールボックス */
 .scrollbox{
-  max-height:55vh;overflow-y:auto;overflow-x:hidden;padding:10px;background:#fff;color:#111;border:2px solid #000;
+  max-height:60vh; overflow-y:auto; overflow-x:hidden; -webkit-overflow-scrolling:touch; touch-action:pan-y;
+  padding:10px; background:#fff; color:#111; border:2px solid #000;
   box-shadow:0 0 0 1px #fff inset,0 0 0 2px #808080 inset,0 0 0 3px #fff inset
 }
 .scrollbox::-webkit-scrollbar{width:10px}
 .scrollbox::-webkit-scrollbar-track{background:#c0c0c0;box-shadow:inset 1px 1px 0 #fff,inset -1px -1px 0 #808080}
 .scrollbox::-webkit-scrollbar-thumb{background:#e0e0e0;border:2px solid #000;box-shadow:inset 0 0 0 1px #fff,inset 0 0 0 2px #808080,inset 0 0 0 3px #fff}
 
-/* 受信ログ（たすけて） */
+/* “たすけて” */
 .help-chant{color:#8b0000;letter-spacing:0;font-weight:600;opacity:0;transition:opacity .25s ease}
 .help-chant.show{opacity:1}
 
 /* ボタン */
-.btn{
-  background:#c0c0c0;color:#000;border:2px solid #000;
+.btn{background:#c0c0c0;color:#000;border:2px solid #000;
   box-shadow:0 0 0 1px #fff inset,0 0 0 2px #808080 inset,0 0 0 3px #fff inset;
-  border-radius:2px;margin-top:16px;padding:.55rem 1rem;cursor:pointer;transition:transform .1s,color .2s,box-shadow .12s
-}
+  border-radius:2px;margin-top:16px;padding:.55rem 1rem;cursor:pointer;transition:transform .1s,color .2s,box-shadow .12s}
 .btn:hover{color:#8b0000}
 .btn:active{box-shadow:0 0 0 1px #808080 inset,0 0 0 2px #fff inset,0 0 0 3px #808080 inset;transform:translateY(1px) scale(.99)}
 
-/* 受付 */
-.entry-form{display:flex;gap:10px;align-items:center;margin:.6rem 0 .4rem}
-#nick-input{
-  width:100%;max-width:360px;padding:.5rem .6rem;background:#fff;color:#111;border:2px solid #000;
-  box-shadow:0 0 0 1px #fff inset,0 0 0 2px #808080 inset,0 0 0 3px #fff inset
-}
-#nick-input:focus{outline:none;border-color:#8b0000}
-.entry-note{color:#333;font-size:.85rem;margin:.2rem 0 0}
-
-/* カルテ一覧 */
+/* カルテ */
 .records{position:relative;z-index:2;width:100%;max-width:900px;text-align:left}
 .records-title{text-align:center;color:#8b0000;letter-spacing:.12em}
 .card{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:8px;padding:12px;margin:12px 0}
@@ -181,7 +172,7 @@ body{
 .modal-body{line-height:1.9}
 .modal-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:12px}
 
-/* モザイク等 */
+/* モザイク */
 .mosaic{position:relative;display:inline-block;color:transparent;padding:0 .25em;border-radius:2px;outline:1px solid rgba(255,255,255,.12)}
 .mosaic::after{
   content:"";position:absolute;inset:0;border-radius:2px;
@@ -197,7 +188,20 @@ body{
 .corrupt-flash{animation:corruptFlash .18s steps(1) 1}
 @keyframes corruptFlash{0%{filter:none}50%{filter:contrast(1.15) saturate(1.1)}100%{filter:none}}
 
-/* 微振動 */
+/* 突き上げ挿入（動画の動きに寄せる） */
+.win-insert{animation:winInsert .58s cubic-bezier(.21,.98,.36,.99) both}
+@keyframes winInsert{
+  0%{transform:translateY(36px) scale(.98);opacity:0;filter:blur(2px)}
+  60%{opacity:1}
+  100%{transform:none;opacity:1;filter:none}
+}
+
+/* コンテンツの遅延フェード */
+.content-hidden{opacity:0}
+.content-show{animation:contentFade .6s .18s ease both}
+@keyframes contentFade{from{opacity:0}to{opacity:1}}
+
+/* 微振動/入力エラー */
 @keyframes microShake{0%{transform:translateX(0)}25%{transform:translateX(1px)}50%{transform:translateX(-1px)}75%{transform:translateX(1px)}100%{transform:translateX(0)}}
 .entry-error{animation:microShake .18s linear 1}
 
