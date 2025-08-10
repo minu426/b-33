@@ -41,7 +41,16 @@ f=true;clearTimeout(t);try{Typekit.load(c)}catch(e){}};x.parentNode.insertBefore
 </div>
 
 <section id="screen-entry" class="screen active">
-  <div style="color:#fff; padding:20px">受付テスト / この行が見えればOK</div>
+  <div class="browser retro crt">
+    <div class="retro-titlebar">
+      <span class="retro-title">受付</span>
+    </div>
+    <div class="retro-pane">
+      <p>診断で使用したお名前を入力してください。</p>
+      <input type="text" id="entry-name" placeholder="お名前" class="retro-input">
+      <button id="btn-entry" class="btn">診断結果へ</button>
+    </div>
+  </div>
 </section>
   
 <!-- 0) 受付 -->
