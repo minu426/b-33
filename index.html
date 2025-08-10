@@ -16,7 +16,18 @@ f=true;clearTimeout(t);try{Typekit.load(c)}catch(e){}};x.parentNode.insertBefore
 </script>
 
 <link rel="stylesheet" href="style.css?v=60" />
+<style>
+  /* 応急: 何があっても受付が見えるようにする */
+  #fx, #noise, #screen-story::before, #screen-records::before { display:none !important; }
+  .screen { display:none !important; }
+  .screen.active { display:flex !important; }
+  body { background:#000 !important; color:#eee !important; }
+  /* 診断バナー（今どのHTMLが出てるか可視化） */
+  #diag-banner{position:fixed;left:10px;top:10px;z-index:99999;
+    background:#900;color:#fff;padding:6px 10px;font:12px/1.2 -apple-system,blinkmacsystemfont,"Segoe UI",sans-serif;border-radius:4px}
+</style>
 </head>
+<div id="diag-banner">LIVE index.html を表示中 / v=60</div>
 <body>
 
 <!-- 薄い常時ノイズ -->
