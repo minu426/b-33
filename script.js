@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
-  /* 画面DOM */
+  // 画面
   const scrEntry   = document.getElementById("screen-entry");
   const scrLoading = document.getElementById("screen-loading");
   const scrName    = document.getElementById("screen-name");
@@ -8,17 +8,17 @@ document.addEventListener("DOMContentLoaded", () => {
   const scrRecLoad = document.getElementById("screen-records-loading");
   const scrRecords = document.getElementById("screen-records");
 
-  /* 受付 */
+  // 受付
   const nickInput  = document.getElementById("nick-input");
   const btnStart   = document.getElementById("btn-start");
   const whoNameEl  = document.getElementById("who-name");
   let visitorName  = "来訪者";
 
-  /* パーセント */
+  // ロード％
   const perEl  = document.getElementById("load-per");
   const recPer = document.getElementById("rec-per");
 
-  /* 発祥 */
+  // 発祥
   const storyText   = document.getElementById("story-text");
   const winChant    = document.getElementById("win-chant");
   const chantWrap   = document.getElementById("chant-scroll");
@@ -27,23 +27,23 @@ document.addEventListener("DOMContentLoaded", () => {
   const btnAgree    = document.getElementById("btn-agree");
   const btnBack     = document.getElementById("btn-back-story");
 
-  /* レコード */
+  // カルテ一覧
   const recordsList = document.getElementById("records-list");
 
-  /* モーダル */
+  // モーダル
   const modal       = document.getElementById("modal");
   const modalTitle  = document.getElementById("modal-title");
   const modalBody   = document.getElementById("modal-body");
   const modalClose  = document.getElementById("modal-close");
 
-  /* FX */
+  // FX
   const FX = {
     root: document.getElementById('fx'),
     roll: document.querySelector('#fx .fx-rollbar'),
     noise: document.getElementById('noise')
   };
 
-  /* 画面切替（確実に非表示 -> 表示） */
+  /* 画面切替 */
   function showScreen(screen){
     document.querySelectorAll(".screen").forEach(s=>{
       s.classList.remove("active");
@@ -52,33 +52,21 @@ document.addEventListener("DOMContentLoaded", () => {
     });
     screen.classList.remove("hidden");
     screen.classList.add("active");
-    window.scrollTo({top:0,behavior:"instant"});
   }
 
-  /* FX系 */
+  /* FX */
   function rollBarOnce(){ if(!FX.roll) return; FX.roll.classList.remove('run'); void FX.roll.offsetWidth; FX.roll.classList.add('run'); }
   function rgbSplitPulse(){ const a=document.querySelector('.screen.active'); if(!a) return; a.classList.add('rgb-split'); setTimeout(()=>a.classList.remove('rgb-split'),300); }
   function screenTearOnce(){ const a=document.querySelector('.screen.active'); if(!a) return; a.classList.add('screen-tear'); setTimeout(()=>a.classList.remove('screen-tear'),300); }
   function flashNoise(ms=260){ if(!FX.noise) return; FX.noise.classList.add('strong'); setTimeout(()=>FX.noise.classList.remove('strong'),ms); }
-  function globalBreak(){ const a=document.querySelector('.screen.active'); if(!a) return; a.classList.add('global-break'); rollBarOnce(); rgbSplitPulse(); screenTearOnce(); flashNoise(360); setTimeout(()=>a.classList.remove('global-break'),360); }
+  function globalBreak(){ const a=document.querySelector('.screen.active'); if(!a) return; a.classList.add('global-break'); rollBarOnce(); rgbSplitPulse(); screenTearOnce(); flashNoise(340); setTimeout(()=>a.classList.remove('global-break'),360); }
 
-  /* ランダムFXループ（ロールバー強化） */
-  ;(function randomFxLoop(){
-    const c=Math.random();
-    if (c < 0.45) rollBarOnce();
-    else if (c < 0.70) rgbSplitPulse();
-    else if (c < 0.85) screenTearOnce();
-    else flashNoise(240);
-
-    if (Math.random() < 0.25){
-      const a=document.querySelector('.screen.active');
-      a?.classList.add('vsync-drift');
-      setTimeout(()=> a?.classList.remove('vsync-drift'), 5000 + Math.random()*4000);
-    }
-    setTimeout(randomFxLoop, 1500 + Math.random()*3000);
+  (function jitterLoop(){
+    const next = 1500 + Math.random()*3000;
+    setTimeout(()=>{ const a=document.querySelector(".screen.active"); if(a){a.classList.add("jolt"); setTimeout(()=>a.classList.remove("jolt"),220);} if(Math.random()<0.28) rollBarOnce(); if(Math.random()<0.20) rgbSplitPulse(); jitterLoop(); }, next);
   })();
 
-  /* 受付→ロード→結果→発祥 */
+  /* 受付 → ロード → 見出し → 発祥 */
   btnStart.addEventListener("click", ()=>{
     const val = (nickInput.value||"").trim();
     if (!val){ nickInput.classList.add("entry-error"); setTimeout(()=>nickInput.classList.remove("entry-error"),220); return; }
@@ -93,7 +81,7 @@ document.addEventListener("DOMContentLoaded", () => {
         globalBreak();
         showScreen(scrStory);
         startStorySequence();
-      }, 1600);
+      }, 1400);
     });
   });
 
@@ -113,7 +101,7 @@ document.addEventListener("DOMContentLoaded", () => {
     })();
   }
 
-  /* 発祥テキスト（本文=完成文フェードイン／たすけて=タイプライター） */
+  /* 発祥：タイプライターをやめてフェード表示 + “たすけて”はタイプライター */
   const storyParagraphs = [
     "昔、とある少女が惨殺され、その少女は赤い日記帳に日々の出来事を綴っていた。",
     "少女の死後、その赤い日記帳は忽然と姿を消し、どこを探しても見つからなかった。",
@@ -126,19 +114,19 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function startStorySequence(){
     storyText.innerHTML = storyParagraphs.map(t=>`<p>${t}</p>`).join("");
-    setTimeout(()=> storyText.classList.add("show"), 320);
+    setTimeout(()=> storyText.classList.add('show'), 320);  // 少し遅れてフェードイン
+
+    // 受信ログは少し遅れて出る
     setTimeout(()=>{
       winChant.classList.remove("hidden");
       globalBreak();
       startChant();
-    }, 1200);
+    }, 1400);
   }
 
-  /* タイプライター（“たすけて”専用） */
   function typeText(el, text, speed=20){
     return new Promise(resolve=>{
-      let i=0;
-      (function step(){
+      let i=0; (function step(){
         if(i>=text.length){ resolve(); return; }
         el.textContent += text.charAt(i++);
         const delay = Math.max(8, speed + (Math.random()*10-5));
@@ -147,6 +135,7 @@ document.addEventListener("DOMContentLoaded", () => {
       })();
     });
   }
+
   function startChant(){
     chantText.classList.add("show");
     let running = true;
@@ -156,16 +145,14 @@ document.addEventListener("DOMContentLoaded", () => {
         const burst = 1 + Math.floor(Math.random()*3);
         for(let i=0;i<burst;i++){ await typeText(chantText, "たすけて", 12); }
         chantWrap.scrollTop = chantWrap.scrollHeight;
-        await wait(260 + Math.random()*420);
+        await new Promise(r=>setTimeout(r, 260 + Math.random()*420));
       }
     })();
   }
-  const wait = ms => new Promise(r=>setTimeout(r,ms));
 
   /* 注意 → カルテ */
   btnWarning.addEventListener("click", ()=>{ globalBreak(); showScreen(scrWarn); });
   btnAgree.addEventListener("click", ()=>{ globalBreak(); startRecordLoading(); });
-  btnBack.addEventListener("click", ()=>{ globalBreak(); showScreen(scrStory); });
 
   function startRecordLoading(){
     showScreen(scrRecLoad);
@@ -187,40 +174,43 @@ document.addEventListener("DOMContentLoaded", () => {
     }, 90);
   }
 
-  /* カルテ（番号ばらけ／666保持） */
+  btnBack.addEventListener("click", ()=>{ globalBreak(); showScreen(scrStory); });
+
+  /* カルテ （ダミーデータ） */
   const recordsData = [
-    { no:"102", name:"<span class='mosaic'>██</span>",   diag:"B-33型《バーバラさん》接触症", sym:"頭痛、悪夢、窓の外の気配", prog:"赤い日記帳が届いた夜から症状出現。夜間、窓から赤い日記が持ち去られるのを確認。", mosaic:true },
-    { no:"219", name:"██",                               diag:"窓辺幻視症",                 sym:"吐き気、視線恐怖",     prog:"窓辺で赤い日記を確認。以後、睡眠障害が悪化。", mosaic:false },
-    { no:"341", name:"<span class='mosaic'>██</span>",   diag:"接近過敏",                   sym:"首筋の寒気、肩圧迫感", prog:"夜半、背部に重量感。窓を開けると軽減。", mosaic:true },
-    { no:"666", name:"<span class='mosaic'>███</span>",  diag:"呼称追跡性障害",             sym:"耳鳴り、名を呼ばれる幻聴", prog:"呼ばれた翌日、窓に赤い日記が置かれていた。", mosaic:true },
-    { no:"704", name:"█",                                diag:"夜間接触症候群",             sym:"過度の不安、失神",     prog:"窓を開けた際、背中に何かを感じ赤い日記が消失。体調急変。", mosaic:false },
-    { no:"853", name:"<span class='mosaic'>████</span>", diag:"視覚残像症",                 sym:"視覚異常、残像",       prog:"赤い日記帳の残像を複数回確認。頭痛増悪。", mosaic:true },
-    { no:"918", name:"██",                               diag:"急性幻視性不安",             sym:"視覚異常、記憶欠落",   prog:"証言と記録の齟齬が多発。最後に赤い日記帳を所持。", mosaic:false }
+    { no:"133", name:"<span class='mosaic'>██</span>",  diag:"B-33型《バーバラさん》接触症", sym:"頭痛、悪夢、窓の外の気配", prog:"赤い日記帳が届いた夜から症状出現。夜間、窓から赤い日記が持ち去られるのを確認。", mosaic:true },
+    { no:"246", name:"██",                         diag:"窓辺幻視症",             sym:"吐き気、視線恐怖",       prog:"窓辺で赤い日記を確認。以後、睡眠障害が悪化。", mosaic:false },
+    { no:"312", name:"<span class='mosaic'>██</span>",  diag:"接近過敏",               sym:"首筋の寒気、肩圧迫感",   prog:"夜半、背部に重量感。窓を開けると軽減。", mosaic:true },
+    { no:"666", name:"<span class='mosaic'>███</span>", diag:"呼称追跡性障害",         sym:"耳鳴り、名を呼ばれる幻聴", prog:"呼ばれた翌日、窓に赤い日記が置かれていた。", mosaic:true },
+    { no:"784", name:"█",                          diag:"夜間接触症候群",           sym:"過度の不安、失神",       prog:"窓を開けた際、背中に何かを感じ赤い日記が消失。体調急変。", mosaic:false },
+    { no:"818", name:"<span class='mosaic'>████</span>", diag:"視覚残像症",            sym:"視覚異常、残像",         prog:"赤い日記帳の残像を複数回確認。頭痛増悪。", mosaic:true },
+    { no:"905", name:"██",                        diag:"急性幻視性不安",           sym:"視覚異常、記憶欠落",     prog:"証言と記録の齟齬が多発。最後に赤い日記帳を所持。", mosaic:false }
   ];
 
   function buildRecords(){
     recordsList.innerHTML = "";
-    recordsData
-      .sort((a,b)=>Number(a.no)-Number(b.no))
-      .forEach(rec=>{
-        const card = document.createElement("article");
-        card.className = "card";
-        card.innerHTML = `
-          <table class="karte">
-            <tr><th>患者番号</th><td>No.${rec.no}</td></tr>
-            <tr><th>患者名</th><td>${rec.name}</td></tr>
-            <tr><th>診断名</th><td>${rec.diag}</td></tr>
-            <tr><th>症状</th><td>${rec.sym}</td></tr>
-            <tr><th>経過</th><td>${rec.prog}</td></tr>
-          </table>
-          <button class="btn open-detail" data-id="${rec.no}">詳細を見る</button>
-        `;
-        card.querySelector(".open-detail").addEventListener("click", ()=> openDetailModal(rec) );
-        recordsList.appendChild(card);
+    recordsData.forEach(rec=>{
+      const card = document.createElement("article");
+      card.className = "card";
+      card.innerHTML = `
+        <table class="karte">
+          <tr><th>患者番号</th><td>No.${rec.no}</td></tr>
+          <tr><th>患者名</th><td>${rec.name}</td></tr>
+          <tr><th>診断名</th><td>${rec.diag}</td></tr>
+          <tr><th>症状</th><td>${rec.sym}</td></tr>
+          <tr><th>経過</th><td>${rec.prog}</td></tr>
+        </table>
+        <button class="btn open-detail" data-id="${rec.no}">詳細を見る</button>
+      `;
+      card.querySelector(".open-detail").addEventListener("click", ()=>{
+        const data = recordsData.find(r=>r.no===rec.no);
+        openDetailModal(data);
       });
+      recordsList.appendChild(card);
+    });
   }
 
-  /* 詳細モーダル + 段階的文字化け（弱め） */
+  /* 詳細モーダル + 段階的文字化け（減らし気味） */
   let corruptTimer = null;
   let corruptSession = [];
   function collectTextNodes(root){
@@ -250,7 +240,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
   function applyCorruption(session, rate){ session.forEach(it=> it.node.nodeValue = corruptString(it.original, rate)); }
   function restoreCorruption(session){ session.forEach(it=> it.node.nodeValue = it.original); }
-  function startModalCorruption(root,{startRate=.035,step=.035,maxRate=.28,periodMs=1300}={}){
+  function startModalCorruption(root,{startRate=.04,step=.04,maxRate=.32,periodMs=1100}={}){
     stopModalCorruption();
     corruptSession = collectTextNodes(root).map(n=>({node:n,original:n.nodeValue}));
     applyCorruption(corruptSession,startRate);
@@ -258,13 +248,10 @@ document.addEventListener("DOMContentLoaded", () => {
       const c = Math.min(maxRate, startRate += step);
       applyCorruption(corruptSession,c);
       root.closest('.modal-inner')?.classList.add('corrupt-flash');
-      setTimeout(()=> root.closest('.modal-inner')?.classList.remove('corrupt-flash'), 160);
+      setTimeout(()=> root.closest('.modal-inner')?.classList.remove('corrupt-flash'), 180);
     }, periodMs);
   }
-  function stopModalCorruption(){
-    if(corruptTimer){ clearInterval(corruptTimer); corruptTimer=null; }
-    if(corruptSession.length){ restoreCorruption(corruptSession); corruptSession=[]; }
-  }
+  function stopModalCorruption(){ if(corruptTimer){ clearInterval(corruptTimer); corruptTimer=null; } if(corruptSession.length){ restoreCorruption(corruptSession); corruptSession=[]; } }
 
   function openDetailModal(data){
     modalTitle.textContent = `患者記録 No.${data.no}`;
@@ -280,13 +267,9 @@ document.addEventListener("DOMContentLoaded", () => {
     globalBreak();
     startModalCorruption(modalBody);
   }
-  modalClose.addEventListener("click", ()=>{
-    stopModalCorruption();
-    modal.classList.remove("open");
-    modal.setAttribute("aria-hidden","true");
-  });
+  modalClose.addEventListener("click", ()=>{ stopModalCorruption(); modal.classList.remove("open"); modal.setAttribute("aria-hidden","true"); });
 
-  /* 自動更新／放置腐食（一覧） */
+  /* 自動更新 */
   let autoUpdatedOnce=false;
   function triggerAutoUpdate(){
     if(autoUpdatedOnce) return; autoUpdatedOnce=true;
@@ -300,14 +283,29 @@ document.addEventListener("DOMContentLoaded", () => {
     globalBreak();
   }
 
+  /* 放置腐食 */
   function slowCorruptRecords(){
     const fields = document.querySelectorAll('#records-list .karte tr:last-child td');
     fields.forEach((td,i)=>{
       const nodes = collectTextNodes(td).map(n=>({node:n,original:n.nodeValue}));
-      let t=0; setInterval(()=>{
-        t++; const r = Math.min(0.20, 0.02 + 0.02*t);
-        nodes.forEach(it=> it.node.nodeValue = corruptString(it.original, r));
-      }, 4000 + i*1200);
+      let t=0; setInterval(()=>{ t++; const r = Math.min(0.20, 0.02 + 0.02*t); nodes.forEach(it=> it.node.nodeValue = corruptString(it.original, r)); }, 4000 + i*1200);
     });
   }
+
+  /* ランダムFXループ（ロールバー頻度45%） */
+  (function randomFxLoop(){
+    const c=Math.random();
+    if (c < 0.45) rollBarOnce();
+    else if (c < 0.70) rgbSplitPulse();
+    else if (c < 0.85) screenTearOnce();
+    else flashNoise(220);
+
+    if (Math.random() < 0.25){
+      const a=document.querySelector('.screen.active');
+      a?.classList.add('vsync-drift');
+      setTimeout(()=> a?.classList.remove('vsync-drift'), 5000 + Math.random()*4000);
+    }
+    setTimeout(randomFxLoop, 1600 + Math.random()*3200);
+  })();
+
 });
