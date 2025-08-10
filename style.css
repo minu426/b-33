@@ -1,104 +1,106 @@
-/* ===== 基本 ===== */
+/* ===== ベース ===== */
 *{box-sizing:border-box}
+html,body{height:100%}
 html{-webkit-text-size-adjust:100%}
 body{
   margin:0;background:#000;color:#eee;
   font-family:"dnp-shuei-gothic-kin-std","Yu Gothic","Hiragino Kaku Gothic ProN",Meiryo,sans-serif;
-  -webkit-font-smoothing:antialiased;
-  min-height:100svh;
-  overflow-x:hidden; overflow-y:auto; -webkit-overflow-scrolling:touch;
+  -webkit-font-smoothing:antialiased;overflow-y:auto;
 }
 
-/* 画面（中央寄せ） */
+/* 画面（表示/非表示・縦スクロール許可） */
 .screen{
-  display:none; min-height:100svh; width:100%;
-  padding:24px 6% 80px;
-  justify-content:center; align-items:flex-start;
-  text-align:center; position:relative;
+  display:none;min-height:100svh;width:100%;padding:24px 6%;
+  position:relative; /* ページ自体はスクロール可能 */
 }
-.screen.active{display:flex}
-/* 受付/ロード/診断結果/注意/カルテロードは縦中央に */
-#screen-entry,#screen-loading,#screen-name,#screen-warning,#screen-records-loading{
-  align-items:center;
-  padding-top:24px; padding-bottom:24px;
-}
-.hidden{display:none}
-.center{max-width:760px;width:100%}
+.screen.active{display:block}
+.center{max-width:760px;margin:0 auto}
+.centered{display:flex;align-items:center;justify-content:center;text-align:center}
+.top{display:block} /* 上寄せ表示 */
+
+/* 文字系 */
 .spaced{letter-spacing:.22em;line-height:1.9}
 .percent{margin-top:.6rem;color:#777}
+.warning{color:#8b0000}
 
-/* 見出し（はみ出し抑制） */
+/* 見出し（はみ出し防止） */
+.name-wrap{max-width:min(820px,92%);margin:0 auto;text-align:center}
 .kaiki{
-  color:#8b0000; text-shadow:0 0 12px rgba(139,0,0,.35);
-  font-size:clamp(20px,6.8vw,36px); letter-spacing:.06em;
-  text-wrap:balance; white-space:normal; word-break:keep-all; line-height:1.15;
+  color:#8b0000;text-shadow:0 0 12px rgba(139,0,0,.35);
+  font-size:clamp(22px,7.2vw,40px);letter-spacing:.08em;
+  text-wrap:balance;white-space:normal;margin:.2rem 0 0;
 }
+@media (max-width:430px){ .kaiki{letter-spacing:.04em} }
 .kaiki-sub{margin:.2rem 0 10px;color:#8b0000;letter-spacing:.12em;font-size:1rem}
 .who-line{color:#aaa;letter-spacing:.18em;margin:.2rem 0 .8rem;font-size:clamp(12px,3.6vw,14px)}
 
-/* 警告の赤を少し強めに */
-.warning{color:#8b0000}
-.warning.strong{color:#b30000}
-
-/* 薄ノイズ（基礎）を少し強く */
-#noise{position:fixed;inset:0;background:rgba(255,255,255,.04);opacity:.08;pointer-events:none;z-index:1;transition:opacity .25s}
+/* 全体薄ノイズ（ベース） */
+#noise{
+  position:fixed;inset:0;background:rgba(255,255,255,.03);
+  opacity:.08;pointer-events:none;z-index:1;transition:opacity .25s;
+}
 #noise.strong{opacity:.45}
 
-/* 全画面FX */
+/* 追加：全画面FXレイヤ（CRTぽい） */
 #fx{position:fixed;inset:0;pointer-events:none;z-index:12;mix-blend-mode:overlay}
-.fx-grain,.fx-scratches,.fx-grid,.fx-rollbar{position:absolute;inset:0}
+.fx-grain,.fx-scratches,.fx-rollbar{position:absolute;inset:0}
 .fx-grain{
   background-image:
     radial-gradient(circle at 20% 30%, rgba(255,255,255,.06), rgba(0,0,0,0) 38%),
-    radial-gradient(circle at 70% 60%, rgba(255,255,255,.05), rgba(0,0,0,0) 42%),
-    repeating-conic-gradient(from 0deg, rgba(255,255,255,.07) 0 .5deg, rgba(0,0,0,0) .5deg 1deg);
-  opacity:.24;animation:fxGrainShift 1.2s steps(2) infinite
+    radial-gradient(circle at 70% 60%, rgba(255,255,255,.04), rgba(0,0,0,0) 42%),
+    repeating-conic-gradient(from 0deg, rgba(255,255,255,.075) 0 .5deg, rgba(0,0,0,0) .5deg 1deg);
+  opacity:.28;animation:fxGrainShift 1.2s steps(2) infinite
 }
 @keyframes fxGrainShift{0%{transform:translate(0,0)}50%{transform:translate(-1px,1px)}100%{transform:translate(0,0)}}
 .fx-scratches{
   background:
     repeating-linear-gradient(to right, rgba(255,255,255,.10) 0 1px, rgba(0,0,0,0) 1px 4px),
-    repeating-linear-gradient(to right, rgba(255,255,255,.04) 0 2px, rgba(0,0,0,0) 2px 7px);
-  opacity:.14;animation:fxScratchDrift 12s linear infinite
+    repeating-linear-gradient(to right, rgba(255,255,255,.05) 0 2px, rgba(0,0,0,0) 2px 7px);
+  opacity:.18;animation:fxScratchDrift 12s linear infinite
 }
 @keyframes fxScratchDrift{0%{transform:translateX(0)}100%{transform:translateX(-60px)}}
-/* 追加：CRT格子（モザイクぽさ） */
-.fx-grid{
-  background:
-    linear-gradient(to right, rgba(255,255,255,.045) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(255,255,255,.045) 1px, transparent 1px);
-  background-size: 3px 3px, 3px 3px;
-  mix-blend-mode:soft-light; opacity:.22;
-}
-/* ロールバー（濃度アップ） */
-.fx-rollbar{background:linear-gradient(to bottom,rgba(255,255,255,0),rgba(255,255,255,.40) 50%,rgba(255,255,255,0));opacity:0;transform:translateY(-120%)}
-.fx-rollbar.run{animation:fxRoll 2.0s linear 1}
-@keyframes fxRoll{0%{opacity:0;transform:translateY(-120%)}10%{opacity:.55}90%{opacity:.55}100%{opacity:0;transform:translateY(120%)}}
+.fx-rollbar{background:linear-gradient(to bottom,rgba(255,255,255,0),rgba(255,255,255,.24) 50%,rgba(255,255,255,0));opacity:0;transform:translateY(-120%)}
+.fx-rollbar.run{animation:fxRoll 2.2s linear 1}
+@keyframes fxRoll{0%{opacity:0;transform:translateY(-120%)}10%{opacity:.5}90%{opacity:.5}100%{opacity:0;transform:translateY(120%)}}
 
-/* ガガガ/壊れ */
-.rgb-split *{text-shadow:1px 0 rgba(255,0,0,.35),-1px 0 rgba(0,255,255,.35);filter:contrast(1.05) saturate(1.05)}
+/* RGBずれ・ドリフト・ティア・ブレイク */
+.rgb-split *{text-shadow:1px 0 rgba(255,0,0,.35),-1px 0 rgba(0,255,255,.35);filter:contrast(1.06) saturate(1.05)}
 .vsync-drift{animation:vsyncDrift 6s ease-in-out infinite alternate}
 @keyframes vsyncDrift{0%{transform:translateY(0)}100%{transform:translateY(1.6px)}}
 .screen-tear::after{
   content:"";position:absolute;left:0;right:0;height:14px;top:40%;
-  background:linear-gradient(to right,rgba(255,255,255,.1),rgba(0,0,0,0));mix-blend-mode:screen;opacity:0;transform:translateX(-8px);
+  background:linear-gradient(to right,rgba(255,255,255,.12),rgba(0,0,0,0));mix-blend-mode:screen;opacity:0;transform:translateX(-8px);
   animation:screenTear .22s steps(1) 1
 }
-@keyframes screenTear{0%{opacity:0}20%{opacity:.35;transform:translateX(8px)}100%{opacity:0;transform:translateX(0)}}
+@keyframes screenTear{0%{opacity:0}20%{opacity:.45;transform:translateX(8px)}100%{opacity:0;transform:translateX(0)}}
 .global-break{
   animation:globalBreakA .18s steps(1) 1, globalBreakB .28s ease 1;
-  filter:invert(.06) contrast(1.2) saturate(1.15) hue-rotate(6deg)
+  filter:invert(.06) contrast(1.25) saturate(1.15) hue-rotate(6deg)
 }
-@keyframes globalBreakA{0%{transform:none}50%{transform:skewX(3deg) translateX(2px)}100%{transform:none}}
-@keyframes globalBreakB{0%{box-shadow:inset 0 0 0 rgba(255,0,0,0)}50%{box-shadow:inset 0 0 48px rgba(255,255,255,.06)}100%{box-shadow:inset 0 0 0 rgba(255,0,0,0)}}
+@keyframes globalBreakA{
+  0%{transform:none}
+  50%{transform:skewX(3deg) translateX(2px)}
+  100%{transform:none}
+}
+@keyframes globalBreakB{
+  0%{box-shadow:inset 0 0 0 rgba(255,0,0,0)}
+  50%{box-shadow:inset 0 0 52px rgba(255,255,255,.08)}
+  100%{box-shadow:inset 0 0 0 rgba(255,0,0,0)}
+}
+
+/* ガガガ */
 @keyframes jolt{0%{transform:none;filter:none}15%{transform:skewX(2deg) translateX(1px)}
 30%{transform:skewX(-2deg) translateX(-1px);filter:contrast(1.08)}45%{transform:skewY(1deg)}
 60%{transform:skewY(-1deg)}75%{transform:translateX(1px)}100%{transform:none;filter:none}}
 .jolt{animation:jolt .22s steps(1) 1}
 
 /* レトロUI */
-.browser.retro{position:relative;z-index:2;width:100%;max-width:900px;background:#c0c0c0;border:2px solid #000;
-  box-shadow:0 0 0 1px #fff inset,0 0 0 2px #808080 inset,0 0 0 3px #fff inset;overflow:hidden}
+.browser.retro{
+  position:relative;z-index:2;width:100%;max-width:900px;
+  background:#c0c0c0;border:2px solid #000;
+  box-shadow:0 0 0 1px #fff inset,0 0 0 2px #808080 inset,0 0 0 3px #fff inset;
+  overflow:hidden;
+}
 .retro-titlebar{display:flex;align-items:center;justify-content:space-between;background:#000080;color:#fff;padding:6px 8px;letter-spacing:.3em;font-size:.9rem;user-select:none}
 .retro-title{font-weight:bold}
 .retro-controls{display:flex;gap:6px}
@@ -108,49 +110,57 @@ body{
 .retro-controls .ctrl.close{color:#800000}
 .retro-pane{padding:12px;text-align:left;color:#000;background:#c0c0c0;position:relative}
 
-/* CRT */
-.browser.retro.crt,.records.crt{position:relative;isolation:isolate;overflow:hidden;filter:contrast(1.03) saturate(0.98)}
+/* CRT質感（樽型・走査線・モザイクっぽさ） */
+.browser.retro.crt,.records.crt{
+  position:relative;isolation:isolate;overflow:hidden;filter:contrast(1.04) saturate(0.97)
+}
 .browser.retro.crt::before,.records.crt::before{
   content:"";position:absolute;inset:-4%;z-index:8;pointer-events:none;
-  background:radial-gradient(ellipse at center,rgba(255,255,255,.02) 0%,rgba(255,255,255,0) 60%,rgba(0,0,0,.38) 100%);
+  background:radial-gradient(ellipse at center,rgba(255,255,255,.02) 0%,rgba(255,255,255,0) 60%,rgba(0,0,0,.42) 100%);
   border-radius:2.6%/1.9%;transform:perspective(1000px) scale(1.018)
 }
 .browser.retro.crt::after,.records.crt::after{
   content:"";position:absolute;inset:0;z-index:8;pointer-events:none;
-  background:repeating-linear-gradient(to bottom,rgba(255,255,255,.045),rgba(255,255,255,.045) 1px,transparent 1px,transparent 3px);
-  mix-blend-mode:overlay;opacity:.5;animation:crtFlicker 4.5s steps(1) infinite
+  background:
+    repeating-linear-gradient(to bottom,rgba(255,255,255,.06),rgba(255,255,255,.06) 1px,transparent 1px,transparent 3px),
+    repeating-linear-gradient(90deg,rgba(0,0,0,.03) 0 2px,rgba(0,0,0,0) 2px 4px);
+  mix-blend-mode:overlay;opacity:.58;animation:crtFlicker 4.5s steps(1) infinite
 }
-@keyframes crtFlicker{0%,98%{opacity:.5}99%{opacity:.56}100%{opacity:.5}}
+@keyframes crtFlicker{0%,98%{opacity:.58}99%{opacity:.64}100%{opacity:.58}}
+.phosphor{ text-shadow:0 0 .4px rgba(0,0,0,.35), 0 0 6px rgba(255,255,255,.08) }
 
-/* 画面別ノイズ */
+/* 画面別ノイズ（JPEGに置換したアニメっぽい動き） */
 #screen-story::before{
   content:"";position:absolute;inset:0;z-index:10;pointer-events:none;
-  background:url('assets/noise_story.gif') repeat;background-size:320px auto;mix-blend-mode:lighten;opacity:.32;
-  animation:noisePanX 1.4s steps(6) infinite,noisePanY 1.2s steps(5) infinite,noiseFlicker .18s steps(2) infinite
+  background:url('assets/noise_story.jpg') repeat;background-size:300px auto;mix-blend-mode:lighten;opacity:.36;
+  animation:noisePanX 1.1s steps(7) infinite,noisePanY 1.3s steps(6) infinite,noiseFlicker .16s steps(2) infinite
 }
 #screen-records::before{
   content:"";position:absolute;inset:0;z-index:10;pointer-events:none;
-  background:url('assets/noise_records.gif') repeat;background-size:280px auto;mix-blend-mode:overlay;opacity:.26;
-  animation:noisePanX 1.1s steps(7) infinite reverse,noisePanY 1.6s steps(6) infinite,noiseFlicker .20s steps(3) infinite
+  background:url('assets/noise_records.jpg') repeat;background-size:280px auto;mix-blend-mode:overlay;opacity:.30;
+  animation:noisePanX 1.0s steps(7) infinite reverse,noisePanY 1.5s steps(6) infinite,noiseFlicker .18s steps(3) infinite
 }
 @keyframes noisePanX{0%{background-position:0 0}100%{background-position:-40px 0}}
 @keyframes noisePanY{0%{background-position:0 0}100%{background-position:0 -30px}}
-@keyframes noiseFlicker{0%{opacity:.22}50%{opacity:.34}100%{opacity:.22}}
+@keyframes noiseFlicker{0%{opacity:.24}50%{opacity:.38}100%{opacity:.24}}
 
-/* 発祥配置 */
+/* ウィンドウ配置 */
 .stack{display:flex;flex-direction:column;gap:12px}
 .win-main{z-index:2}
 .win-mini{z-index:3;width:min(480px,100%);margin-left:auto}
 .win-mini.hidden{display:none}
 
-/* 発祥テキスト（タイプライター無し・行間少し狭め） */
-.story-text{color:#111;line-height:1.85;font-size:clamp(14px,3.9vw,18px);letter-spacing:.005em}
-.story-text p{margin:0 0 1.1em 0}
+/* 本文（縦の字間を少し詰める／横スクロール禁止） */
+.typewriter{
+  color:#111;line-height:1.82;font-size:clamp(14px,3.8vw,18px);letter-spacing:.005em;
+  white-space:normal;word-break:normal;overflow-wrap:anywhere;line-break:strict;text-wrap:balance;
+}
+.typewriter p{margin:0 0 1.05em 0}
+.story-fade{opacity:0;transition:opacity .5s ease}
 
-/* スクロールボックス */
+/* スクロールボックス（縦のみ） */
 .scrollbox{
-  max-height:60vh; overflow-y:auto; overflow-x:hidden; -webkit-overflow-scrolling:touch; touch-action:pan-y;
-  padding:10px; background:#fff; color:#111; border:2px solid #000;
+  max-height:55vh;overflow-y:auto;overflow-x:hidden;padding:10px;background:#fff;color:#111;border:2px solid #000;
   box-shadow:0 0 0 1px #fff inset,0 0 0 2px #808080 inset,0 0 0 3px #fff inset
 }
 .scrollbox::-webkit-scrollbar{width:10px}
@@ -162,25 +172,28 @@ body{
 .help-chant.show{opacity:1}
 
 /* ボタン */
-.btn{background:#c0c0c0;color:#000;border:2px solid #000;
+.btn{
+  background:#c0c0c0;color:#000;border:2px solid #000;
   box-shadow:0 0 0 1px #fff inset,0 0 0 2px #808080 inset,0 0 0 3px #fff inset;
-  border-radius:2px;margin-top:16px;padding:.62rem 1.1rem;cursor:pointer;transition:transform .1s,color .2s,box-shadow .12s}
+  border-radius:2px;margin-top:16px;padding:.65rem 1.1rem;cursor:pointer;transition:transform .1s,color .2s,box-shadow .12s
+}
 .btn:hover{color:#8b0000}
 .btn:active{box-shadow:0 0 0 1px #808080 inset,0 0 0 2px #fff inset,0 0 0 3px #808080 inset;transform:translateY(1px) scale(.99)}
 
-/* 受付UIを大きめに */
-.entry-form{display:flex;gap:12px;align-items:center;margin:.8rem 0 .4rem}
+/* 受付（入力少し大きめ） */
+.entry-form{display:flex;gap:12px;align-items:center;margin:.8rem 0 .4rem;flex-wrap:wrap}
 #nick-input{
-  width:100%;max-width:420px;padding:.7rem .75rem;background:#fff;color:#111;border:2px solid #000;
-  font-size:1.05rem;
+  width:min(440px,100%);padding:.65rem .7rem;background:#fff;color:#111;border:2px solid #000;
+  font-size:1.02rem;
   box-shadow:0 0 0 1px #fff inset,0 0 0 2px #808080 inset,0 0 0 3px #fff inset
 }
 #nick-input:focus{outline:none;border-color:#8b0000}
-.entry-note{color:#333;font-size:.88rem;margin:.25rem 0 0}
+.entry-note{color:#333;font-size:.86rem;margin:.2rem 0 0}
 
-/* カルテ */
+/* カルテ一覧 */
 .records{position:relative;z-index:2;width:100%;max-width:900px;text-align:left}
 .records-title{text-align:center;color:#8b0000;letter-spacing:.12em}
+.records-note{margin:.2rem 0 1rem}
 .card{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:8px;padding:12px;margin:12px 0}
 .karte{width:100%;border-collapse:collapse;table-layout:fixed}
 .karte th,.karte td{padding:8px;border-bottom:1px dashed rgba(255,255,255,.08);vertical-align:top;word-break:break-word}
@@ -197,10 +210,10 @@ body{
 .modal-inner{width:92%;max-width:680px;background:#0b0b0b;border:1px solid rgba(255,255,255,.08);border-radius:8px;padding:16px;transform:scale(.96) translateY(8px);transition:transform .22s,box-shadow .22s;box-shadow:0 18px 50px rgba(0,0,0,.55)}
 #modal.open .modal-inner{transform:scale(1) translateY(0);box-shadow:0 22px 60px rgba(0,0,0,.65)}
 .modal-title{margin:0 0 10px;color:#8b0000}
-.modal-body{line-height:1.9}
+.modal-body{line-height:1.85}
 .modal-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:12px}
 
-/* モザイク/ハイライト */
+/* モザイク等 */
 .mosaic{position:relative;display:inline-block;color:transparent;padding:0 .25em;border-radius:2px;outline:1px solid rgba(255,255,255,.12)}
 .mosaic::after{
   content:"";position:absolute;inset:0;border-radius:2px;
@@ -216,22 +229,14 @@ body{
 .corrupt-flash{animation:corruptFlash .18s steps(1) 1}
 @keyframes corruptFlash{0%{filter:none}50%{filter:contrast(1.15) saturate(1.1)}100%{filter:none}}
 
-/* 挿入アニメ（下からニュッ） */
-.win-insert{animation:winInsert .58s cubic-bezier(.21,.98,.36,.99) both}
-@keyframes winInsert{
-  0%{transform:translateY(36px) scale(.98);opacity:0;filter:blur(2px)}
-  60%{opacity:1}
-  100%{transform:none;opacity:1;filter:none}
-}
-
-/* コンテンツの遅延フェード */
-.content-hidden{opacity:0}
-.content-show{animation:contentFade .6s .18s ease both}
-@keyframes contentFade{from{opacity:0}to{opacity:1}}
-
-/* 入力エラー微振動 */
+/* 微振動（入力エラー） */
 @keyframes microShake{0%{transform:translateX(0)}25%{transform:translateX(1px)}50%{transform:translateX(-1px)}75%{transform:translateX(1px)}100%{transform:translateX(0)}}
 .entry-error{animation:microShake .18s linear 1}
+
+/* フェードイン（ウィンドウ登場） */
+.appear{opacity:0;transform:translateY(16px);animation:appearIn .45s ease forwards}
+.appear:nth-child(2){animation-delay:.15s}
+@keyframes appearIn{to{opacity:1;transform:translateY(0)}}
 
 /* スマホ */
 @media (max-width:430px){
