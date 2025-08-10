@@ -116,17 +116,36 @@ body{
 .crt.strong::after{opacity:.72}
 @keyframes crtFlicker{0%,98%{opacity:inherit}99%{opacity:calc( inherit + .06 )}100%{opacity:inherit}}
 
-/* 画面別ノイズ（GIF使用） */
+/* 画面別ノイズ（GIF）- 表示を強め・確実化 */
+#screen-story,
+#screen-records { position:relative; } /* 念のため */
+
 #screen-story::before{
-  content:"";position:absolute;inset:0;z-index:10;pointer-events:none;
-  background:url('assets/noise_story.gif') repeat;background-size:320px auto;mix-blend-mode:lighten;opacity:.34;
-  animation:noisePanX 1.4s steps(6) infinite,noisePanY 1.2s steps(5) infinite,noiseFlicker .18s steps(2) infinite
+  content:"";
+  position:absolute; inset:0;
+  z-index:6;                   /* ブラウン管より手前 / FXより下 */
+  pointer-events:none;
+  background: url('assets/noise_story.gif') center / 320px auto repeat;
+  mix-blend-mode: screen;      /* iOSでも見えやすく */
+  opacity:.48;                 /* 少し濃く */
+  animation: noisePanX 1.4s steps(6) infinite,
+             noisePanY 1.2s steps(5) infinite,
+             noiseFlicker .18s steps(2) infinite;
 }
+
 #screen-records::before{
-  content:"";position:absolute;inset:0;z-index:10;pointer-events:none;
-  background:url('assets/noise_records.gif') repeat;background-size:280px auto;mix-blend-mode:overlay;opacity:.30;
-  animation:noisePanX 1.1s steps(7) infinite reverse,noisePanY 1.6s steps(6) infinite,noiseFlicker .20s steps(3) infinite
+  content:"";
+  position:absolute; inset:0;
+  z-index:6;
+  pointer-events:none;
+  background: url('assets/noise_records.gif') center / 280px auto repeat;
+  mix-blend-mode: screen;
+  opacity:.52;
+  animation: noisePanX 1.1s steps(7) infinite reverse,
+             noisePanY 1.6s steps(6) infinite,
+             noiseFlicker .20s steps(3) infinite;
 }
+
 @keyframes noisePanX{0%{background-position:0 0}100%{background-position:-40px 0}}
 @keyframes noisePanY{0%{background-position:0 0}100%{background-position:0 -30px}}
 @keyframes noiseFlicker{0%{opacity:.25}50%{opacity:.38}100%{opacity:.25}}
