@@ -1,4 +1,4 @@
-/* ===== 基本・黒画面防止 ===== */
+/* ===== 基本（黒画面防止の相方） ===== */
 *{box-sizing:border-box}
 html{height:100%;-webkit-text-size-adjust:100%}
 body{
@@ -11,17 +11,18 @@ body{
 .center{max-width:760px;width:100%;margin:0 auto}
 .spaced{letter-spacing:.22em;line-height:1.9}
 .percent{margin-top:.6rem;color:#777}
+.warning{color:#8b0000}
 
-/* 見出し（モバイル安全） */
+/* 見出し（安全な可変） */
 .kaiki{color:#8b0000;text-shadow:0 0 12px rgba(139,0,0,.35);
   font-size:clamp(22px,9vw,40px);letter-spacing:.06em;text-wrap:balance}
 .who-line{color:#aaa;letter-spacing:.18em;margin:.2rem 0 .8rem;font-size:clamp(12px,3.6vw,14px)}
+.chromatic{text-shadow:1px 0 rgba(255,0,0,.25), -1px 0 rgba(0,255,255,.25)}
 
-/* 薄ノイズ（背景） */
-#noise{position:fixed;inset:0;z-index:1;pointer-events:none;
-  background:rgba(255,255,255,.02);}
+/* 常時ノイズ（軽量） */
+#noise{position:fixed;inset:0;z-index:1;pointer-events:none;background:rgba(255,255,255,.02)}
 
-/* レトロUI＋CRT（安定版） */
+/* レトロUI＋CRT（軽量安定） */
 .browser.retro{position:relative;z-index:2;width:100%;max-width:900px;background:#c0c0c0;border:2px solid #000;
   box-shadow:0 0 0 1px #fff inset,0 0 0 2px #808080 inset,0 0 0 3px #fff inset;overflow:hidden;margin:0 auto}
 .retro-titlebar{display:flex;align-items:center;justify-content:space-between;background:#000080;color:#fff;padding:6px 8px;letter-spacing:.3em;font-size:.9rem;user-select:none}
@@ -36,15 +37,7 @@ body{
   mix-blend-mode:overlay;opacity:.45
 }
 
-/* 画面別ノイズGIF：今は“無効”（安定最優先） */
-/* 後で有効化するなら以下コメントアウト外して使う
-#screen-story::before{
-  content:"";position:absolute;inset:0;z-index:3;pointer-events:none;
-  background:url('assets/noise_story.gif') repeat; background-size:300px auto; opacity:.24; mix-blend-mode:normal;
-}
-*/
-
-/* スクロールボックス（横スクロール禁止） */
+/* スクロールボックス（縦のみ） */
 .scrollbox{
   max-height:55vh;overflow-y:auto;overflow-x:hidden;padding:10px;background:#fff;color:#111;border:2px solid #000;
   box-shadow:0 0 0 1px #fff inset,0 0 0 2px #808080 inset,0 0 0 3px #fff inset
@@ -53,7 +46,7 @@ body{
 .scrollbox::-webkit-scrollbar-track{background:#c0c0c0;box-shadow:inset 1px 1px 0 #fff,inset -1px -1px 0 #808080}
 .scrollbox::-webkit-scrollbar-thumb{background:#e0e0e0;border:2px solid #000;box-shadow:inset 0 0 0 1px #fff,inset 0 0 0 2px #808080,inset 0 0 0 3px #fff}
 
-/* 行間を詰める（発祥ストーリー） */
+/* 発祥ストーリー行間調整 */
 #story-text p{ line-height:1.45; margin:0 0 .55em 0; font-size:clamp(14px,3.9vw,18px) }
 
 /* ボタン */
@@ -63,6 +56,7 @@ body{
   border-radius:2px;margin-top:16px;padding:.55rem 1rem;cursor:pointer;transition:transform .1s,color .2s,box-shadow .12s}
 .btn:hover{color:#8b0000}
 .btn:active{box-shadow:0 0 0 1px #808080 inset,0 0 0 2px #fff inset,0 0 0 3px #808080 inset;transform:translateY(1px) scale(.99)}
+.cta{margin-top:12px;display:flex;justify-content:center}
 
 /* 入力 */
 .entry-form{display:flex;gap:10px;align-items:center;margin:.6rem 0 .4rem;justify-content:center}
@@ -71,6 +65,37 @@ body{
 #entry-name:focus{outline:none;border-color:#8b0000}
 .entry-note{color:#333;font-size:.85rem;margin:.2rem 0 0}
 
+/* カルテ一覧 */
+.records{position:relative;z-index:2;width:100%;max-width:900px;text-align:left;margin:0 auto}
+.records-title{text-align:center;color:#8b0000;letter-spacing:.12em}
+.card{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:8px;padding:12px;margin:12px 0}
+.karte{width:100%;border-collapse:collapse;table-layout:fixed}
+.karte th,.karte td{padding:8px;border-bottom:1px dashed rgba(255,255,255,.08);vertical-align:top;word-break:break-word}
+.karte th{white-space:nowrap;width:30%}
+.badge-update{display:inline-block;margin-left:.4em;padding:.1em .4em;background:#8b0000;color:#fff;font-size:.75em;border-radius:3px}
+
+/* モーダル */
+#modal{position:fixed;inset:0;background:rgba(0,0,0,.86);z-index:9999;display:flex;justify-content:center;align-items:center;padding:20px;text-align:left;opacity:0;pointer-events:none;transition:opacity .22s}
+#modal.open{opacity:1;pointer-events:auto}
+.modal-inner{width:92%;max-width:680px;background:#0b0b0b;border:1px solid rgba(255,255,255,.08);border-radius:8px;padding:16px;transform:scale(.96) translateY(8px);transition:transform .22s,box-shadow .22s;box-shadow:0 18px 50px rgba(0,0,0,.55)}
+#modal.open .modal-inner{transform:scale(1) translateY(0);box-shadow:0 22px 60px rgba(0,0,0,.65)}
+.modal-title{margin:0 0 10px;color:#8b0000}
+.modal-body{line-height:1.85}
+.modal-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:12px}
+
+/* マスク表現（しましまモザイク＆黒塗り） */
+.mosaic{position:relative;display:inline-block;color:transparent;padding:0 .25em;border-radius:2px;outline:1px solid rgba(255,255,255,.12)}
+.mosaic::after{content:"";position:absolute;inset:0;border-radius:2px;
+  background:repeating-linear-gradient(135deg,rgba(20,20,20,1) 0 6px,rgba(0,0,0,.78) 6px 12px),
+             linear-gradient(to bottom,rgba(255,255,255,.05),rgba(0,0,0,.0));
+  opacity:.96}
+.blacked{background:#000;color:transparent;border-radius:2px;padding:0 6px;display:inline-block}
+
 /* フェードアップ */
 .fade-up{opacity:0;transform:translateY(24px)}
 .fade-up.show{opacity:1;transform:translateY(0);transition:opacity .36s ease, transform .36s ease}
+
+/* スマホ */
+@media (max-width:430px){
+  .scrollbox{max-height:60vh}
+}
