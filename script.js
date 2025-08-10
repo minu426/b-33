@@ -1,60 +1,129 @@
-document.addEventListener('DOMContentLoaded', () => {
-  const scrEntry   = document.getElementById('screen-entry');
-  const scrLoading = document.getElementById('screen-loading');
-  const scrStory   = document.getElementById('screen-story');
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>B-33型《バーバラさん》 診断記録</title>
 
-  const inputName  = document.getElementById('entry-name');
-  const btnEntry   = document.getElementById('btn-entry');
-  const perEl      = document.getElementById('load-per');
-  const whoNameEl  = document.getElementById('player-name-display');
+<!-- Adobe Fonts（DNP 秀英角ゴシック金）※なくても表示されます -->
+<script>
+(function(d){var c={kitId:'ouz3iep',scriptTimeout:3000,async:true},h=d.documentElement,
+t=setTimeout(function(){h.className=h.className.replace(/\bwf-loading\b/g,"")+" wf-inactive";},c.scriptTimeout),
+s=d.createElement("script"),f=false,x=d.getElementsByTagName("script")[0],a;h.className+=" wf-loading";
+s.src='https://use.typekit.net/'+c.kitId+'.js';s.async=true;
+s.onload=s.onreadystatechange=function(){a=this.readyState;if(f||a&&a!="complete"&&a!="loaded")return;
+f=true;clearTimeout(t);try{Typekit.load(c)}catch(e){}};x.parentNode.insertBefore(s,x)})(document);
+</script>
 
-  let visitorName  = '来訪者';
+<link rel="stylesheet" href="style.css?v=63" />
 
-  // 画面切替の基本
-  function showScreen(target){
-    document.querySelectorAll('.screen').forEach(s=>{
-      s.classList.remove('active'); s.classList.add('hidden'); // hiddenはCSSで使ってないが保険
-    });
-    target.classList.remove('hidden'); target.classList.add('active');
-  }
+<!-- 黒画面防止（最低限） -->
+<style>.screen{display:none}.screen.active{display:flex}</style>
+</head>
+<body>
 
-  // 受付 → ロード
-  btnEntry.addEventListener('click', ()=>{
-    const val = (inputName.value||'').trim();
-    if(!val){
-      // ちょい震え演出（CSSなしでも動く簡易版）
-      inputName.style.transform='translateX(2px)'; setTimeout(()=>inputName.style.transform='',150);
-      return;
-    }
-    visitorName = val.slice(0,20);
-    whoNameEl.textContent = visitorName;
+<!-- 常時うっすらノイズ（重すぎ防止でCSSの色ノイズのみ） -->
+<div id="noise" aria-hidden="true"></div>
 
-    showScreen(scrLoading);
-    startLoading(()=>{
-      // ロード完了 → ストーリー
-      showScreen(scrStory);
-      // タイトルウィンドウのフェードアップ
-      requestAnimationFrame(()=>{
-        const box = scrStory.querySelector('.fade-up');
-        if(box) box.classList.add('show');
-      });
-    });
-  });
+<!-- 0) 受付 -->
+<section id="screen-entry" class="screen active">
+  <div class="browser retro crt">
+    <div class="retro-titlebar">
+      <span class="retro-title">受　付</span>
+      <div class="retro-controls"><span class="ctrl">_</span><span class="ctrl">□</span><span class="ctrl close">×</span></div>
+    </div>
+    <div class="retro-pane">
+      <p class="phosphor">
+        診断で使用したお名前を入力してください。<br>
+        <strong>※ 実名はお控えください（渾名・イニシャル推奨）</strong>
+      </p>
+      <div class="entry-form">
+        <input id="entry-name" type="text" autocomplete="off" autocapitalize="off" maxlength="20"
+               placeholder="例）ミヌ／M.N.／来訪者" aria-label="お名前（渾名）">
+        <button id="btn-entry" class="btn">診断を開始</button>
+      </div>
+      <p class="entry-note">入力されたお名前は画面表示のみに使用され、保存されません。</p>
+    </div>
+  </div>
+</section>
 
-  // ローディング（序盤遅く→終盤早く）
-  function startLoading(done){
-    let p = 0;
-    function step(){
-      p += (p<40?1:(p<80?2:5));
-      if(p>100) p=100;
-      perEl.textContent = p + '%';
-      if(p<100){
-        setTimeout(step, Math.max(20, 120*Math.pow(0.86, p/10)));
-      }else{
-        // ちょっと間を置いてから切替
-        setTimeout(()=> done && done(), 350);
-      }
-    }
-    step();
-  }
-});
+<!-- 1) ロード -->
+<section id="screen-loading" class="screen">
+  <div class="center">
+    <p class="spaced">診断情報を準備しています…</p>
+    <p id="load-per" class="percent">0%</p>
+  </div>
+</section>
+
+<!-- 2) 発祥ストーリー -->
+<section id="screen-story" class="screen">
+  <div class="browser retro crt fade-up">
+    <div class="retro-titlebar">
+      <span class="retro-title">発　祥　ス　ト　ー　リ　ー</span>
+      <div class="retro-controls"><span class="ctrl">_</span><span class="ctrl">□</span><span class="ctrl close">×</span></div>
+    </div>
+    <div class="retro-pane">
+      <p class="who-line">―― <span id="player-name-display">来訪者</span> 様の診断結果 ――</p>
+      <h1 class="kaiki">B-33型《バーバラさん》</h1>
+      <div class="scrollbox phosphor">
+        <div id="story-text" class="typewriter no-typing">
+          <p>昔、とある少女が惨殺され、その少女は赤い日記帳に日々の出来事を綴っていた。</p>
+          <p>少女の死後、その赤い日記帳は忽然と姿を消し、どこを探しても見つからなかった。</p>
+          <p>やがて、噂を聞いた者の家に見たことのない赤い日記帳が届くようになったが、決して開いてはならないと言われている。</p>
+          <p>その日記帳が届いた夜、バーバラさんと呼ばれる存在が現れる。</p>
+          <p>バーバラさんの顔を見ず、扉を開けて背中に乗せ、部屋の窓を開けて外に送り出さなければならない。</p>
+          <p>日記帳を開いたり、バーバラさんの顔を見てしまった者の運命や、バーバラさんの正体は謎に包まれている。</p>
+          <p>彼女は惨殺された少女の成れの果てなのか、犯人なのか、誰にもわからない。</p>
+        </div>
+      </div>
+
+      <div class="cta">
+        <button id="btn-to-warning" class="btn">過去の患者カルテを見る</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 3) 注意 -->
+<section id="screen-warning" class="screen">
+  <div class="center">
+    <p class="warning spaced">
+      これから表示される内容は極めて危険です。<br>
+      閲覧によって発生したいかなる事象についても当院は責任を負いかねます。<br>
+      自己責任で閲覧してください。
+    </p>
+    <button id="btn-agree" class="btn">同意して閲覧</button>
+  </div>
+</section>
+
+<!-- 4) カルテロード -->
+<section id="screen-records-loading" class="screen">
+  <div class="center">
+    <p class="spaced">カルテ情報を取得しています…</p>
+    <p id="rec-per" class="percent">0%</p>
+  </div>
+</section>
+
+<!-- 5) カルテ一覧 -->
+<section id="screen-records" class="screen">
+  <div class="records crt">
+    <h3 class="records-title chromatic">患者記録一覧</h3>
+    <div id="records-list"></div>
+    <div class="controls">
+      <button id="btn-back-story" class="btn">発祥ストーリーに戻る</button>
+    </div>
+  </div>
+</section>
+
+<!-- 6) 詳細モーダル -->
+<div id="modal" role="dialog" aria-hidden="true">
+  <div class="modal-inner">
+    <h4 id="modal-title" class="modal-title">患者記録</h4>
+    <div id="modal-body" class="modal-body"></div>
+    <div class="modal-actions"><button id="modal-close" class="btn">閉じる</button></div>
+  </div>
+</div>
+
+<script src="script.js?v=63" defer></script>
+</body>
+</html>
