@@ -15,25 +15,25 @@ s.onload=s.onreadystatechange=function(){a=this.readyState;if(f||a&&a!="complete
 f=true;clearTimeout(t);try{Typekit.load(c)}catch(e){}};x.parentNode.insertBefore(s,x)})(document);
 </script>
 
-<link rel="stylesheet" href="style.css?v=90" />
+<link rel="stylesheet" href="style.css?v=70" />
 </head>
 <body>
 
-<!-- 薄ノイズ（全画面） -->
+<!-- 常時: 薄ノイズ -->
 <div id="noise" aria-hidden="true"></div>
 
-<!-- 全画面FXレイヤ -->
+<!-- 全画面FX -->
 <div id="fx" aria-hidden="true">
   <div class="fx-grain"></div>
   <div class="fx-scratches"></div>
   <div class="fx-rollbar"></div>
 </div>
 
-<!-- 0) 受付（中央寄せ） -->
-<section id="screen-entry" class="screen centered active">
-  <div class="browser retro crt">
+<!-- 0) 受付（青プレート背景） -->
+<section id="screen-entry" class="screen blue-plate active">
+  <div class="browser retro crt strong">
     <div class="retro-titlebar">
-      <span class="retro-title">受　付</span>
+      <span class="retro-title nowrap">受　付</span>
       <div class="retro-controls"><span class="ctrl">_</span><span class="ctrl">□</span><span class="ctrl close">×</span></div>
     </div>
     <div class="retro-pane">
@@ -41,7 +41,7 @@ f=true;clearTimeout(t);try{Typekit.load(c)}catch(e){}};x.parentNode.insertBefore
         診断で使用したお名前を入力してください。<br>
         <strong data-no-corrupt>※ 実名はお控えください（渾名・イニシャル推奨）</strong>
       </p>
-      <div class="entry-form">
+      <div class="entry-form large">
         <input id="nick-input" type="text" autocomplete="off" autocapitalize="off" maxlength="20"
                placeholder="例）ミヌ／M.N.／来訪者" aria-label="お名前（渾名）">
         <button id="btn-start" class="btn">データの照合</button>
@@ -51,46 +51,44 @@ f=true;clearTimeout(t);try{Typekit.load(c)}catch(e){}};x.parentNode.insertBefore
   </div>
 </section>
 
-<!-- 1) 初回ロード（中央寄せ） -->
-<section id="screen-loading" class="screen centered hidden">
+<!-- 1) 初回ロード -->
+<section id="screen-loading" class="screen">
   <div class="center">
     <p class="spaced">診断情報を準備しています…</p>
     <p id="load-per" class="percent">0%</p>
   </div>
 </section>
 
-<!-- 2) 名前＋見出し（中央寄せ・改行固定） -->
-<section id="screen-name" class="screen centered hidden">
-  <div class="name-wrap">
+<!-- 2) 名前＋見出し（2行に分割） -->
+<section id="screen-name" class="screen">
+  <div class="center">
     <p class="who-line">―― <span id="who-name">来訪者</span> 様の診断結果 ――</p>
-    <h1 class="kaiki">
-      <span>B-33型</span><br><span>《バーバラさん》</span>
-    </h1>
+    <h1 class="kaiki"><span>B-33型</span><br><span>《バーバラさん》</span></h1>
   </div>
 </section>
 
-<!-- 3) 発祥（ページ縦スクロール可／中身上寄せ+ウィンドウ内スクロール） -->
-<section id="screen-story" class="screen top hidden">
+<!-- 3) 発祥（青プレート背景 / 本文フェードイン、たすけてはタイプライター） -->
+<section id="screen-story" class="screen blue-plate">
   <div class="stack">
-    <!-- 本文ウィンドウ（ボックス→少し遅れて本文フェードイン） -->
-    <div class="browser retro crt win-main appear ui-top">
+    <!-- 本文ウィンドウ -->
+    <div class="browser retro crt strong win-main">
       <div class="retro-titlebar">
-        <span class="retro-title">発　祥　ス　ト　ー　リ　ー</span>
+        <span class="retro-title nowrap">発　祥　ス　ト　ー　リ　ー</span>
         <div class="retro-controls"><span class="ctrl">_</span><span class="ctrl">□</span><span class="ctrl close">×</span></div>
       </div>
       <div class="retro-pane">
         <h2 class="kaiki-sub chromatic">“B-33型《バーバラさん》”</h2>
         <div id="story-scroll" class="scrollbox phosphor">
-          <div id="story-text" class="story-fade typewriter"></div>
+          <div id="story-text" class="story-fade"></div>
         </div>
         <button id="btn-to-warning" class="btn">過去の患者カルテを見る</button>
       </div>
     </div>
 
-    <!-- “たすけて”ミニウィンドウ（ボックス挿入→中の文字はタイプライター） -->
-    <div id="win-chant" class="browser retro crt win-mini appear hidden ui-top">
+    <!-- “たすけて”ウィンドウ -->
+    <div id="win-chant" class="browser retro crt strong win-mini hidden">
       <div class="retro-titlebar">
-        <span class="retro-title">受　信　ロ　グ</span>
+        <span class="retro-title nowrap">受 信 ロ グ</span>
         <div class="retro-controls"><span class="ctrl">_</span><span class="ctrl">□</span><span class="ctrl close">×</span></div>
       </div>
       <div class="retro-pane">
@@ -100,15 +98,12 @@ f=true;clearTimeout(t);try{Typekit.load(c)}catch(e){}};x.parentNode.insertBefore
       </div>
     </div>
   </div>
-
-  <!-- 画面別ノイズ（GIF） -->
-  <div class="screen-noise story" aria-hidden="true"></div>
 </section>
 
-<!-- 4) 注意（中央寄せ・赤） -->
-<section id="screen-warning" class="screen centered hidden">
+<!-- 4) 注意（赤文字） -->
+<section id="screen-warning" class="screen">
   <div class="center">
-    <p class="warning spaced">
+    <p class="warning spaced strong-red">
       これから表示される内容は極めて危険です。<br>
       閲覧によって発生したいかなる事象についても当院は責任を負いかねます。<br>
       自己責任で閲覧してください。
@@ -117,25 +112,22 @@ f=true;clearTimeout(t);try{Typekit.load(c)}catch(e){}};x.parentNode.insertBefore
   </div>
 </section>
 
-<!-- 5) カルテロード（中央寄せ） -->
-<section id="screen-records-loading" class="screen centered hidden">
+<!-- 5) カルテロード -->
+<section id="screen-records-loading" class="screen">
   <div class="center">
     <p class="spaced">カルテ情報を取得しています…</p>
     <p id="rec-per" class="percent">0%</p>
   </div>
 </section>
 
-<!-- 6) カルテ一覧（ページ縦スクロール可／上寄せ） -->
-<section id="screen-records" class="screen top hidden">
-  <div class="records crt ui-top">
+<!-- 6) カルテ一覧 -->
+<section id="screen-records" class="screen">
+  <div class="records crt strong">
     <h3 class="records-title chromatic">患者記録一覧</h3>
-    <p class="records-note warning">※ 閲覧は自己責任でお願いします。視聴・読解により身体症状の悪化が報告されています。</p>
+    <p class="records-note strong-red">※ 以降の閲覧は自己責任でお願いします。</p>
     <div id="records-list"></div>
     <div class="controls"><button id="btn-back-story" class="btn">発祥ストーリーに戻る</button></div>
   </div>
-
-  <!-- 画面別ノイズ（GIF） -->
-  <div class="screen-noise records" aria-hidden="true"></div>
 </section>
 
 <!-- 7) 詳細モーダル -->
@@ -147,6 +139,6 @@ f=true;clearTimeout(t);try{Typekit.load(c)}catch(e){}};x.parentNode.insertBefore
   </div>
 </div>
 
-<script src="script.js?v=90"></script>
+<script src="script.js?v=70"></script>
 </body>
 </html>
