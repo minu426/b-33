@@ -1,4 +1,16 @@
 document.addEventListener("DOMContentLoaded", () => {
+    /* ====== モバイルvh補正（アドレスバー対策） ====== */
+  function setVh(){
+    // 1vh = window.innerHeight * 0.01 をCSS変数に反映
+    document.documentElement.style.setProperty('--vh', `${window.innerHeight * 0.01}px`);
+  }
+  setVh();
+  window.addEventListener('resize', setVh);
+  window.addEventListener('orientationchange', setVh);
+
+  /* ここから先は既存の処理（受付/発祥/カルテ…） */
+  // ...
+});
   // ===== 画面要素 =====
   const scrEntry   = document.getElementById("screen-entry");
   const scrLoading = document.getElementById("screen-loading");
