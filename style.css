@@ -226,3 +226,29 @@ body{
   .retro-titlebar{letter-spacing:.22em;font-size:.85rem}
   .story-title{letter-spacing:.2em}
 }
+
+/* ====== 受付が下に寄る対策（モバイルvh補正 & 受付だけ微上げ） ====== */
+
+/* まず、モバイルで正しい高さが使えるようにカスタムvh */
+:root { --vh: 1vh; }
+
+/* 100dvh に対応しているブラウザではそれを使う */
+@supports (height: 100dvh) {
+  .screen { min-height: 100dvh; }
+}
+
+/* それ以外は JS で更新する --vh を使う */
+@supports not (height: 100dvh) {
+  .screen { min-height: calc(var(--vh, 1vh) * 100); }
+}
+
+/* 受付画面だけ少し上げる（端末の高さに応じて微調整） */
+#screen-entry .browser.retro {
+  transform: translateY(-4vh);
+}
+@media (min-height: 800px) {
+  #screen-entry .browser.retro { transform: translateY(-6vh); }
+}
+@media (max-height: 640px) {
+  #screen-entry .browser.retro { transform: translateY(-2vh); }
+}
