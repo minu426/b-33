@@ -46,15 +46,15 @@ document.addEventListener("DOMContentLoaded", () => {
   /* ---------- 画面切替 ---------- */
   function showScreen(screen){
     document.querySelectorAll(".screen").forEach(s=>{
-      s.classList.remove("active");
+      s.classList.remove("active","global-break","rgb-split","screen-tear","vsync-drift");
       s.classList.add("hidden");
-      s.classList.remove("global-break","rgb-split","screen-tear","vsync-drift");
     });
-    screen.classList.remove("hidden");
-    screen.classList.add("active");
+    const target = screen || scrEntry;
+    target.classList.remove("hidden");
+    target.classList.add("active");
   }
 
-  /* ---------- ノイズ/FX ---------- */
+  /* ---------- FX ---------- */
   function rollBarOnce(){
     if(!FX.roll) return;
     FX.roll.classList.remove('run'); void FX.roll.offsetWidth;
@@ -77,7 +77,6 @@ document.addEventListener("DOMContentLoaded", () => {
     FX.noise.classList.add('strong');
     setTimeout(()=> FX.noise.classList.remove('strong'), ms);
   }
-  // “ガッ”と壊す強グリッチ（短時間で複合）
   function globalBreak(){
     const active = document.querySelector('.screen.active');
     if(!active) return;
@@ -91,14 +90,13 @@ document.addEventListener("DOMContentLoaded", () => {
     setTimeout(()=>{
       const active = document.querySelector(".screen.active");
       if (active){ active.classList.add("jolt"); setTimeout(()=>active.classList.remove("jolt"), 220); }
-      // たまに軽いFX
       if (Math.random()<0.25) rollBarOnce();
       if (Math.random()<0.20) rgbSplitPulse();
       jitterLoop();
     }, next);
   })();
 
-  /* ---------- 受付 → 初回ロード → 見出し → 発祥 ---------- */
+  /* ---------- 受付 → ロード → 見出し → 発祥 ---------- */
   btnStart.addEventListener("click", ()=>{
     const val = (nickInput.value||"").trim();
     if (!val){ nickInput.classList.add("entry-error"); setTimeout(()=>nickInput.classList.remove("entry-error"),220); return; }
@@ -107,7 +105,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     showScreen(scrLoading);
     startInitialLoading(()=>{
-      // 画面切替時にガッと壊す
       globalBreak();
       showScreen(scrName);
       setTimeout(()=>{
@@ -151,7 +148,7 @@ document.addEventListener("DOMContentLoaded", () => {
     startTypewriterParagraphs(storyText, storyParagraphs, 20).then(()=>{
       setTimeout(()=>{
         winChant.classList.remove("hidden");
-        globalBreak(); // “受信ログ”が出る瞬間に壊す
+        globalBreak();
         startChant();
       }, 1400);
     });
@@ -181,14 +178,14 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  // “たすけて”別ウィンドウ：間を空けてから、隙間なしで連打
+  // “たすけて”別ウィンドウ：やや間を空けて開始、隙間なしで高速連打
   function startChant(){
     chantText.classList.add("show");
     let running = true;
     btnWarning.addEventListener("click", ()=> running=false, {once:true});
     (async function loop(){
       while(running){
-        const burst = 1 + Math.floor(Math.random()*3); // 1〜3連打
+        const burst = 1 + Math.floor(Math.random()*3);
         for(let i=0;i<burst;i++){ await typeText(chantText, "たすけて", 12); }
         chantWrap.scrollTop = chantWrap.scrollHeight;
         await wait(260 + Math.random()*420);
@@ -235,14 +232,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
   /* ---------- カルテ：データ／生成 ---------- */
   const recordsData = [
-    { no:"333", name:"<span class='mosaic'>████</span>", diag:"B-33型《バーバラさん》接触症", sym:"頭痛、悪夢、窓の外の気配", prog:"赤い日記帳が届いた夜から症状出現。夜間、窓から赤い日記が持ち去られるのを確認。", mosaic:true },
-    { no:"444", name:"██", diag:"窓辺幻視症", sym:"吐き気、視線恐怖", prog:"窓辺で赤い日記を確認。以後、睡眠障害が悪化。", mosaic:false },
-    { no:"555", name:"<span class='mosaic'>██</span>", diag:"接近過敏", sym:"首筋の寒気、肩圧迫感", prog:"夜半、背部に重量感。窓を開けると軽減。", mosaic:true },
-    { no:"666", name:"<span class='mosaic'>███</span>", diag:"呼称追跡性障害", sym:"耳鳴り、名を呼ばれる幻聴", prog:"呼ばれた翌日、窓に赤い日記が置かれていた。", mosaic:true },
-    { no:"777", name:"█", diag:"夜間接触症候群", sym:"過度の不安、失神", prog:"窓を開けた際、背中に何かを感じ赤い日記が消失。体調急変。", mosaic:false },
-    { no:"888", name:"<span class='mosaic'>████</span>", diag:"視覚残像症", sym:"視覚異常、残像", prog:"赤い日記帳の残像を複数回確認。頭痛増悪。", mosaic:true },
-    { no:"999", name:"██", diag:"急性幻視性不安", sym:"視覚異常、記憶欠落", prog:"証言と記録の齟齬が多発。最後に赤い日記帳を所持。", mosaic:false }
-  ];
+    { no:"101", name:"<span class='mosaic'>██</span>",      diag:"B-33型《バーバラさん》接触症", sym:"頭痛、悪夢、窓の外の気配", prog:"赤い日記帳が届いた夜から症状出現。夜間、窓から何かが覗く。", mosaic:true },
+    { no:"142", name:"██",                                  diag:"窓辺幻視症",                 sym:"吐き気、視線恐怖",         prog:"窓辺で赤い日記を確認。以後、睡眠障害が悪化。", mosaic:false },
+    { no:"233", name:"<span class='mosaic'>██</span>",      diag:"接近過敏",                   sym:"首筋の寒気、肩圧迫感",     prog:"夜半、背部に重量感。窓を開けると軽減。", mosaic:true },
+    { no:"345", name:"<span class='mosaic'>████</span>",    diag:"視覚残像症",                 sym:"視覚異常、残像",           prog:"赤い日記帳の残像を複数回確認。頭痛増悪。", mosaic:true },
+    { no:"589", name:"█",                                  diag:"夜間接触症候群",             sym:"過度の不安、失神",         prog:"窓を開けた際、背中に何かを感じ赤い日記が消失。", mosaic:false },
+    { no:"666", name:"<span class='mosaic'>███</span>",    diag:"呼称追跡性障害",             sym:"耳鳴り、名を呼ばれる幻聴", prog:"呼ばれた翌日、窓に赤い日記が置かれていた。", mosaic:true },
+    { no:"702", name:"<span class='mosaic'>████</span>",    diag:"急性幻視性不安",             sym:"視覚異常、記憶欠落",       prog:"証言と記録の齟齬が多発。最後に赤い日記帳を所持。", mosaic:true }
+  ].sort((a,b)=> Number(a.no)-Number(b.no)); // 昇順
 
   function buildRecords(){
     recordsList.innerHTML = "";
@@ -324,7 +321,7 @@ document.addEventListener("DOMContentLoaded", () => {
     `;
     modal.classList.add("open");
     modal.setAttribute("aria-hidden","false");
-    globalBreak();                // モーダル出現時に強グリッチ
+    globalBreak();                // 出現時に強グリッチ
     startModalCorruption(modalBody);
   }
   modalClose.addEventListener("click", ()=>{
@@ -333,7 +330,7 @@ document.addEventListener("DOMContentLoaded", () => {
     modal.setAttribute("aria-hidden","true");
   });
 
-  /* ---------- 自動更新（一覧の1件を勝手に更新） ---------- */
+  /* ---------- 自動更新（1件だけ勝手に更新） ---------- */
   let autoUpdatedOnce=false;
   function triggerAutoUpdate(){
     if(autoUpdatedOnce) return; autoUpdatedOnce=true;
@@ -344,7 +341,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const field = tdList[tdList.length-1];
     field.innerHTML = `状態悪化を確認。<span class="mosaic">赤い日記帳</span>の所在不明。<span class="badge-update">更新</span>`;
     target.classList.add("updated");
-    globalBreak(); // 自動更新の瞬間も“ガッ”と
+    globalBreak();
   }
 
   /* ---------- 放置腐食（経過欄がじわじわ読みにくく） ---------- */
@@ -359,14 +356,13 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  /* ---------- 共通：初期ランダムFXループ ---------- */
+  /* ---------- ランダムFXループ ---------- */
   (function randomFxLoop(){
     const choice = Math.random();
     if (choice < 0.30) rollBarOnce();
     else if (choice < 0.55) rgbSplitPulse();
     else if (choice < 0.75) screenTearOnce();
     else flashNoise(220);
-    // たまにドリフト
     if (Math.random() < 0.25){
       const active = document.querySelector('.screen.active');
       active?.classList.add('vsync-drift');
