@@ -15,7 +15,7 @@ s.onload=s.onreadystatechange=function(){a=this.readyState;if(f||a&&a!="complete
 f=true;clearTimeout(t);try{Typekit.load(c)}catch(e){}};x.parentNode.insertBefore(s,x)})(document);
 </script>
 
-<link rel="stylesheet" href="style.css?v=80" />
+<link rel="stylesheet" href="style.css?v=90" />
 </head>
 <body>
 
@@ -30,7 +30,7 @@ f=true;clearTimeout(t);try{Typekit.load(c)}catch(e){}};x.parentNode.insertBefore
 </div>
 
 <!-- 0) 受付（中央寄せ） -->
-<section id="screen-entry" class="screen active centered">
+<section id="screen-entry" class="screen centered active">
   <div class="browser retro crt">
     <div class="retro-titlebar">
       <span class="retro-title">受　付</span>
@@ -52,26 +52,28 @@ f=true;clearTimeout(t);try{Typekit.load(c)}catch(e){}};x.parentNode.insertBefore
 </section>
 
 <!-- 1) 初回ロード（中央寄せ） -->
-<section id="screen-loading" class="screen centered">
+<section id="screen-loading" class="screen centered hidden">
   <div class="center">
     <p class="spaced">診断情報を準備しています…</p>
     <p id="load-per" class="percent">0%</p>
   </div>
 </section>
 
-<!-- 2) 名前＋見出し（中央寄せ・はみ出し防止） -->
-<section id="screen-name" class="screen centered">
+<!-- 2) 名前＋見出し（中央寄せ・改行固定） -->
+<section id="screen-name" class="screen centered hidden">
   <div class="name-wrap">
     <p class="who-line">―― <span id="who-name">来訪者</span> 様の診断結果 ――</p>
-    <h1 class="kaiki">B-33型《バーバラさん》</h1>
+    <h1 class="kaiki">
+      <span>B-33型</span><br><span>《バーバラさん》</span>
+    </h1>
   </div>
 </section>
 
-<!-- 3) 発祥（ページは縦スクロール可能／中身は上寄せ） -->
-<section id="screen-story" class="screen top">
+<!-- 3) 発祥（ページ縦スクロール可／中身上寄せ+ウィンドウ内スクロール） -->
+<section id="screen-story" class="screen top hidden">
   <div class="stack">
     <!-- 本文ウィンドウ（ボックス→少し遅れて本文フェードイン） -->
-    <div class="browser retro crt win-main appear">
+    <div class="browser retro crt win-main appear ui-top">
       <div class="retro-titlebar">
         <span class="retro-title">発　祥　ス　ト　ー　リ　ー</span>
         <div class="retro-controls"><span class="ctrl">_</span><span class="ctrl">□</span><span class="ctrl close">×</span></div>
@@ -86,7 +88,7 @@ f=true;clearTimeout(t);try{Typekit.load(c)}catch(e){}};x.parentNode.insertBefore
     </div>
 
     <!-- “たすけて”ミニウィンドウ（ボックス挿入→中の文字はタイプライター） -->
-    <div id="win-chant" class="browser retro crt win-mini appear hidden">
+    <div id="win-chant" class="browser retro crt win-mini appear hidden ui-top">
       <div class="retro-titlebar">
         <span class="retro-title">受　信　ロ　グ</span>
         <div class="retro-controls"><span class="ctrl">_</span><span class="ctrl">□</span><span class="ctrl close">×</span></div>
@@ -98,10 +100,13 @@ f=true;clearTimeout(t);try{Typekit.load(c)}catch(e){}};x.parentNode.insertBefore
       </div>
     </div>
   </div>
+
+  <!-- 画面別ノイズ（GIF） -->
+  <div class="screen-noise story" aria-hidden="true"></div>
 </section>
 
 <!-- 4) 注意（中央寄せ・赤） -->
-<section id="screen-warning" class="screen centered">
+<section id="screen-warning" class="screen centered hidden">
   <div class="center">
     <p class="warning spaced">
       これから表示される内容は極めて危険です。<br>
@@ -113,21 +118,24 @@ f=true;clearTimeout(t);try{Typekit.load(c)}catch(e){}};x.parentNode.insertBefore
 </section>
 
 <!-- 5) カルテロード（中央寄せ） -->
-<section id="screen-records-loading" class="screen centered">
+<section id="screen-records-loading" class="screen centered hidden">
   <div class="center">
     <p class="spaced">カルテ情報を取得しています…</p>
     <p id="rec-per" class="percent">0%</p>
   </div>
 </section>
 
-<!-- 6) カルテ一覧（ページは縦スクロール可能／上寄せ） -->
-<section id="screen-records" class="screen top">
-  <div class="records crt">
+<!-- 6) カルテ一覧（ページ縦スクロール可／上寄せ） -->
+<section id="screen-records" class="screen top hidden">
+  <div class="records crt ui-top">
     <h3 class="records-title chromatic">患者記録一覧</h3>
     <p class="records-note warning">※ 閲覧は自己責任でお願いします。視聴・読解により身体症状の悪化が報告されています。</p>
     <div id="records-list"></div>
     <div class="controls"><button id="btn-back-story" class="btn">発祥ストーリーに戻る</button></div>
   </div>
+
+  <!-- 画面別ノイズ（GIF） -->
+  <div class="screen-noise records" aria-hidden="true"></div>
 </section>
 
 <!-- 7) 詳細モーダル -->
@@ -139,6 +147,6 @@ f=true;clearTimeout(t);try{Typekit.load(c)}catch(e){}};x.parentNode.insertBefore
   </div>
 </div>
 
-<script src="script.js?v=80"></script>
+<script src="script.js?v=90"></script>
 </body>
 </html>
