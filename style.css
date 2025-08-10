@@ -250,5 +250,5 @@ body{
   #screen-entry .browser.retro { transform: translateY(-6vh); }
 }
 @media (max-height: 640px) {
-  #screen-entry .browser.retro { transform: translateY(-2vh); }
+  #screen-entry .browser.retro { transform: translateY(-6vh); }
 }
