@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>B-33型《バーバラさん》 診断記録</title>
 
-<!-- Adobe Fonts（DNP 秀英角ゴシック金） -->
+<!-- Adobe Fonts（秀英角ゴシック金） -->
 <script>
 (function(d){var c={kitId:'ouz3iep',scriptTimeout:3000,async:true},h=d.documentElement,
 t=setTimeout(function(){h.className=h.className.replace(/\bwf-loading\b/g,"")+" wf-inactive";},c.scriptTimeout),
@@ -15,14 +15,14 @@ s.onload=s.onreadystatechange=function(){a=this.readyState;if(f||a&&a!="complete
 f=true;clearTimeout(t);try{Typekit.load(c)}catch(e){}};x.parentNode.insertBefore(s,x)})(document);
 </script>
 
-<link rel="stylesheet" href="style.css?v=60" />
+<link rel="stylesheet" href="style.css?v=61" />
 </head>
 <body>
 
-<!-- 薄い常時ノイズ -->
+<!-- 薄ノイズ -->
 <div id="noise" aria-hidden="true"></div>
 
-<!-- 全画面FX（粒子／傷／ロールバー） -->
+<!-- 全画面FX -->
 <div id="fx" aria-hidden="true">
   <div class="fx-grain"></div>
   <div class="fx-scratches"></div>
@@ -52,7 +52,7 @@ f=true;clearTimeout(t);try{Typekit.load(c)}catch(e){}};x.parentNode.insertBefore
 </section>
 
 <!-- 1) 初回ロード -->
-<section id="screen-loading" class="screen hidden">
+<section id="screen-loading" class="screen">
   <div class="center">
     <p class="spaced">診断情報を準備しています…</p>
     <p id="load-per" class="percent">0%</p>
@@ -60,32 +60,33 @@ f=true;clearTimeout(t);try{Typekit.load(c)}catch(e){}};x.parentNode.insertBefore
 </section>
 
 <!-- 2) 名前＋見出し -->
-<section id="screen-name" class="screen hidden">
+<section id="screen-name" class="screen">
   <div class="center">
     <p class="who-line">―― <span id="who-name">来訪者</span> 様の診断結果 ――</p>
     <h1 class="kaiki">B-33型《バーバラさん》</h1>
   </div>
 </section>
 
-<!-- 3) 発祥ストーリー（本文）＋ “受信ログ（たすけて）” -->
-<section id="screen-story" class="screen hidden">
+<!-- 3) 発祥（本文ウィンドウ + “たすけて”ミニウィンドウ） -->
+<section id="screen-story" class="screen">
   <div class="stack">
     <!-- 本文ウィンドウ -->
-    <div class="browser retro crt win-main">
+    <div class="browser retro crt win-main" id="win-main">
       <div class="retro-titlebar">
-        <span class="retro-title">発祥ストーリー</span>
+        <span class="retro-title">発　祥</span>
         <div class="retro-controls"><span class="ctrl">_</span><span class="ctrl">□</span><span class="ctrl close">×</span></div>
       </div>
       <div class="retro-pane">
         <h2 class="kaiki-sub chromatic">“B-33型《バーバラさん》”</h2>
-        <div id="story-scroll" class="scrollbox phosphor">
-          <div id="story-text" class="typewriter"></div>
+        <!-- 初期はコンテンツ非表示、あとからフェードイン -->
+        <div id="story-scroll" class="scrollbox phosphor content-hidden">
+          <div id="story-text" class="story-text"></div>
         </div>
         <button id="btn-to-warning" class="btn">過去の患者カルテを見る</button>
       </div>
     </div>
 
-    <!-- “受信ログ（たすけて）” -->
+    <!-- “たすけて”ミニウィンドウ（最初は非表示） -->
     <div id="win-chant" class="browser retro crt win-mini hidden">
       <div class="retro-titlebar">
         <span class="retro-title">受 信 ロ グ</span>
@@ -100,8 +101,8 @@ f=true;clearTimeout(t);try{Typekit.load(c)}catch(e){}};x.parentNode.insertBefore
   </div>
 </section>
 
-<!-- 4) 注意（赤文字） -->
-<section id="screen-warning" class="screen hidden">
+<!-- 4) 注意 -->
+<section id="screen-warning" class="screen">
   <div class="center">
     <p class="warning spaced">
       これから表示される内容は極めて危険です。<br>
@@ -113,7 +114,7 @@ f=true;clearTimeout(t);try{Typekit.load(c)}catch(e){}};x.parentNode.insertBefore
 </section>
 
 <!-- 5) カルテロード -->
-<section id="screen-records-loading" class="screen hidden">
+<section id="screen-records-loading" class="screen">
   <div class="center">
     <p class="spaced">カルテ情報を取得しています…</p>
     <p id="rec-per" class="percent">0%</p>
@@ -121,7 +122,7 @@ f=true;clearTimeout(t);try{Typekit.load(c)}catch(e){}};x.parentNode.insertBefore
 </section>
 
 <!-- 6) カルテ一覧 -->
-<section id="screen-records" class="screen hidden">
+<section id="screen-records" class="screen">
   <div class="records crt">
     <h3 class="records-title chromatic">患者記録一覧</h3>
     <div id="records-list"></div>
@@ -138,6 +139,6 @@ f=true;clearTimeout(t);try{Typekit.load(c)}catch(e){}};x.parentNode.insertBefore
   </div>
 </div>
 
-<script src="script.js?v=60"></script>
+<script src="script.js?v=61"></script>
 </body>
 </html>
