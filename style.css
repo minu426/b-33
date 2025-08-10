@@ -160,3 +160,10 @@ body{
   .screen.active { display:flex !important; }
   body { background:#000 !important; color:#eee !important; }
 </style>
+/* --- 緊急: 受付のセクションを常に出す --- */
+#screen-entry { 
+  display:flex !important; 
+  visibility:visible !important; 
+  opacity:1 !important; 
+  min-height:100vh;
+}
