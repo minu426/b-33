@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>B-33型《バーバラさん》 診断記録</title>
 
-<!-- Adobe Fonts（秀英角ゴシック金） -->
+<!-- Adobe Fonts（DNP 秀英角ゴシック金） -->
 <script>
 (function(d){var c={kitId:'ouz3iep',scriptTimeout:3000,async:true},h=d.documentElement,
 t=setTimeout(function(){h.className=h.className.replace(/\bwf-loading\b/g,"")+" wf-inactive";},c.scriptTimeout),
@@ -15,25 +15,31 @@ s.onload=s.onreadystatechange=function(){a=this.readyState;if(f||a&&a!="complete
 f=true;clearTimeout(t);try{Typekit.load(c)}catch(e){}};x.parentNode.insertBefore(s,x)})(document);
 </script>
 
-<link rel="stylesheet" href="style.css?v=70" />
+<link rel="stylesheet" href="style.css?v=80" />
 </head>
 <body>
 
-<!-- 常時: 薄ノイズ -->
-<div id="noise" aria-hidden="true"></div>
+<!-- 背景ノイズ動画（画面別。最背面固定） -->
+<video id="bg-story" class="bg-video tint-blue" autoplay muted loop playsinline>
+  <source src="assets/noise_story.mp4" type="video/mp4">
+</video>
+<video id="bg-records" class="bg-video" autoplay muted loop playsinline>
+  <source src="assets/noise_records.mp4" type="video/mp4">
+</video>
 
-<!-- 全画面FX -->
+<!-- 走査線/粒状/ロールバーなど全体FX -->
 <div id="fx" aria-hidden="true">
   <div class="fx-grain"></div>
-  <div class="fx-scratches"></div>
+  <div class="fx-scanlines"></div>
+  <div class="fx-vignette"></div>
   <div class="fx-rollbar"></div>
 </div>
 
-<!-- 0) 受付（青プレート背景） -->
-<section id="screen-entry" class="screen blue-plate active">
-  <div class="browser retro crt strong">
+<!-- 0) 受付 -->
+<section id="screen-entry" class="screen active">
+  <div class="browser retro crt">
     <div class="retro-titlebar">
-      <span class="retro-title nowrap">受　付</span>
+      <span class="retro-title">受　付</span>
       <div class="retro-controls"><span class="ctrl">_</span><span class="ctrl">□</span><span class="ctrl close">×</span></div>
     </div>
     <div class="retro-pane">
@@ -41,7 +47,7 @@ f=true;clearTimeout(t);try{Typekit.load(c)}catch(e){}};x.parentNode.insertBefore
         診断で使用したお名前を入力してください。<br>
         <strong data-no-corrupt>※ 実名はお控えください（渾名・イニシャル推奨）</strong>
       </p>
-      <div class="entry-form large">
+      <div class="entry-form">
         <input id="nick-input" type="text" autocomplete="off" autocapitalize="off" maxlength="20"
                placeholder="例）ミヌ／M.N.／来訪者" aria-label="お名前（渾名）">
         <button id="btn-start" class="btn">データの照合</button>
@@ -59,36 +65,39 @@ f=true;clearTimeout(t);try{Typekit.load(c)}catch(e){}};x.parentNode.insertBefore
   </div>
 </section>
 
-<!-- 2) 名前＋見出し（2行に分割） -->
+<!-- 2) 名前＋見出し -->
 <section id="screen-name" class="screen">
   <div class="center">
     <p class="who-line">―― <span id="who-name">来訪者</span> 様の診断結果 ――</p>
-    <h1 class="kaiki"><span>B-33型</span><br><span>《バーバラさん》</span></h1>
+    <h1 class="kaiki">
+      <span class="kaiki-line">B-33型<wbr></span>
+      <span class="kaiki-line">《バーバラさん》</span>
+    </h1>
   </div>
 </section>
 
-<!-- 3) 発祥（青プレート背景 / 本文フェードイン、たすけてはタイプライター） -->
-<section id="screen-story" class="screen blue-plate">
+<!-- 3) 発祥（本文ウィンドウ + “たすけて”ウィンドウ） -->
+<section id="screen-story" class="screen">
   <div class="stack">
-    <!-- 本文ウィンドウ -->
-    <div class="browser retro crt strong win-main">
+    <!-- 本文ウィンドウ：先にボックス挿入→少し遅れて本文フェードイン -->
+    <div class="browser retro crt win-main appear">
       <div class="retro-titlebar">
-        <span class="retro-title nowrap">発　祥　ス　ト　ー　リ　ー</span>
+        <span class="retro-title story-title">発 祥 ス ト ー リ ー</span>
         <div class="retro-controls"><span class="ctrl">_</span><span class="ctrl">□</span><span class="ctrl close">×</span></div>
       </div>
       <div class="retro-pane">
         <h2 class="kaiki-sub chromatic">“B-33型《バーバラさん》”</h2>
         <div id="story-scroll" class="scrollbox phosphor">
-          <div id="story-text" class="story-fade"></div>
+          <div id="story-text" class="story-body"></div>
         </div>
         <button id="btn-to-warning" class="btn">過去の患者カルテを見る</button>
       </div>
     </div>
 
-    <!-- “たすけて”ウィンドウ -->
-    <div id="win-chant" class="browser retro crt strong win-mini hidden">
+    <!-- “たすけて”ミニウィンドウ：同じ挿入演出、本文はタイプライター -->
+    <div id="win-chant" class="browser retro crt win-mini hidden appear">
       <div class="retro-titlebar">
-        <span class="retro-title nowrap">受 信 ロ グ</span>
+        <span class="retro-title">受 信 ロ グ</span>
         <div class="retro-controls"><span class="ctrl">_</span><span class="ctrl">□</span><span class="ctrl close">×</span></div>
       </div>
       <div class="retro-pane">
@@ -100,10 +109,10 @@ f=true;clearTimeout(t);try{Typekit.load(c)}catch(e){}};x.parentNode.insertBefore
   </div>
 </section>
 
-<!-- 4) 注意（赤文字） -->
+<!-- 4) 注意 -->
 <section id="screen-warning" class="screen">
   <div class="center">
-    <p class="warning spaced strong-red">
+    <p class="warning spaced">
       これから表示される内容は極めて危険です。<br>
       閲覧によって発生したいかなる事象についても当院は責任を負いかねます。<br>
       自己責任で閲覧してください。
@@ -122,9 +131,9 @@ f=true;clearTimeout(t);try{Typekit.load(c)}catch(e){}};x.parentNode.insertBefore
 
 <!-- 6) カルテ一覧 -->
 <section id="screen-records" class="screen">
-  <div class="records crt strong">
+  <div class="records crt">
     <h3 class="records-title chromatic">患者記録一覧</h3>
-    <p class="records-note strong-red">※ 以降の閲覧は自己責任でお願いします。</p>
+    <p class="records-note warning">※ 個人情報に関わるため一部を伏せています。</p>
     <div id="records-list"></div>
     <div class="controls"><button id="btn-back-story" class="btn">発祥ストーリーに戻る</button></div>
   </div>
@@ -139,6 +148,7 @@ f=true;clearTimeout(t);try{Typekit.load(c)}catch(e){}};x.parentNode.insertBefore
   </div>
 </div>
 
-<script src="script.js?v=70"></script>
+<script src="script.js?v=80"></script>
 </body>
 </html>
+
