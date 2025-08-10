@@ -221,3 +221,9 @@ body{
   .retro-titlebar{letter-spacing:.22em;font-size:.86rem}
   .scrollbox{max-height:62vh}
 }
+
+/* ページ本体は常にスクロールさせない */
+html, body{
+  height:100%;
+  overflow:hidden;    /* ← これで “他の画面が見えてしまう” を防止 */
+}
