@@ -3,13 +3,20 @@ document.addEventListener("DOMContentLoaded", () => {
   function setVh(){ document.documentElement.style.setProperty('--vh', `${window.innerHeight * 0.01}px`); }
   setVh(); window.addEventListener('resize', setVh); window.addEventListener('orientationchange', setVh);
 
-  /* ===== Video未対応ならgifに切替（class付与） ===== */
-  (function checkVideo(){
-    const v = document.createElement('video');
-    if(!('canPlayType' in v)) document.body.classList.add('no-video');
+  /* ===== Video autoplay チェック：失敗→gifへ ===== */
+  (async function ensureVideo(){
+    const vids = document.querySelectorAll('.bgv');
+    let anyFailed = false;
+    for (const v of vids){
+      try{
+        const p = v.play();
+        if (p && typeof p.then==='function'){ await p; }
+      }catch(e){ anyFailed = true; }
+    }
+    if (anyFailed){ document.body.classList.add('no-video'); }
   })();
 
-  /* ===== 要素参照 ===== */
+  /* ===== 要素 ===== */
   const scrEntry   = document.getElementById("screen-entry");
   const scrLoading = document.getElementById("screen-loading");
   const scrName    = document.getElementById("screen-name");
@@ -26,6 +33,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const recPer = document.getElementById("rec-per");
 
   const storyText = document.getElementById("story-text");
+  const storyScroll = document.getElementById("story-scroll");
   const winChant  = document.getElementById("win-chant");
   const chantWrap = document.getElementById("chant-scroll");
   const chantText = document.getElementById("chant-text");
@@ -34,6 +42,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const btnAgree   = document.getElementById("btn-agree");
   const btnBack    = document.getElementById("btn-back-story");
 
+  const recordsWrap = document.querySelector("#screen-records .records");
   const recordsList = document.getElementById("records-list");
 
   const modal      = document.getElementById("modal");
@@ -53,7 +62,31 @@ document.addEventListener("DOMContentLoaded", () => {
       s.classList.remove("global-break","rgb-split","screen-tear","vsync-drift");
     });
     screen.classList.remove("hidden"); screen.classList.add("active");
+    sizeScrollAreas(); // 画面切替のたびに高さ再計算
   }
+
+  /* ===== スクロール領域の高さをpx指定（安定化） ===== */
+  function sizeScrollAreas(){
+    const vh = window.innerHeight;
+    // 発祥本文：全高の約58%（最小: 320px）
+    if (storyScroll){
+      const h = Math.max(320, Math.round(vh * 0.58));
+      storyScroll.style.height = h + 'px';
+    }
+    // たすけて欄：全高の約26%（最小: 160px）
+    if (chantWrap){
+      const h = Math.max(160, Math.round(vh * 0.26));
+      chantWrap.style.height = h + 'px';
+    }
+    // カルテラッパ：全高の約80%（最小: 420px）
+    if (recordsWrap){
+      const h = Math.max(420, Math.round(vh * 0.80));
+      recordsWrap.style.maxHeight = h + 'px';
+    }
+  }
+  sizeScrollAreas();
+  window.addEventListener('resize', sizeScrollAreas);
+  window.addEventListener('orientationchange', sizeScrollAreas);
 
   /* ===== FX ===== */
   function rollBarOnce(){ if(!FX.roll) return; FX.roll.classList.remove('run'); void FX.roll.offsetWidth; FX.roll.classList.add('run'); }
@@ -62,14 +95,12 @@ document.addEventListener("DOMContentLoaded", () => {
   function flashNoise(ms=260){ if(!FX.noise) return; FX.noise.classList.add('strong'); setTimeout(()=>FX.noise.classList.remove('strong'),ms); }
   function globalBreak(){ const a=document.querySelector('.screen.active'); if(!a) return; a.classList.add('global-break'); rollBarOnce(); rgbSplitPulse(); screenTearOnce(); flashNoise(340); setTimeout(()=>a.classList.remove('global-break'),360); }
 
-  // ランダム“ガガガ” + ロールバー多め
   (function randomFxLoop(){
     const c=Math.random();
     if (c < 0.45) rollBarOnce();
     else if (c < 0.70) rgbSplitPulse();
     else if (c < 0.85) screenTearOnce();
     else flashNoise(220);
-
     if (Math.random() < 0.25){
       const a=document.querySelector('.screen.active');
       a?.classList.add('vsync-drift');
@@ -79,8 +110,6 @@ document.addEventListener("DOMContentLoaded", () => {
   })();
 
   /* ===== シーケンス ===== */
-
-  // 受付 → ロード → 見出し → 発祥
   btnStart.addEventListener("click", ()=>{
     const val = (nickInput.value||"").trim();
     if (!val){ nickInput.classList.add("entry-error"); setTimeout(()=>nickInput.classList.remove("entry-error"),220); return; }
@@ -99,7 +128,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-  // 初回ロード％
   function startInitialLoading(done){
     let p=0;
     (function step(){
@@ -116,7 +144,6 @@ document.addEventListener("DOMContentLoaded", () => {
     })();
   }
 
-  // 発祥本文（タイプライターは使わず、ウィンドウ出現後テキストがフェード）
   const storyParagraphs = [
     "昔、とある少女が惨殺され、その少女は赤い日記帳に日々の出来事を綴っていた。",
     "少女の死後、その赤い日記帳は忽然と姿を消し、どこを探しても見つからなかった。",
@@ -128,20 +155,15 @@ document.addEventListener("DOMContentLoaded", () => {
   ];
 
   function startStorySequence(){
-    // 本文挿入
     storyText.innerHTML = storyParagraphs.map(t=>`<p>${t}</p>`).join("");
-    // 少し遅延してフェードイン
     setTimeout(()=> storyText.classList.add('show'), 380);
-
-    // “たすけて”ウィンドウを遅れて出す
     setTimeout(()=>{
       winChant.classList.remove('hidden');
       globalBreak();
-      startChant();   // こちらはタイプライター
+      startChant();
     }, 1200);
   }
 
-  // “たすけて”のタイプライター
   function typeText(el, text, speed=18){
     return new Promise(resolve=>{
       let i=0;
@@ -154,7 +176,7 @@ document.addEventListener("DOMContentLoaded", () => {
       })();
     });
   }
-  function wait(ms){ return new Promise(r=>setTimeout(r,ms)); }
+  const wait = (ms)=> new Promise(r=>setTimeout(r,ms));
 
   function startChant(){
     chantText.classList.add("show");
@@ -170,7 +192,6 @@ document.addEventListener("DOMContentLoaded", () => {
     })();
   }
 
-  // 注意 → カルテロード
   btnWarning.addEventListener("click", ()=>{ globalBreak(); showScreen(scrWarn); });
   btnAgree.addEventListener("click", ()=> startRecordLoading());
   btnBack.addEventListener("click", ()=>{ globalBreak(); showScreen(scrStory); });
@@ -221,14 +242,14 @@ document.addEventListener("DOMContentLoaded", () => {
         </table>
         <button class="btn open-detail" data-id="${rec.no}">詳細を見る</button>
       `;
-      card.querySelector(".open-detail").addEventListener("click", ()=>{
-        openDetailModal(rec);
-      });
+      card.querySelector(".open-detail").addEventListener("click", ()=> openDetailModal(rec));
       recordsList.appendChild(card);
     });
+    // 高さ再計算
+    sizeScrollAreas();
   }
 
-  /* ===== モーダル（文字化けは控えめ） ===== */
+  /* ===== モーダル：文字化け控えめ ===== */
   let corruptTimer = null;
   let corruptSession = [];
   function collectTextNodes(root){
@@ -311,10 +332,10 @@ document.addEventListener("DOMContentLoaded", () => {
   function slowCorruptRecords(){
     const fields = document.querySelectorAll('#records-list .karte tr:last-child td');
     fields.forEach((td,i)=>{
-      const walker = collectTextNodes(td).map(n=>({node:n,original:n.nodeValue}));
+      const nodes = collectTextNodes(td).map(n=>({node:n,original:n.nodeValue}));
       let t=0; setInterval(()=>{
-        t++; const r = Math.min(0.18, 0.02 + 0.02*t); // 少し軽めに
-        walker.forEach(it=> it.node.nodeValue = corruptString(it.original, r));
+        t++; const r = Math.min(0.18, 0.02 + 0.02*t);
+        nodes.forEach(it=> it.node.nodeValue = corruptString(it.original, r));
       }, 4200 + i*1200);
     });
   }
