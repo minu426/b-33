@@ -18,11 +18,11 @@ document.addEventListener("DOMContentLoaded", () => {
   const recPer = document.getElementById("rec-per");
 
   // 発祥
-  const winMain  = document.querySelector("#screen-story .win-main");
-  const winChant = document.getElementById("win-chant");
-  const chantWrap= document.getElementById("chant-scroll");
-  const chantText= document.getElementById("chant-text");
-  const storyText= document.getElementById("story-text");
+  const winMain   = document.querySelector("#screen-story .win-main");
+  const winChant  = document.getElementById("win-chant");
+  const chantWrap = document.getElementById("chant-scroll");
+  const chantText = document.getElementById("chant-text");
+  const storyText = document.getElementById("story-text");
   const btnWarning= document.getElementById("btn-to-warning");
 
   // 注意/戻る
@@ -38,11 +38,24 @@ document.addEventListener("DOMContentLoaded", () => {
   const modalBody  = document.getElementById("modal-body");
   const modalClose = document.getElementById("modal-close");
 
-  // FX
-  const FX = {
-    roll: document.querySelector('#fx .fx-rollbar')
-  };
+  /* ==== 背景動画の再生保証（失敗時はフェイルセーフ） ==== */
+  function ensureVideoPlay(id){
+    const v = document.getElementById(id);
+    if(!v) return;
+    v.muted = true; v.playsInline = true;
+    const p = v.play();
+    if (p && typeof p.catch === 'function'){
+      p.catch(()=>{
+        // 再生できない場合はフェイルセーフ（背景グラデのみ）
+        v.style.display = 'none';
+      });
+    }
+  }
+  // 初期（受付）だけはDOMContentLoadedで念のため呼ぶ
+  ["bg-entry","bg-loading","bg-name","bg-story","bg-warning","bg-records-loading","bg-records"]
+    .forEach(id=> ensureVideoPlay(id));
 
+  /* ==== 画面切替 ==== */
   function showScreen(screen){
     document.querySelectorAll(".screen").forEach(s=>{
       s.classList.remove("active");
@@ -51,9 +64,14 @@ document.addEventListener("DOMContentLoaded", () => {
     });
     screen.classList.remove("hidden");
     screen.classList.add("active");
+
+    // 画面に入るたびに背景動画の再生を保証
+    const vid = screen.querySelector(".bg-noise");
+    if (vid && vid.id) ensureVideoPlay(vid.id);
   }
 
-  /* ==== エフェクト ==== */
+  /* ==== 画面エフェクト ==== */
+  const FX = { roll: document.querySelector('#fx .fx-rollbar') };
   function rollBarOnce(){
     if(!FX.roll) return;
     FX.roll.classList.remove('run'); void FX.roll.offsetWidth;
@@ -72,7 +90,6 @@ document.addEventListener("DOMContentLoaded", () => {
     if (c < 0.45) rollBarOnce();
     else if (c < 0.70) rgbSplitPulse();
     else if (c < 0.85) screenTearOnce();
-    // たまに小刻み
     const a=document.querySelector('.screen.active');
     if (a && Math.random()<.25){
       a.classList.add('vsync-drift');
@@ -102,19 +119,16 @@ document.addEventListener("DOMContentLoaded", () => {
     showScreen(scrLoading);
     startInitialLoading(()=>{
       showScreen(scrName);
-      // 名前表示少し待ってから発祥へ
       setTimeout(()=>{
         showScreen(scrStory);
-        // ボックスのフェードイン
+        // 発祥：ボックスと本文フェード、たすけて開始
         requestAnimationFrame(()=>{
           winMain.classList.add('ready');
           setTimeout(()=>{ winChant.classList.remove('hidden'); winChant.classList.add('ready'); }, 250);
-          // 発祥本文を遅れてフェードイン
           setTimeout(()=> storyText.classList.add('show'), 240);
-          // “たすけて” タイプライター開始
           setTimeout(startChant, 800);
         });
-      }, 1600);
+      }, 1400);
     });
   });
 
@@ -124,11 +138,8 @@ document.addEventListener("DOMContentLoaded", () => {
       p += (p<40?1:(p<80?2:5));
       if (p>100) p=100;
       perEl.textContent = p+"%";
-      if (p<100){
-        setTimeout(step, Math.max(18, 120*Math.pow(0.85,p/10)));
-      }else{
-        done && done();
-      }
+      if (p<100){ setTimeout(step, Math.max(18, 120*Math.pow(0.85,p/10))); }
+      else { done && done(); }
     })();
   }
 
@@ -304,5 +315,3 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
 });
-
-
