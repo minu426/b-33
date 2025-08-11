@@ -39,13 +39,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // ノイズ動画/FX
   const noiseVideo  = document.getElementById("noise-layer");
+  const trans       = document.getElementById("transition-noise");
   const FX = {
     roll: document.querySelector('#fx .fx-rollbar'),
   };
 
-  /* ---------- 画面切替 ---------- */
+  /* ---------- ノイズ動画ソース切替 ---------- */
   function useNoiseFor(screen){
-    // 受付/発祥 = story、カルテ = records、それ以外はstory
     let src = "assets/noise_story.mp4";
     if (screen === scrRecords || screen === scrRecLoad) src = "assets/noise_records.mp4";
     if (noiseVideo.dataset.src !== src){
@@ -54,35 +54,45 @@ document.addEventListener("DOMContentLoaded", () => {
       noiseVideo.dataset.src = src;
       noiseVideo.load();
       const p = noiseVideo.play();
-      if (p && typeof p.catch === 'function'){
-        p.catch(()=>{}) // iOSで黙って止まるのを避けて後で再開トライ
-      }
+      if (p && typeof p.catch === 'function'){ p.catch(()=>{}) }
     }
-    // 濃さは固定（可読性重視）
-    noiseVideo.style.opacity = ".18";
+    noiseVideo.classList.remove('boost'); // 基本濃度
+  }
+  // iOS復帰
+  function ensureVideo(){
+    if (!noiseVideo) return;
+    const p = noiseVideo.play();
+    if (p && typeof p.catch === 'function'){ p.catch(()=>{}) }
+  }
+  document.addEventListener('visibilitychange', ()=> { if (!document.hidden) ensureVideo(); });
+  document.addEventListener('touchstart', ensureVideo, {passive:true, once:true});
+
+  /* ---------- トランジション（ノイズ） ---------- */
+  function playTransition(cb){
+    trans.classList.add('show');
+    noiseVideo.classList.add('boost');
+    setTimeout(()=>{ trans.classList.remove('show'); noiseVideo.classList.remove('boost'); cb&&cb(); }, 320);
   }
 
+  /* ---------- 画面切替（ノイズ演出付き） ---------- */
   function showScreen(screen){
-    document.querySelectorAll(".screen").forEach(s=>{
-      s.classList.remove("active");
+    playTransition(()=>{
+      document.querySelectorAll(".screen").forEach(s=> s.classList.remove("active"));
+      screen.classList.add("active");
+
+      if (screen.classList.contains("page-scroll")){
+        document.body.classList.add("allow-scroll");
+        document.body.classList.remove("no-scroll");
+      }else{
+        document.body.classList.remove("allow-scroll");
+        document.body.classList.add("no-scroll");
+        window.scrollTo(0,0);
+      }
+      useNoiseFor(screen);
     });
-    screen.classList.add("active");
-
-    // ページスクロール制御
-    if (screen.classList.contains("page-scroll")){
-      document.body.classList.add("allow-scroll");
-      document.body.classList.remove("no-scroll");
-    }else{
-      document.body.classList.remove("allow-scroll");
-      document.body.classList.add("no-scroll");
-      window.scrollTo(0,0);
-    }
-
-    // ノイズ動画切替
-    useNoiseFor(screen);
   }
 
-  /* ---------- ノイズ/FX ---------- */
+  /* ---------- 軽FX ---------- */
   function rollBarOnce(){
     if(!FX.roll) return;
     FX.roll.classList.remove('run'); void FX.roll.offsetWidth;
@@ -106,6 +116,7 @@ document.addEventListener("DOMContentLoaded", () => {
     active.classList.add('global-break'); rollBarOnce(); rgbSplitPulse(); screenTearOnce();
     setTimeout(()=> active.classList.remove('global-break'), 360);
   }
+
   // ランダム“ガガガ”
   (function jitterLoop(){
     const next = 1500 + Math.random()*3000;
@@ -118,24 +129,26 @@ document.addEventListener("DOMContentLoaded", () => {
     }, next);
   })();
 
-  /* ---------- iOS動画の再生復帰 ---------- */
-  function ensureVideo(){
-    if (!noiseVideo) return;
-    const p = noiseVideo.play();
-    if (p && typeof p.catch === 'function'){ p.catch(()=>{}) }
-  }
-  document.addEventListener('visibilitychange', ()=> { if (!document.hidden) ensureVideo(); });
-  document.addEventListener('touchstart', ensureVideo, {passive:true, once:true});
-
   /* ---------- 前置き → 受付 ---------- */
-  useNoiseFor(scrEntry); // 最初の動画はstory系
-  setTimeout(()=>{
-    globalBreak();
-    showScreen(scrEntry);
-  }, 3600); // しっかり読める長さ
+  useNoiseFor(scrEntry); // 最初の動画はstory系に
+  setTimeout(()=>{ showScreen(scrEntry); }, 3800); // しっかり読める長さ
+
+  /* ---------- ボタン押し感（視覚） ---------- */
+  function pressFX(btn){
+    btn.classList.add('pressed');
+    const head = btn.closest('.viewer')?.querySelector('.led');
+    if (head){
+      const old = head.style.boxShadow;
+      head.style.boxShadow="0 0 10px #ff5a5a, 0 0 20px rgba(255,90,90,.6)";
+      setTimeout(()=> head.style.boxShadow=old, 140);
+    }
+    setTimeout(()=> btn.classList.remove('pressed'), 160);
+  }
 
   /* ---------- 受付 → 初回ロード → 見出し → 発祥 ---------- */
   btnStart.addEventListener("click", ()=>{
+    pressFX(btnStart);
+
     const val = (nickInput.value||"").trim();
     if (!val){ nickInput.classList.add("entry-error"); setTimeout(()=>nickInput.classList.remove("entry-error"),220); return; }
     visitorName = val.slice(0,20);
@@ -147,12 +160,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
     showScreen(scrLoading);
     startInitialLoading(()=>{
-      globalBreak();
       showScreen(scrName);
       // 見出しを遅れてフェードアップ（B-33 → 《バーバラさん》）
       revealKaiki();
       setTimeout(()=>{
-        globalBreak();
         showScreen(scrStory);
         startStorySequence();
       }, 2000);
@@ -201,7 +212,7 @@ document.addEventListener("DOMContentLoaded", () => {
   ];
 
   function startStorySequence(){
-    // ウィンドウがボワッと表示された後にテキストをフェード配置
+    // 本文（段落フェード）
     storyText.innerHTML = "";
     const frag = document.createDocumentFragment();
     storyParagraphs.forEach((t,i)=>{
@@ -219,7 +230,7 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     });
 
-    // “たすけて”ウィンドウはさらに遅れて出す
+    // 受信ログは遅らせて表示 → 表示後にタイプ開始
     setTimeout(()=>{
       winChant.classList.remove("hidden");
       winChant.style.opacity=0; winChant.style.transform="translateY(12px)";
@@ -227,7 +238,7 @@ document.addEventListener("DOMContentLoaded", () => {
       requestAnimationFrame(()=>{
         winChant.style.opacity=1; winChant.style.transform="translateY(0)";
       });
-      startChant();
+      setTimeout(startChant, 300); // さらに間を置いてから
     }, 2600);
   }
 
@@ -251,7 +262,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const burst = 1 + Math.floor(Math.random()*3); // 1〜3連打
         for(let i=0;i<burst;i++){ await typeText(chantText, "たすけて", 12); }
         chantWrap.scrollTop = chantWrap.scrollHeight;
-        await wait(400 + Math.random()*540); // 少し遅く
+        await wait(420 + Math.random()*560);
       }
     })();
   }
@@ -259,12 +270,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
   /* ---------- 注意 → カルテロード ---------- */
   btnWarning.addEventListener("click", ()=>{
-    globalBreak();
+    pressFX(btnWarning);
     showScreen(scrWarn);
   });
 
   btnAgree.addEventListener("click", ()=>{
-    globalBreak();
+    pressFX(btnAgree);
     startRecordLoading();
   });
 
@@ -278,7 +289,6 @@ document.addEventListener("DOMContentLoaded", () => {
       if (p>=100){
         clearInterval(t);
         setTimeout(()=>{
-          globalBreak();
           showScreen(scrRecords);
           buildRecords();
           setTimeout(triggerAutoUpdate, 1000 + Math.random()*1200);
@@ -290,7 +300,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   btnBack.addEventListener("click", ()=>{
-    globalBreak();
+    pressFX(btnBack);
     showScreen(scrStory);
   });
 
@@ -384,7 +394,6 @@ document.addEventListener("DOMContentLoaded", () => {
     `;
     modal.classList.add("open");
     modal.setAttribute("aria-hidden","false");
-    globalBreak();
     startModalCorruption(modalBody);
   }
   modalClose.addEventListener("click", ()=>{
@@ -404,7 +413,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const field = tdList[tdList.length-1];
     field.innerHTML = `状態悪化を確認。<span class="mosaic">赤い日記帳</span>の所在不明。<span class="badge-update">更新</span>`;
     target.classList.add("updated");
-    globalBreak();
   }
 
   /* ---------- 放置腐食（経過欄がじわじわ読みにくく） ---------- */
@@ -419,7 +427,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  /* ---------- 一覧に“時々”軽い文字化け（雰囲気付け） ---------- */
+  /* ---------- 一覧“時々”軽い文字化け ---------- */
   function randomLightCorrupt(){
     (function lo(){
       if (!scrRecords.classList.contains('active')) return;
@@ -446,12 +454,6 @@ document.addEventListener("DOMContentLoaded", () => {
     if (c < 0.45) rollBarOnce();
     else if (c < 0.70) rgbSplitPulse();
     else if (c < 0.85) screenTearOnce();
-    else {/* noop */}
-    if (Math.random() < 0.25){
-      const a=document.querySelector('.screen.active');
-      a?.classList.add('vsync-drift');
-      setTimeout(()=> a?.classList.remove('vsync-drift'), 5000 + Math.random()*4000);
-    }
     setTimeout(randomFxLoop, 1600 + Math.random()*3200);
   })();
 
