@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>B-33型《バーバラさん》 診断記録</title>
 
-<!-- Adobe Fonts（秀英角ゴシック金） -->
+<!-- Adobe Fonts（秀英角ゴシック金 kit: ouz3iep） -->
 <script>
 (function(d){var c={kitId:'ouz3iep',scriptTimeout:3000,async:true},h=d.documentElement,
 t=setTimeout(function(){h.className=h.className.replace(/\bwf-loading\b/g,"")+" wf-inactive";},c.scriptTimeout),
@@ -15,114 +15,123 @@ s.onload=s.onreadystatechange=function(){a=this.readyState;if(f||a&&a!="complete
 f=true;clearTimeout(t);try{Typekit.load(c)}catch(e){}};x.parentNode.insertBefore(s,x)})(document);
 </script>
 
-<link rel="stylesheet" href="style.css?v=91" />
+<link rel="stylesheet" href="style.css?v=72">
 </head>
-<body class="no-scroll">
+<body>
 
-<!-- トランジションノイズ（画面切替時） -->
-<div id="transition-noise" aria-hidden="true">
-  <div class="t-grain"></div>
-  <div class="t-scan"></div>
+<!-- 常時オーバーレイ：スキャンライン＆粒状グレイン -->
+<div id="overlay">
+  <div class="scanlines"></div>
+  <div class="grain"></div>
 </div>
 
-<!-- FXレイヤ（スクラッチ/ロールバー） -->
-<div id="fx" aria-hidden="true">
-  <div class="fx-grain"></div>
-  <div class="fx-scratches"></div>
-  <div class="fx-rollbar"></div>
-</div>
+<!-- ノイズ映像（上に薄く被せる） -->
+<video id="v-noise-story" class="v-noise" playsinline muted loop preload="auto">
+  <source src="assets/noise_story.mp4" type="video/mp4">
+  <source src="assets/noise_story.gif" type="image/gif">
+</video>
+<video id="v-noise-records" class="v-noise" playsinline muted loop preload="auto">
+  <source src="assets/noise_records.mp4" type="video/mp4">
+  <source src="assets/noise_records.gif" type="image/gif">
+</video>
 
-<!-- 常時ノイズ動画（全体に重ねる・文字の上にも薄く掛ける） -->
-<video id="noise-layer" class="noise-layer" autoplay muted loop playsinline preload="auto"></video>
+<!-- 効果音（任意設置。無ければ無音で進みます） -->
+<audio id="se-glitch" preload="auto">
+  <source src="assets/se_glitch.mp3" type="audio/mpeg">
+</audio>
+<audio id="se-hum" preload="auto" loop>
+  <source src="assets/se_hum.mp3" type="audio/mpeg">
+</audio>
+<audio id="se-btn" preload="auto">
+  <source src="assets/se_btn.mp3" type="audio/mpeg">
+</audio>
 
-<!-- -1) 前置き（真っ暗＋白文字、ノイズまとめフェード） -->
-<section id="screen-preamble" class="screen active">
-  <div class="center">
-    <div class="preamble-wrap">
-      <p class="preamble all-ink" data-text="本日はご来院、ありがとうございました。">本日はご来院、ありがとうございました。</p>
-      <p class="preamble all-ink" data-text="患者様の処方箋より怪異の詳細な情報を開示いたします。">患者様の処方箋より怪異の詳細な情報を開示いたします。</p>
-    </div>
+<!-- イントロ（黒地・白字・ノイズ発光） -->
+<section id="screen-intro" class="screen active ui-serif center-stack">
+  <div class="intro-box">
+    <p class="intro-line">
+      本日はご来院、ありがとうございました。<br>
+      患者様の処方箋より怪異の詳細な情報を開示いたします。
+    </p>
   </div>
 </section>
 
-<!-- 0) 受付 -->
-<section id="screen-entry" class="screen">
-  <div class="viewer win entry-win">
-    <div class="viewer-head">
-      <span class="led"></span>
-      <span class="viewer-title nowrap">受　付</span>
-      <span class="dots">···</span>
+<!-- 受付 -->
+<section id="screen-entry" class="screen ui-serif center-stack">
+  <div class="panel win medium slide-up">
+    <div class="panel-head">
+      <span class="panel-title nowrap">受　付</span>
+      <div class="panel-ctrl"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
     </div>
-    <div class="viewer-body">
-      <p class="small-note fw-gothic">診断で使用したお名前を入力してください。<br><strong>※ 実名はお控えください（渾名・イニシャル推奨）</strong></p>
+    <div class="panel-body">
+      <p class="note-strong">診断で使用したお名前を入力してください。<br>
+        <small>※ 実名はお控えください（渾名・イニシャル推奨）</small></p>
       <div class="entry-form">
-        <input id="nick-input" type="text" inputmode="text" autocomplete="off" autocapitalize="off" maxlength="20"
+        <input id="nick-input" type="text" autocomplete="off" autocapitalize="off" maxlength="20"
                placeholder="例）化神魔 / M.N / 来訪者" aria-label="お名前（渾名）">
         <button id="btn-start" class="btn">データの照合</button>
       </div>
-      <p class="entry-note small-note fw-gothic">入力されたお名前は画面表示のみに使用され、保存されません。</p>
+      <p class="foot-mini">※ 入力は画面表示のみに使用され、保存されません。</p>
     </div>
   </div>
 </section>
 
-<!-- 1) 初回ロード -->
-<section id="screen-loading" class="screen">
+<!-- 初回ロード -->
+<section id="screen-loading" class="screen center-stack">
   <div class="center">
-    <p class="spaced ink-sm">診断情報を準備しています…</p>
+    <p class="spaced">診断情報を準備しています…</p>
     <p id="load-per" class="percent">0%</p>
   </div>
 </section>
 
-<!-- 2) 名前＋見出し -->
-<section id="screen-name" class="screen">
-  <div class="center">
-    <p class="who-line ink-sm">―― <span id="who-name">来訪者</span> 様の診断結果 ――</p>
-    <h1 class="kaiki glow crt-bleed">
-      <span class="kaiki-line1">B-33型</span><br>
-      <span class="kaiki-line2">《バーバラさん》</span>
-    </h1>
+<!-- 見出し（結果） -->
+<section id="screen-name" class="screen center-stack">
+  <div class="center result-wrap">
+    <p class="who-line ui-serif">―― <span id="who-name">来訪者</span> 様の診断結果 ――</p>
+    <h1 class="kaiki glow-break"><span>B-33型</span><br><span>《バーバラさん》</span></h1>
   </div>
 </section>
 
-<!-- 3) 発祥：本文ウィンドウ + “たすけて” -->
-<section id="screen-story" class="screen page-scroll">
+<!-- 発祥ストーリー（ページ自体スクロール可 + 内部もスクロール） -->
+<section id="screen-story" class="screen scroll-page">
   <div class="stack">
-    <!-- 本文 -->
-    <div class="viewer win win-main">
-      <div class="viewer-head">
-        <span class="led"></span>
-        <span class="viewer-title nowrap">発 祥 ス ト ー リ ー</span>
-        <span class="dots">···</span>
+
+    <!-- 本文ウィンドウ -->
+    <div class="panel win large fade-in-delay">
+      <div class="panel-head">
+        <span class="panel-title nowrap">発祥ストーリー</span>
+        <div class="panel-ctrl"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
       </div>
-      <div class="viewer-body">
-        <h2 class="kaiki-sub chromatic">“B-33型《バーバラさん》”</h2>
-        <div id="story-scroll" class="scrollbox fw-gothic">
-          <div id="story-text" class="story-block"></div>
+      <div class="panel-body gothic">
+        <h2 class="kaiki-sub">“B-33型《バーバラさん》”</h2>
+        <div id="story-scroll" class="scrollbox">
+          <div id="story-text" class="story-text"></div>
         </div>
         <button id="btn-to-warning" class="btn">過去の患者カルテを見る</button>
+        <p class="caution-mini ui-serif">※ 個人情報は伏せた上で、掲載許可を得た記録のみ表示しています。</p>
       </div>
     </div>
 
-    <!-- 受信ログ（遅れて表示） -->
-    <div id="win-chant" class="viewer win win-mini hidden">
-      <div class="viewer-head">
-        <span class="led"></span>
-        <span class="viewer-title">受 信 ロ グ</span>
-        <span class="dots">···</span>
+    <!-- 受信ログ（絶対に見るな） 遅延出現 -->
+    <div id="win-chant" class="panel win small fade-in-later hidden">
+      <div class="panel-head">
+        <span class="panel-title nowrap">受 信 ロ グ</span>
+        <div class="panel-ctrl"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
       </div>
-      <div class="viewer-body">
-        <div id="chant-scroll" class="scrollbox fw-gothic">
+      <div class="panel-body gothic">
+        <div id="chant-scroll" class="scrollbox">
           <div id="chant-text" class="help-chant"></div>
         </div>
       </div>
     </div>
+
   </div>
 </section>
 
-<!-- 4) 注意 -->
-<section id="screen-warning" class="screen">
+<!-- 注意 -->
+<section id="screen-warning" class="screen center-stack">
   <div class="center">
-    <p class="warning spaced warning-block">
+    <p class="warning spaced center-keep">
       これから表示される内容は<br>
       極めて危険です。<br>
       閲覧によって発生したいかなる<br>
@@ -130,37 +139,36 @@ f=true;clearTimeout(t);try{Typekit.load(c)}catch(e){}};x.parentNode.insertBefore
       責任を負いかねます。<br>
       自己責任で閲覧してください。
     </p>
-    <p class="small-note red">※ 個人情報は伏せた上で、掲載許可を得た記録のみ表示しています。</p>
     <button id="btn-agree" class="btn">同意して閲覧</button>
   </div>
 </section>
 
-<!-- 5) カルテロード -->
-<section id="screen-records-loading" class="screen">
+<!-- カルテロード -->
+<section id="screen-records-loading" class="screen center-stack">
   <div class="center">
-    <p class="spaced ink-sm">カルテ情報を取得しています…</p>
+    <p class="spaced">カルテ情報を取得しています…</p>
     <p id="rec-per" class="percent">0%</p>
   </div>
 </section>
 
-<!-- 6) カルテ一覧 -->
-<section id="screen-records" class="screen page-scroll">
+<!-- カルテ一覧（ページスクロール可） -->
+<section id="screen-records" class="screen scroll-page">
   <div class="records">
-    <h3 class="records-title chromatic crt-bleed">患者記録一覧</h3>
+    <h3 class="records-title gothic chroma">患者記録一覧</h3>
     <div id="records-list"></div>
     <div class="controls"><button id="btn-back-story" class="btn">発祥ストーリーに戻る</button></div>
   </div>
 </section>
 
-<!-- 7) 詳細モーダル -->
+<!-- 詳細モーダル -->
 <div id="modal" role="dialog" aria-hidden="true">
   <div class="modal-inner">
-    <h4 id="modal-title" class="modal-title">患者記録</h4>
-    <div id="modal-body" class="modal-body"></div>
+    <h4 id="modal-title" class="modal-title gothic">患者記録</h4>
+    <div id="modal-body" class="modal-body gothic"></div>
     <div class="modal-actions"><button id="modal-close" class="btn">閉じる</button></div>
   </div>
 </div>
 
-<script src="script.js?v=91"></script>
+<script src="script.js?v=72"></script>
 </body>
 </html>
