@@ -15,7 +15,7 @@ s.onload=s.onreadystatechange=function(){a=this.readyState;if(f||a&&a!="complete
 f=true;clearTimeout(t);try{Typekit.load(c)}catch(e){}};x.parentNode.insertBefore(s,x)})(document);
 </script>
 
-<link rel="stylesheet" href="style.css?v=92" />
+<link rel="stylesheet" href="style.css?v=94" />
 </head>
 <body>
 
@@ -51,7 +51,7 @@ f=true;clearTimeout(t);try{Typekit.load(c)}catch(e){}};x.parentNode.insertBefore
       </p>
       <div class="entry-form">
         <input id="nick-input" type="text" autocomplete="off" autocapitalize="off" maxlength="20"
-               placeholder="例）テケテケ／M.N.／来訪者" aria-label="お名前（渾名）">
+               placeholder="例）カシマ／M.N.／来訪者" aria-label="お名前（渾名）">
         <button id="btn-start" class="btn">データの照合</button>
       </div>
       <p class="entry-note" data-no-corrupt>入力されたお名前は画面表示のみに使用され、保存されません。</p>
@@ -77,7 +77,6 @@ f=true;clearTimeout(t);try{Typekit.load(c)}catch(e){}};x.parentNode.insertBefore
 
 <!-- 3) 発祥（本文ウィンドウ + “たすけて”ミニウィンドウ） -->
 <section id="screen-story" class="screen">
-  <!-- 背景ノイズ（受付と同トーンの青め） -->
   <div class="bg-noise" data-type="story">
     <video playsinline autoplay muted loop preload="auto" class="bgv">
       <source src="assets/noise_story.mp4" type="video/mp4">
@@ -89,7 +88,7 @@ f=true;clearTimeout(t);try{Typekit.load(c)}catch(e){}};x.parentNode.insertBefore
     <!-- 本文ウィンドウ（下から出現→テキストは遅れてフェードイン） -->
     <div class="browser retro crt win-main appear">
       <div class="retro-titlebar">
-        <span class="retro-title">発　祥　ス　ト　｜　リ　｜</span>
+        <span class="retro-title no-wrap">発　祥　ス　ト　｜　リ　｜</span>
         <div class="retro-controls"><span class="ctrl">_</span><span class="ctrl">□</span><span class="ctrl close">×</span></div>
       </div>
       <div class="retro-pane">
@@ -101,7 +100,7 @@ f=true;clearTimeout(t);try{Typekit.load(c)}catch(e){}};x.parentNode.insertBefore
       </div>
     </div>
 
-    <!-- “たすけて”ミニウィンドウ（同じ挙動で出現／中身はタイプライター） -->
+    <!-- “たすけて”ミニウィンドウ -->
     <div id="win-chant" class="browser retro crt win-mini hidden appear">
       <div class="retro-titlebar">
         <span class="retro-title">受 信 ロ グ</span>
@@ -138,7 +137,6 @@ f=true;clearTimeout(t);try{Typekit.load(c)}catch(e){}};x.parentNode.insertBefore
 
 <!-- 6) カルテ一覧 -->
 <section id="screen-records" class="screen">
-  <!-- 背景ノイズ（カルテ用） -->
   <div class="bg-noise" data-type="records">
     <video playsinline autoplay muted loop preload="auto" class="bgv">
       <source src="assets/noise_records.mp4" type="video/mp4">
@@ -162,6 +160,6 @@ f=true;clearTimeout(t);try{Typekit.load(c)}catch(e){}};x.parentNode.insertBefore
   </div>
 </div>
 
-<script src="script.js?v=92"></script>
+<script src="script.js?v=94"></script>
 </body>
 </html>
