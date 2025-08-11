@@ -1,98 +1,161 @@
 document.addEventListener("DOMContentLoaded", () => {
-  /* ---------- 画面参照 ---------- */
-  const scrPref   = document.getElementById("screen-preface");
-  const scrEntry  = document.getElementById("screen-entry");
-  const scrLoad   = document.getElementById("screen-loading");
-  const scrName   = document.getElementById("screen-name");
-  const scrStory  = document.getElementById("screen-story");
-  const scrWarn   = document.getElementById("screen-warning");
-  const scrRecLd  = document.getElementById("screen-records-loading");
-  const scrRecs   = document.getElementById("screen-records");
+  // 画面
+  const scrPreamble = document.getElementById("screen-preamble");
+  const scrEntry   = document.getElementById("screen-entry");
+  const scrLoading = document.getElementById("screen-loading");
+  const scrName    = document.getElementById("screen-name");
+  const scrStory   = document.getElementById("screen-story");
+  const scrWarn    = document.getElementById("screen-warning");
+  const scrRecLoad = document.getElementById("screen-records-loading");
+  const scrRecords = document.getElementById("screen-records");
 
-  /* ---------- 要素 ---------- */
-  const nickInput = document.getElementById("nick-input");
-  const btnStart  = document.getElementById("btn-start");
-  const whoNameEl = document.getElementById("who-name");
-  const perEl     = document.getElementById("load-per");
-  const recPer    = document.getElementById("rec-per");
-  const btnWarn   = document.getElementById("btn-to-warning");
-  const btnAgree  = document.getElementById("btn-agree");
-  const btnBack   = document.getElementById("btn-back-story");
+  // 受付
+  const nickInput  = document.getElementById("nick-input");
+  const btnStart   = document.getElementById("btn-start");
+  const whoNameEl  = document.getElementById("who-name");
+  let visitorName  = "来訪者";
 
-  const winChant  = document.getElementById("win-chant");
-  const chantWrap = document.getElementById("chant-scroll");
-  const chantText = document.getElementById("chant-text");
+  // ロード％
+  const perEl  = document.getElementById("load-per");
+  const recPer = document.getElementById("rec-per");
 
-  const pre1 = document.getElementById("preface-line1");
-  const pre2 = document.getElementById("preface-line2");
+  // 発祥
+  const storyText   = document.getElementById("story-text");
+  const winChant    = document.getElementById("win-chant");
+  const chantWrap   = document.getElementById("chant-scroll");
+  const chantText   = document.getElementById("chant-text");
+  const btnWarning  = document.getElementById("btn-to-warning");
+  const btnAgree    = document.getElementById("btn-agree");
+  const btnBack     = document.getElementById("btn-back-story");
 
-  /* ---------- FX ---------- */
+  // カルテ
+  const recordsList = document.getElementById("records-list");
+
+  // モーダル
+  const modal       = document.getElementById("modal");
+  const modalTitle  = document.getElementById("modal-title");
+  const modalBody   = document.getElementById("modal-body");
+  const modalClose  = document.getElementById("modal-close");
+
+  // ノイズ動画/FX
+  const noiseVideo  = document.getElementById("noise-layer");
   const FX = {
     roll: document.querySelector('#fx .fx-rollbar'),
-    noise: document.getElementById('noise')
   };
+
+  /* ---------- 画面切替 ---------- */
+  function useNoiseFor(screen){
+    // 受付/発祥 = story、カルテ = records、それ以外はstory
+    let src = "assets/noise_story.mp4";
+    if (screen === scrRecords || screen === scrRecLoad) src = "assets/noise_records.mp4";
+    if (noiseVideo.dataset.src !== src){
+      noiseVideo.pause();
+      noiseVideo.src = src;
+      noiseVideo.dataset.src = src;
+      noiseVideo.load();
+      const p = noiseVideo.play();
+      if (p && typeof p.catch === 'function'){
+        p.catch(()=>{}) // iOSで黙って止まるのを避けて後で再開トライ
+      }
+    }
+    // 濃さは固定（可読性重視）
+    noiseVideo.style.opacity = ".18";
+  }
+
+  function showScreen(screen){
+    document.querySelectorAll(".screen").forEach(s=>{
+      s.classList.remove("active");
+    });
+    screen.classList.add("active");
+
+    // ページスクロール制御
+    if (screen.classList.contains("page-scroll")){
+      document.body.classList.add("allow-scroll");
+      document.body.classList.remove("no-scroll");
+    }else{
+      document.body.classList.remove("allow-scroll");
+      document.body.classList.add("no-scroll");
+      window.scrollTo(0,0);
+    }
+
+    // ノイズ動画切替
+    useNoiseFor(screen);
+  }
+
+  /* ---------- ノイズ/FX ---------- */
   function rollBarOnce(){
     if(!FX.roll) return;
     FX.roll.classList.remove('run'); void FX.roll.offsetWidth;
     FX.roll.classList.add('run');
   }
-  function joltActive(){
-    const a=document.querySelector('.screen.active');
-    if(a){ a.classList.add('jolt'); setTimeout(()=>a.classList.remove('jolt'), 220); }
+  function rgbSplitPulse(){
+    const active = document.querySelector('.screen.active');
+    if(!active) return;
+    active.classList.add('rgb-split');
+    setTimeout(()=> active.classList.remove('rgb-split'), 300);
   }
-  (function randomFxLoop(){
-    const c=Math.random();
-    if (c < 0.45) rollBarOnce();
-    setTimeout(randomFxLoop, 1600 + Math.random()*3200);
+  function screenTearOnce(){
+    const active = document.querySelector('.screen.active');
+    if(!active) return;
+    active.classList.add('screen-tear');
+    setTimeout(()=> active.classList.remove('screen-tear'), 300);
+  }
+  function globalBreak(){
+    const active = document.querySelector('.screen.active');
+    if(!active) return;
+    active.classList.add('global-break'); rollBarOnce(); rgbSplitPulse(); screenTearOnce();
+    setTimeout(()=> active.classList.remove('global-break'), 360);
+  }
+  // ランダム“ガガガ”
+  (function jitterLoop(){
+    const next = 1500 + Math.random()*3000;
+    setTimeout(()=>{
+      const active = document.querySelector(".screen.active");
+      if (active){ active.classList.add("jolt"); setTimeout(()=>active.classList.remove("jolt"), 220); }
+      if (Math.random()<0.30) rollBarOnce();
+      if (Math.random()<0.22) rgbSplitPulse();
+      jitterLoop();
+    }, next);
   })();
 
-  /* ---------- 画面切替 ---------- */
-  function showScreen(el){
-    document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));
-    el.classList.add("active");
+  /* ---------- iOS動画の再生復帰 ---------- */
+  function ensureVideo(){
+    if (!noiseVideo) return;
+    const p = noiseVideo.play();
+    if (p && typeof p.catch === 'function'){ p.catch(()=>{}) }
   }
+  document.addEventListener('visibilitychange', ()=> { if (!document.hidden) ensureVideo(); });
+  document.addEventListener('touchstart', ensureVideo, {passive:true, once:true});
 
-  /* ---------- 前置き：グリッチ解読→受付へ ---------- */
-  glitchReveal(pre1, 1400);
-  setTimeout(()=>glitchReveal(pre2, 1600), 250);
-
-  // 前置きは十分に読めるように 5.2s 表示してから受付へ
+  /* ---------- 前置き → 受付 ---------- */
+  useNoiseFor(scrEntry); // 最初の動画はstory系
   setTimeout(()=>{
+    globalBreak();
     showScreen(scrEntry);
-    // 受付ウィンドウ “ボワッ”
-    setTimeout(()=> {
-      document.querySelectorAll('.will-pop').forEach(n=>n.classList.remove('show'));
-      scrEntry.querySelector('.will-pop')?.classList.add('show');
-    }, 60);
-  }, 5200);
+  }, 3600); // しっかり読める長さ
 
-  /* ---------- 受付 → ロード → 見出し → 発祥 ---------- */
-  let visitorName = "来訪者";
+  /* ---------- 受付 → 初回ロード → 見出し → 発祥 ---------- */
   btnStart.addEventListener("click", ()=>{
-    const v=(nickInput.value||"").trim();
-    if(!v){ nickInput.classList.add("jolt"); setTimeout(()=>nickInput.classList.remove("jolt"),220); return; }
-    visitorName = v.slice(0,20);
+    const val = (nickInput.value||"").trim();
+    if (!val){ nickInput.classList.add("entry-error"); setTimeout(()=>nickInput.classList.remove("entry-error"),220); return; }
+    visitorName = val.slice(0,20);
     whoNameEl.textContent = visitorName;
 
-    showScreen(scrLoad);
+    // 入力フィールドのズーム/スクロールを戻す
+    nickInput.blur();
+    setTimeout(()=>window.scrollTo(0,0), 60);
+
+    showScreen(scrLoading);
     startInitialLoading(()=>{
+      globalBreak();
       showScreen(scrName);
-      // 見出しは中央に収まる
+      // 見出しを遅れてフェードアップ（B-33 → 《バーバラさん》）
+      revealKaiki();
       setTimeout(()=>{
+        globalBreak();
         showScreen(scrStory);
-
-        // 発祥：本文ウィンドウを“ボワッ”表示（先に）
-        const mainWin = scrStory.querySelector('.win-main');
-        mainWin.classList.add('show');
-
-        // 少し遅れて受信ログウィンドウを“ボワッ”表示
-        setTimeout(()=>{
-          winChant.classList.remove("hidden");
-          winChant.classList.add('show');
-          startChant(); // タイプライター開始
-        }, 1100);
-
-      }, 1500);
+        startStorySequence();
+      }, 2000);
     });
   });
 
@@ -105,58 +168,141 @@ document.addEventListener("DOMContentLoaded", () => {
       if (p<100){
         setTimeout(step, Math.max(18, 120*Math.pow(0.85,p/10)));
       }else{
-        done&&done();
+        scrLoading.style.transition="opacity .6s ease";
+        scrLoading.style.opacity="0";
+        setTimeout(()=>{ scrLoading.style.opacity=""; done&&done(); }, 620);
       }
     })();
   }
 
-  /* ---------- “たすけて” タイプライター ---------- */
-  function typeText(el, text, speed=16){
+  function revealKaiki(){
+    const l1 = document.querySelector('.kaiki-line1');
+    const l2 = document.querySelector('.kaiki-line2');
+    if(!l1 || !l2) return;
+    l1.style.opacity=0; l2.style.opacity=0;
+    l1.style.transform="translateY(8px)"; l2.style.transform="translateY(10px)";
+    l1.style.transition="opacity .45s ease, transform .45s ease";
+    l2.style.transition="opacity .55s ease, transform .55s ease .18s";
+    requestAnimationFrame(()=>{
+      l1.style.opacity=1; l1.style.transform="translateY(0)";
+      setTimeout(()=>{ l2.style.opacity=1; l2.style.transform="translateY(0)"; }, 120);
+    });
+  }
+
+  /* ---------- 発祥テキスト（固定文フェード） ---------- */
+  const storyParagraphs = [
+    "昔、とある少女が惨殺され、その少女は赤い日記帳に日々の出来事を綴っていた。",
+    "少女の死後、その赤い日記帳は忽然と姿を消し、どこを探しても見つからなかった。",
+    "やがて、噂を聞いた者の家に見たことのない赤い日記帳が届くようになったが、決して開いてはならないと言われている。",
+    "その日記帳が届いた夜、バーバラさんと呼ばれる存在が現れる。",
+    "バーバラさんの顔を見ず、扉を開けて背中に乗せ、部屋の窓を開けて外に送り出さなければならない。",
+    "日記帳を開いたり、バーバラさんの顔を見てしまった者の運命や、バーバラさんの正体は謎に包まれている。",
+    "彼女は惨殺された少女の成れの果てなのか、犯人なのか、誰にもわからない。"
+  ];
+
+  function startStorySequence(){
+    // ウィンドウがボワッと表示された後にテキストをフェード配置
+    storyText.innerHTML = "";
+    const frag = document.createDocumentFragment();
+    storyParagraphs.forEach((t,i)=>{
+      const p = document.createElement("p");
+      p.textContent = t;
+      p.style.opacity=0;
+      p.style.transform="translateY(6px)";
+      p.style.transition=`opacity .42s ease ${i*90}ms, transform .42s ease ${i*90}ms`;
+      frag.appendChild(p);
+    });
+    storyText.appendChild(frag);
+    requestAnimationFrame(()=>{
+      storyText.querySelectorAll('p').forEach(p=>{
+        p.style.opacity=1; p.style.transform="translateY(0)";
+      });
+    });
+
+    // “たすけて”ウィンドウはさらに遅れて出す
+    setTimeout(()=>{
+      winChant.classList.remove("hidden");
+      winChant.style.opacity=0; winChant.style.transform="translateY(12px)";
+      winChant.style.transition="opacity .28s ease, transform .28s ease";
+      requestAnimationFrame(()=>{
+        winChant.style.opacity=1; winChant.style.transform="translateY(0)";
+      });
+      startChant();
+    }, 2600);
+  }
+
+  // “たすけて”：隙間なしで連打（間隔は少し長め）
+  function typeText(el, text, speed=20){
     return new Promise(resolve=>{
-      let i=0; (function step(){
+      let i=0;
+      (function step(){
         if(i>=text.length){ resolve(); return; }
         el.textContent += text.charAt(i++);
+        const delay = Math.max(8, speed + (Math.random()*10-5));
         const box = el.closest('.scrollbox'); if (box) box.scrollTop = box.scrollHeight;
-        setTimeout(step, Math.max(6, speed + (Math.random()*8-4)));
+        setTimeout(step, delay);
       })();
     });
   }
   function startChant(){
-    chantText.style.opacity=1;
+    chantText.classList.add("show");
     (async function loop(){
-      while(document.getElementById('screen-story').classList.contains('active')){
-        const burst = 1 + Math.floor(Math.random()*3);
+      while(document.getElementById("screen-story").classList.contains("active")){
+        const burst = 1 + Math.floor(Math.random()*3); // 1〜3連打
         for(let i=0;i<burst;i++){ await typeText(chantText, "たすけて", 12); }
         chantWrap.scrollTop = chantWrap.scrollHeight;
-        await wait(260 + Math.random()*420);
+        await wait(400 + Math.random()*540); // 少し遅く
       }
     })();
   }
   const wait = ms => new Promise(r=>setTimeout(r,ms));
 
-  /* ---------- 注意 → カルテ ---------- */
-  btnWarn.addEventListener("click", ()=> showScreen(scrWarn));
-  btnAgree.addEventListener("click", ()=>{
-    showScreen(scrRecLd);
-    let p=0;
-    const t=setInterval(()=>{
-      p+=(p<60?4:8); if(p>100)p=100;
-      recPer.textContent=p+"%";
-      if(p>=100){ clearInterval(t); showScreen(scrRecs); buildRecords(); }
-    }, 90);
+  /* ---------- 注意 → カルテロード ---------- */
+  btnWarning.addEventListener("click", ()=>{
+    globalBreak();
+    showScreen(scrWarn);
   });
-  btnBack.addEventListener("click", ()=> showScreen(scrStory));
 
-  /* ---------- カルテ：ダミーデータ ---------- */
-  const recordsList = document.getElementById("records-list");
+  btnAgree.addEventListener("click", ()=>{
+    globalBreak();
+    startRecordLoading();
+  });
+
+  function startRecordLoading(){
+    showScreen(scrRecLoad);
+    let p=0;
+    const t = setInterval(()=>{
+      p += (p<60?4:8);
+      if (p>100) p=100;
+      recPer.textContent = p+"%";
+      if (p>=100){
+        clearInterval(t);
+        setTimeout(()=>{
+          globalBreak();
+          showScreen(scrRecords);
+          buildRecords();
+          setTimeout(triggerAutoUpdate, 1000 + Math.random()*1200);
+          setTimeout(slowCorruptRecords, 1500);       // 経過欄じわじわ
+          setTimeout(randomLightCorrupt, 1200);       // 一覧へ時々軽い化け
+        }, 200);
+      }
+    }, 90);
+  }
+
+  btnBack.addEventListener("click", ()=>{
+    globalBreak();
+    showScreen(scrStory);
+  });
+
+  /* ---------- カルテデータ ---------- */
   const recordsData = [
-    { no:"132", name:"<span class='mosaic'>██</span>", diag:"B-33型《バーバラさん》接触症", sym:"頭痛、悪夢、窓の外の気配", prog:"赤い日記帳が届いた夜から症状出現。夜間、窓から赤い日記が持ち去られるのを確認。", mosaic:true },
-    { no:"247", name:"██", diag:"窓辺幻視症", sym:"吐き気、視線恐怖", prog:"窓辺で赤い日記を確認。以後、睡眠障害が悪化。", mosaic:false },
-    { no:"318", name:"<span class='mosaic'>██</span>", diag:"接近過敏", sym:"首筋の寒気、肩圧迫感", prog:"夜半、背部に重量感。窓を開けると軽減。", mosaic:true },
+    { no:"132", name:"<span class='mosaic'>████</span>", diag:"B-33型《バーバラさん》接触症", sym:"頭痛、悪夢、窓の外の気配", prog:"赤い日記帳が届いた夜から症状出現。夜間、窓から赤い日記が持ち去られるのを確認。", mosaic:true },
+    { no:"208", name:"██", diag:"窓辺幻視症", sym:"吐き気、視線恐怖", prog:"窓辺で赤い日記を確認。以後、睡眠障害が悪化。", mosaic:false },
+    { no:"319", name:"<span class='mosaic'>██</span>", diag:"接近過敏", sym:"首筋の寒気、肩圧迫感", prog:"夜半、背部に重量感。窓を開けると軽減。", mosaic:true },
     { no:"666", name:"<span class='mosaic'>███</span>", diag:"呼称追跡性障害", sym:"耳鳴り、名を呼ばれる幻聴", prog:"呼ばれた翌日、窓に赤い日記が置かれていた。", mosaic:true },
-    { no:"702", name:"█", diag:"夜間接触症候群", sym:"過度の不安、失神", prog:"窓を開けた際、背中に何かを感じ赤い日記が消失。体調急変。", mosaic:false },
-    { no:"845", name:"<span class='mosaic'>████</span>", diag:"視覚残像症", sym:"視覚異常、残像", prog:"赤い日記帳の残像を複数回確認。頭痛増悪。", mosaic:true },
-    { no:"921", name:"██", diag:"急性幻視性不安", sym:"視覚異常、記憶欠落", prog:"証言と記録の齟齬が多発。最後に赤い日記帳を所持。", mosaic:false }
+    { no:"741", name:"█", diag:"夜間接触症候群", sym:"過度の不安、失神", prog:"窓を開けた際、背中に何かを感じ赤い日記が消失。体調急変。", mosaic:false },
+    { no:"853", name:"<span class='mosaic'>████</span>", diag:"視覚残像症", sym:"視覚異常、残像", prog:"赤い日記帳の残像を複数回確認。頭痛増悪。", mosaic:true },
+    { no:"902", name:"██", diag:"急性幻視性不安", sym:"視覚異常、記憶欠落", prog:"証言と記録の齟齬が多発。最後に赤い日記帳を所持。", mosaic:false }
   ];
 
   function buildRecords(){
@@ -165,7 +311,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const card = document.createElement("article");
       card.className = "card";
       card.innerHTML = `
-        <table class="karte">
+        <table class="karte fw-gothic">
           <tr><th>患者番号</th><td>No.${rec.no}</td></tr>
           <tr><th>患者名</th><td>${rec.name}</td></tr>
           <tr><th>診断名</th><td>${rec.diag}</td></tr>
@@ -175,69 +321,138 @@ document.addEventListener("DOMContentLoaded", () => {
         <button class="btn open-detail" data-id="${rec.no}">詳細を見る</button>
       `;
       card.querySelector(".open-detail").addEventListener("click", ()=>{
-        openDetailModal(rec);
+        const data = recordsData.find(r=>r.no===rec.no);
+        openDetailModal(data);
       });
       recordsList.appendChild(card);
     });
   }
 
-  /* ---------- 詳細モーダル（軽め文字化け） ---------- */
-  const modal  = document.getElementById("modal");
-  const mTitle = document.getElementById("modal-title");
-  const mBody  = document.getElementById("modal-body");
-  const mClose = document.getElementById("modal-close");
-
+  /* ---------- 詳細モーダル + 段階的文字化け（やや弱め） ---------- */
+  let corruptTimer = null;
+  let corruptSession = [];
+  function collectTextNodes(root){
+    const out = [];
+    const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
+      acceptNode: (node) => {
+        if(!node.nodeValue || !node.nodeValue.trim()) return NodeFilter.FILTER_REJECT;
+        let p = node.parentElement;
+        while(p){
+          if(p.classList && (p.classList.contains('mosaic') || p.dataset.noCorrupt!==undefined)) return NodeFilter.FILTER_REJECT;
+          p = p.parentElement;
+        }
+        return NodeFilter.FILTER_ACCEPT;
+      }
+    });
+    let n; while((n=walker.nextNode())) out.push(n);
+    return out;
+  }
   const GLITCH_SET = "◆※#＠▓░╳■□△◎◢◣";
-  function corruptOnce(str, rate=0.09){
-    let out=""; for(let i=0;i<str.length;i++){
-      const ch=str[i]; if(/\s/.test(ch)){out+=ch;continue;}
-      out += Math.random()<rate ? GLITCH_SET[Math.floor(Math.random()*GLITCH_SET.length)] : ch;
+  const HOMO = { "ー":"—","-":"－","・":"･","。":"｡","、":"､","口":"□","日":"■","〇":"○","○":"◯","人":"入","田":"亩","カ":"力","へ":"∧","ン":"ソ","テ":"ﾃ","タ":"ﾀ" };
+  function corruptString(src, rate){
+    let out=""; for(let i=0;i<src.length;i++){
+      const ch=src[i]; if(/\s/.test(ch)){out+=ch;continue;}
+      if(Math.random()<rate){ out += (Math.random()<0.4 && HOMO[ch])? HOMO[ch] : GLITCH_SET[Math.floor(Math.random()*GLITCH_SET.length)]; }
+      else out += ch;
     } return out;
+  }
+  function applyCorruption(session, rate){ session.forEach(it=> it.node.nodeValue = corruptString(it.original, rate)); }
+  function restoreCorruption(session){ session.forEach(it=> it.node.nodeValue = it.original); }
+  function startModalCorruption(root,{startRate=.03,step=.04,maxRate=.35,periodMs=1300}={}){
+    stopModalCorruption();
+    corruptSession = collectTextNodes(root).map(n=>({node:n,original:n.nodeValue}));
+    applyCorruption(corruptSession,startRate);
+    corruptTimer = setInterval(()=>{
+      const c = Math.min(maxRate, startRate += step);
+      applyCorruption(corruptSession,c);
+      root.closest('.modal-inner')?.classList.add('corrupt-flash');
+      setTimeout(()=> root.closest('.modal-inner')?.classList.remove('corrupt-flash'), 180);
+    }, periodMs);
+  }
+  function stopModalCorruption(){
+    if(corruptTimer){ clearInterval(corruptTimer); corruptTimer=null; }
+    if(corruptSession.length){ restoreCorruption(corruptSession); corruptSession=[]; }
   }
 
   function openDetailModal(data){
-    mTitle.textContent = `患者記録 No.${data.no}`;
-    mBody.innerHTML = `
-      <p><strong>患者名：</strong>${data.name}</p>
-      <p><strong>診断名：</strong>${data.diag}</p>
-      <p><strong>症状：</strong>${data.sym}</p>
-      <p><strong>経過：</strong>${data.prog}</p>
-      ${data.mosaic ? `<p>※ 記録の一部が読み取り不能です。</p>` : ``}
+    modalTitle.textContent = `患者記録 No.${data.no}`;
+    modalBody.innerHTML = `
+      <p class="fw-gothic"><strong>患者名：</strong>${data.name}</p>
+      <p class="fw-gothic"><strong>診断名：</strong>${data.diag}</p>
+      <p class="fw-gothic"><strong>症状：</strong>${data.sym}</p>
+      <p class="fw-gothic"><strong>経過：</strong>${data.prog}</p>
     `;
-    // 軽い文字化け発生→修復
-    const texts = Array.from(mBody.querySelectorAll('p'));
-    texts.forEach(p=>{
-      const org = p.textContent;
-      p.textContent = corruptOnce(org, .08);
-      setTimeout(()=> p.textContent = org, 900);
-    });
-
     modal.classList.add("open");
     modal.setAttribute("aria-hidden","false");
+    globalBreak();
+    startModalCorruption(modalBody);
   }
-  mClose.addEventListener("click", ()=>{
+  modalClose.addEventListener("click", ()=>{
+    stopModalCorruption();
     modal.classList.remove("open");
     modal.setAttribute("aria-hidden","true");
   });
 
-  /* ---------- 小道具 ---------- */
-  function glitchReveal(el, dur=1200){
-    const target = el.textContent;
-    const pool = "█▓▒░◎◇◆#*+%€@$";
-    let t=0;
-    (function loop(){
-      const prog = Math.min(1, t/dur);
-      const keep = Math.floor(target.length * prog);
-      let s = target.slice(0, keep);
-      for(let i=keep;i<target.length;i++){
-        s += pool[Math.floor(Math.random()*pool.length)];
+  /* ---------- 自動更新（一覧の1件を勝手に更新） ---------- */
+  let autoUpdatedOnce=false;
+  function triggerAutoUpdate(){
+    if(autoUpdatedOnce) return; autoUpdatedOnce=true;
+    const cards = Array.from(document.querySelectorAll("#records-list .card"));
+    if(cards.length<=1) return;
+    const target = cards[1 + Math.floor(Math.random()*(cards.length-1))];
+    const tdList = target.querySelectorAll("td"); if(!tdList.length) return;
+    const field = tdList[tdList.length-1];
+    field.innerHTML = `状態悪化を確認。<span class="mosaic">赤い日記帳</span>の所在不明。<span class="badge-update">更新</span>`;
+    target.classList.add("updated");
+    globalBreak();
+  }
+
+  /* ---------- 放置腐食（経過欄がじわじわ読みにくく） ---------- */
+  function slowCorruptRecords(){
+    const fields = document.querySelectorAll('#records-list .karte tr:last-child td');
+    fields.forEach((td,i)=>{
+      const nodes = collectTextNodes(td).map(n=>({node:n,original:n.nodeValue}));
+      let t=0; setInterval(()=>{
+        t++; const r = Math.min(0.22, 0.02 + 0.02*t);
+        nodes.forEach(it=> it.node.nodeValue = corruptString(it.original, r));
+      }, 4000 + i*1200);
+    });
+  }
+
+  /* ---------- 一覧に“時々”軽い文字化け（雰囲気付け） ---------- */
+  function randomLightCorrupt(){
+    (function lo(){
+      if (!scrRecords.classList.contains('active')) return;
+      const cards = Array.from(document.querySelectorAll("#records-list .card"));
+      if (cards.length){
+        const card = cards[Math.floor(Math.random()*cards.length)];
+        const td = card.querySelector('td:last-child');
+        if (td){
+          const nodes = collectTextNodes(td).map(n=>({node:n,original:n.nodeValue}));
+          if(nodes.length){
+            const rate = 0.06;
+            nodes.forEach(it=> it.node.nodeValue = corruptString(it.original, rate));
+            setTimeout(()=> nodes.forEach(it=> it.node.nodeValue = it.original), 1400 + Math.random()*1400);
+          }
+        }
       }
-      el.textContent = s;
-      el.style.opacity = 1;
-      t += 30;
-      if (prog<1) setTimeout(loop, 30);
-      else el.textContent = target;
+      setTimeout(lo, 2600 + Math.random()*2400);
     })();
   }
+
+  /* ---------- ランダムFXループ（ロールバーやや多め） ---------- */
+  (function randomFxLoop(){
+    const c=Math.random();
+    if (c < 0.45) rollBarOnce();
+    else if (c < 0.70) rgbSplitPulse();
+    else if (c < 0.85) screenTearOnce();
+    else {/* noop */}
+    if (Math.random() < 0.25){
+      const a=document.querySelector('.screen.active');
+      a?.classList.add('vsync-drift');
+      setTimeout(()=> a?.classList.remove('vsync-drift'), 5000 + Math.random()*4000);
+    }
+    setTimeout(randomFxLoop, 1600 + Math.random()*3200);
+  })();
 
 });
