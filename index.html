@@ -15,11 +15,11 @@ s.onload=s.onreadystatechange=function(){a=this.readyState;if(f||a&&a!="complete
 f=true;clearTimeout(t);try{Typekit.load(c)}catch(e){}};x.parentNode.insertBefore(s,x)})(document);
 </script>
 
-<link rel="stylesheet" href="style.css?v=80" />
+<link rel="stylesheet" href="style.css?v=90" />
 </head>
 <body>
 
-<!-- 全画面の微ノイズ＆走査線レイヤ -->
+<!-- 全画面FX -->
 <div id="fx" aria-hidden="true">
   <div class="fx-grain"></div>
   <div class="fx-scratches"></div>
@@ -28,8 +28,7 @@ f=true;clearTimeout(t);try{Typekit.load(c)}catch(e){}};x.parentNode.insertBefore
 
 <!-- 0) 受付 -->
 <section id="screen-entry" class="screen active">
-  <!-- 青ノイズ背景（mp4） -->
-  <video class="bg-noise" id="bg-entry" src="assets/noise_story.mp4" autoplay muted loop playsinline></video>
+  <video class="bg-noise" id="bg-entry" src="assets/noise_story.mp4" autoplay muted playsinline loop></video>
 
   <div class="browser retro crt">
     <div class="retro-titlebar">
@@ -53,7 +52,7 @@ f=true;clearTimeout(t);try{Typekit.load(c)}catch(e){}};x.parentNode.insertBefore
 
 <!-- 1) 初回ロード -->
 <section id="screen-loading" class="screen">
-  <video class="bg-noise" id="bg-loading" src="assets/noise_story.mp4" autoplay muted loop playsinline></video>
+  <video class="bg-noise" id="bg-loading" src="assets/noise_story.mp4" autoplay muted playsinline loop></video>
   <div class="center">
     <p class="spaced">診断情報を準備しています…</p>
     <p id="load-per" class="percent">0%</p>
@@ -62,7 +61,7 @@ f=true;clearTimeout(t);try{Typekit.load(c)}catch(e){}};x.parentNode.insertBefore
 
 <!-- 2) 名前＋見出し -->
 <section id="screen-name" class="screen">
-  <video class="bg-noise" id="bg-name" src="assets/noise_story.mp4" autoplay muted loop playsinline></video>
+  <video class="bg-noise" id="bg-name" src="assets/noise_story.mp4" autoplay muted playsinline loop></video>
   <div class="center">
     <p class="who-line">―― <span id="who-name">来訪者</span> 様の診断結果 ――</p>
     <h1 class="kaiki">
@@ -74,19 +73,18 @@ f=true;clearTimeout(t);try{Typekit.load(c)}catch(e){}};x.parentNode.insertBefore
 
 <!-- 3) 発祥（本文ウィンドウ + “たすけて” ミニウィンドウ） -->
 <section id="screen-story" class="screen">
-  <video class="bg-noise" id="bg-story" src="assets/noise_story.mp4" autoplay muted loop playsinline></video>
+  <video class="bg-noise" id="bg-story" src="assets/noise_story.mp4" autoplay muted playsinline loop></video>
 
   <div class="stack">
-    <!-- 本文ウィンドウ（フェードイン） -->
+    <!-- 本文ウィンドウ -->
     <div class="browser retro crt win-main popin">
       <div class="retro-titlebar">
-        <span class="retro-title">発　祥　ス　ト　ー　リ　ー</span>
+        <span class="retro-title retro-title--story">発　祥 ストーリー</span>
         <div class="retro-controls"><span class="ctrl">_</span><span class="ctrl">□</span><span class="ctrl close">×</span></div>
       </div>
       <div class="retro-pane">
         <h2 class="kaiki-sub chromatic">“B-33型《バーバラさん》”</h2>
         <div id="story-scroll" class="scrollbox phosphor">
-          <!-- フェードイン表示（タイプライターは使わない） -->
           <div id="story-text" class="story-text">
             <p>昔、とある少女が惨殺され、その少女は赤い日記帳に日々の出来事を綴っていた。</p>
             <p>少女の死後、その赤い日記帳は忽然と姿を消し、どこを探しても見つからなかった。</p>
@@ -101,7 +99,7 @@ f=true;clearTimeout(t);try{Typekit.load(c)}catch(e){}};x.parentNode.insertBefore
       </div>
     </div>
 
-    <!-- “たすけて” ミニウィンドウ（ボックスはフェード、文字はタイプライター） -->
+    <!-- “たすけて” -->
     <div id="win-chant" class="browser retro crt win-mini popin delay hidden">
       <div class="retro-titlebar">
         <span class="retro-title">受 信 ロ グ</span>
@@ -118,7 +116,7 @@ f=true;clearTimeout(t);try{Typekit.load(c)}catch(e){}};x.parentNode.insertBefore
 
 <!-- 4) 注意 -->
 <section id="screen-warning" class="screen">
-  <video class="bg-noise" id="bg-warning" src="assets/noise_records.mp4" autoplay muted loop playsinline></video>
+  <video class="bg-noise" id="bg-warning" src="assets/noise_records.mp4" autoplay muted playsinline loop></video>
   <div class="center">
     <p class="warning spaced">
       これから表示される内容は極めて危険です。<br>
@@ -131,7 +129,7 @@ f=true;clearTimeout(t);try{Typekit.load(c)}catch(e){}};x.parentNode.insertBefore
 
 <!-- 5) カルテロード -->
 <section id="screen-records-loading" class="screen">
-  <video class="bg-noise" id="bg-records-loading" src="assets/noise_records.mp4" autoplay muted loop playsinline></video>
+  <video class="bg-noise" id="bg-records-loading" src="assets/noise_records.mp4" autoplay muted playsinline loop></video>
   <div class="center">
     <p class="spaced">カルテ情報を取得しています…</p>
     <p id="rec-per" class="percent">0%</p>
@@ -140,7 +138,7 @@ f=true;clearTimeout(t);try{Typekit.load(c)}catch(e){}};x.parentNode.insertBefore
 
 <!-- 6) カルテ一覧 -->
 <section id="screen-records" class="screen">
-  <video class="bg-noise" id="bg-records" src="assets/noise_records.mp4" autoplay muted loop playsinline></video>
+  <video class="bg-noise" id="bg-records" src="assets/noise_records.mp4" autoplay muted playsinline loop></video>
   <div class="records crt">
     <h3 class="records-title chromatic">患者記録一覧</h3>
     <div class="records-scroll"><div id="records-list"></div></div>
@@ -157,6 +155,6 @@ f=true;clearTimeout(t);try{Typekit.load(c)}catch(e){}};x.parentNode.insertBefore
   </div>
 </div>
 
-<script src="script.js?v=80" defer></script>
+<script src="script.js?v=90" defer></script>
 </body>
 </html>
