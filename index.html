@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>B-33型《バーバラさん》 診断記録</title>
 
-<!-- Adobe Fonts（秀英角ゴシック金） -->
+<!-- Adobe Fonts（DNP 秀英角ゴシック金：あなたのキットIDのままでOK） -->
 <script>
 (function(d){var c={kitId:'ouz3iep',scriptTimeout:3000,async:true},h=d.documentElement,
 t=setTimeout(function(){h.className=h.className.replace(/\bwf-loading\b/g,"")+" wf-inactive";},c.scriptTimeout),
@@ -15,22 +15,33 @@ s.onload=s.onreadystatechange=function(){a=this.readyState;if(f||a&&a!="complete
 f=true;clearTimeout(t);try{Typekit.load(c)}catch(e){}};x.parentNode.insertBefore(s,x)})(document);
 </script>
 
-<link rel="stylesheet" href="style.css?v=90" />
+<link rel="stylesheet" href="style.css?v=80" />
 </head>
 <body>
 
-<!-- 全画面FX -->
+<!-- 全体ノイズ（うっすら）-->
+<div id="noise" aria-hidden="true"></div>
+
+<!-- 走査線/ロールバー等 全画面FX -->
 <div id="fx" aria-hidden="true">
   <div class="fx-grain"></div>
   <div class="fx-scratches"></div>
   <div class="fx-rollbar"></div>
 </div>
 
-<!-- 0) 受付 -->
-<section id="screen-entry" class="screen active">
-  <video class="bg-noise" id="bg-entry" src="assets/noise_story.mp4" autoplay muted playsinline loop></video>
+<!-- 0) 前置きフェードイン -->
+<section id="screen-preface" class="screen active blue-stage">
+  <div class="preface-wrap">
+    <p class="preface-text">
+      本日はご来院、ありがとうございました。<br>
+      患者様の処方箋より怪異の詳細な情報を開示いたします。
+    </p>
+  </div>
+</section>
 
-  <div class="browser retro crt">
+<!-- 1) 受付 -->
+<section id="screen-entry" class="screen blue-stage">
+  <div class="browser retro crt pop-from-bottom" data-pop>
     <div class="retro-titlebar">
       <span class="retro-title">受　付</span>
       <div class="retro-controls"><span class="ctrl">_</span><span class="ctrl">□</span><span class="ctrl close">×</span></div>
@@ -40,52 +51,50 @@ f=true;clearTimeout(t);try{Typekit.load(c)}catch(e){}};x.parentNode.insertBefore
         診断で使用したお名前を入力してください。<br>
         <strong data-no-corrupt>※ 実名はお控えください（渾名・イニシャル推奨）</strong>
       </p>
-      <div class="entry-form">
+      <div class="entry-form bigger">
         <input id="nick-input" type="text" autocomplete="off" autocapitalize="off" maxlength="20"
                placeholder="例）ミヌ／M.N.／来訪者" aria-label="お名前（渾名）">
         <button id="btn-start" class="btn">データの照合</button>
       </div>
       <p class="entry-note" data-no-corrupt>入力されたお名前は画面表示のみに使用され、保存されません。</p>
-    </div>
+  </div>
   </div>
 </section>
 
-<!-- 1) 初回ロード -->
+<!-- 2) 初回ロード -->
 <section id="screen-loading" class="screen">
-  <video class="bg-noise" id="bg-loading" src="assets/noise_story.mp4" autoplay muted playsinline loop></video>
   <div class="center">
     <p class="spaced">診断情報を準備しています…</p>
     <p id="load-per" class="percent">0%</p>
   </div>
 </section>
 
-<!-- 2) 名前＋見出し -->
+<!-- 3) 名前＋見出し -->
 <section id="screen-name" class="screen">
-  <video class="bg-noise" id="bg-name" src="assets/noise_story.mp4" autoplay muted playsinline loop></video>
   <div class="center">
     <p class="who-line">―― <span id="who-name">来訪者</span> 様の診断結果 ――</p>
-    <h1 class="kaiki">
-      <span>B-33型</span><br>
-      <span>《バーバラさん》</span>
-    </h1>
+    <!-- 指定箇所で改行 -->
+    <h1 class="kaiki">B-33型<br>《バーバラさん》</h1>
   </div>
 </section>
 
-<!-- 3) 発祥（本文ウィンドウ + “たすけて” ミニウィンドウ） -->
-<section id="screen-story" class="screen">
-  <video class="bg-noise" id="bg-story" src="assets/noise_story.mp4" autoplay muted playsinline loop></video>
+<!-- 4) 発祥ストーリー（本文ウィンドウ + “たすけて”ミニウィンドウ） -->
+<section id="screen-story" class="screen blue-stage">
+  <!-- 背景ノイズ映像（上に重ねる） -->
+  <video class="noise-video" id="vid-story" src="assets/noise_story.mp4" muted autoplay loop playsinline></video>
 
   <div class="stack">
     <!-- 本文ウィンドウ -->
-    <div class="browser retro crt win-main popin">
+    <div class="browser retro crt win-main" id="story-window">
       <div class="retro-titlebar">
-        <span class="retro-title retro-title--story">発　祥 ストーリー</span>
+        <span class="retro-title tight">発　祥　ス　ト　ー　リ　ー</span>
         <div class="retro-controls"><span class="ctrl">_</span><span class="ctrl">□</span><span class="ctrl close">×</span></div>
       </div>
       <div class="retro-pane">
         <h2 class="kaiki-sub chromatic">“B-33型《バーバラさん》”</h2>
         <div id="story-scroll" class="scrollbox phosphor">
-          <div id="story-text" class="story-text">
+          <!-- 完成文を後からフェードイン -->
+          <div id="story-fade" class="story-ready typewriter">
             <p>昔、とある少女が惨殺され、その少女は赤い日記帳に日々の出来事を綴っていた。</p>
             <p>少女の死後、その赤い日記帳は忽然と姿を消し、どこを探しても見つからなかった。</p>
             <p>やがて、噂を聞いた者の家に見たことのない赤い日記帳が届くようになったが、決して開いてはならないと言われている。</p>
@@ -99,8 +108,8 @@ f=true;clearTimeout(t);try{Typekit.load(c)}catch(e){}};x.parentNode.insertBefore
       </div>
     </div>
 
-    <!-- “たすけて” -->
-    <div id="win-chant" class="browser retro crt win-mini popin delay hidden">
+    <!-- “たすけて”ミニウィンドウ -->
+    <div id="win-chant" class="browser retro crt win-mini hidden">
       <div class="retro-titlebar">
         <span class="retro-title">受 信 ロ グ</span>
         <div class="retro-controls"><span class="ctrl">_</span><span class="ctrl">□</span><span class="ctrl close">×</span></div>
@@ -114,39 +123,39 @@ f=true;clearTimeout(t);try{Typekit.load(c)}catch(e){}};x.parentNode.insertBefore
   </div>
 </section>
 
-<!-- 4) 注意 -->
+<!-- 5) 注意 -->
 <section id="screen-warning" class="screen">
-  <video class="bg-noise" id="bg-warning" src="assets/noise_records.mp4" autoplay muted playsinline loop></video>
   <div class="center">
     <p class="warning spaced">
       これから表示される内容は極めて危険です。<br>
       閲覧によって発生したいかなる事象についても当院は責任を負いかねます。<br>
-      <strong>自己責任で閲覧してください。</strong>
+      自己責任で閲覧してください。
     </p>
     <button id="btn-agree" class="btn">同意して閲覧</button>
   </div>
 </section>
 
-<!-- 5) カルテロード -->
+<!-- 6) カルテロード -->
 <section id="screen-records-loading" class="screen">
-  <video class="bg-noise" id="bg-records-loading" src="assets/noise_records.mp4" autoplay muted playsinline loop></video>
   <div class="center">
     <p class="spaced">カルテ情報を取得しています…</p>
     <p id="rec-per" class="percent">0%</p>
   </div>
 </section>
 
-<!-- 6) カルテ一覧 -->
+<!-- 7) カルテ一覧 -->
 <section id="screen-records" class="screen">
-  <video class="bg-noise" id="bg-records" src="assets/noise_records.mp4" autoplay muted playsinline loop></video>
+  <!-- カルテ用 背景ノイズ映像 -->
+  <video class="noise-video" id="vid-records" src="assets/noise_records.mp4" muted autoplay loop playsinline></video>
+
   <div class="records crt">
     <h3 class="records-title chromatic">患者記録一覧</h3>
-    <div class="records-scroll"><div id="records-list"></div></div>
+    <div id="records-list"></div>
     <div class="controls"><button id="btn-back-story" class="btn">発祥ストーリーに戻る</button></div>
   </div>
 </section>
 
-<!-- 7) 詳細モーダル -->
+<!-- 8) 詳細モーダル -->
 <div id="modal" role="dialog" aria-hidden="true">
   <div class="modal-inner">
     <h4 id="modal-title" class="modal-title">患者記録</h4>
@@ -155,6 +164,6 @@ f=true;clearTimeout(t);try{Typekit.load(c)}catch(e){}};x.parentNode.insertBefore
   </div>
 </div>
 
-<script src="script.js?v=90" defer></script>
+<script src="script.js?v=80"></script>
 </body>
 </html>
