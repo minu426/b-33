@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>B-33型《バーバラさん》 診断記録</title>
 
-<!-- Adobe Fonts（DNP 秀英角ゴシック金） -->
+<!-- Adobe Fonts（秀英角ゴシック金） -->
 <script>
 (function(d){var c={kitId:'ouz3iep',scriptTimeout:3000,async:true},h=d.documentElement,
 t=setTimeout(function(){h.className=h.className.replace(/\bwf-loading\b/g,"")+" wf-inactive";},c.scriptTimeout),
@@ -15,28 +15,30 @@ s.onload=s.onreadystatechange=function(){a=this.readyState;if(f||a&&a!="complete
 f=true;clearTimeout(t);try{Typekit.load(c)}catch(e){}};x.parentNode.insertBefore(s,x)})(document);
 </script>
 
-<link rel="stylesheet" href="style.css?v=80" />
+<link rel="stylesheet" href="style.css?v=92" />
 </head>
 <body>
 
-<!-- 背景ノイズ動画（画面別。最背面固定） -->
-<video id="bg-story" class="bg-video tint-blue" autoplay muted loop playsinline>
-  <source src="assets/noise_story.mp4" type="video/mp4">
-</video>
-<video id="bg-records" class="bg-video" autoplay muted loop playsinline>
-  <source src="assets/noise_records.mp4" type="video/mp4">
-</video>
+<!-- 薄ノイズ（全体） -->
+<div id="noise" aria-hidden="true"></div>
 
-<!-- 走査線/粒状/ロールバーなど全体FX -->
+<!-- 全画面エフェクト -->
 <div id="fx" aria-hidden="true">
   <div class="fx-grain"></div>
-  <div class="fx-scanlines"></div>
-  <div class="fx-vignette"></div>
+  <div class="fx-scratches"></div>
   <div class="fx-rollbar"></div>
 </div>
 
 <!-- 0) 受付 -->
 <section id="screen-entry" class="screen active">
+  <!-- 背景ノイズ（mp4優先 / gif fallback） -->
+  <div class="bg-noise" data-type="entry">
+    <video playsinline autoplay muted loop preload="auto" class="bgv">
+      <source src="assets/noise_entry.mp4" type="video/mp4">
+    </video>
+    <div class="bg-gif" style="background-image:url('assets/noise_entry.gif')"></div>
+  </div>
+
   <div class="browser retro crt">
     <div class="retro-titlebar">
       <span class="retro-title">受　付</span>
@@ -69,32 +71,37 @@ f=true;clearTimeout(t);try{Typekit.load(c)}catch(e){}};x.parentNode.insertBefore
 <section id="screen-name" class="screen">
   <div class="center">
     <p class="who-line">―― <span id="who-name">来訪者</span> 様の診断結果 ――</p>
-    <h1 class="kaiki">
-      <span class="kaiki-line">B-33型<wbr></span>
-      <span class="kaiki-line">《バーバラさん》</span>
-    </h1>
+    <h1 class="kaiki">B-33型<br class="force">《バーバラさん》</h1>
   </div>
 </section>
 
-<!-- 3) 発祥（本文ウィンドウ + “たすけて”ウィンドウ） -->
+<!-- 3) 発祥（本文ウィンドウ + “たすけて”ミニウィンドウ） -->
 <section id="screen-story" class="screen">
+  <!-- 背景ノイズ（受付と同トーンの青め） -->
+  <div class="bg-noise" data-type="story">
+    <video playsinline autoplay muted loop preload="auto" class="bgv">
+      <source src="assets/noise_story.mp4" type="video/mp4">
+    </video>
+    <div class="bg-gif" style="background-image:url('assets/noise_story.gif')"></div>
+  </div>
+
   <div class="stack">
-    <!-- 本文ウィンドウ：先にボックス挿入→少し遅れて本文フェードイン -->
+    <!-- 本文ウィンドウ（下から出現→テキストは遅れてフェードイン） -->
     <div class="browser retro crt win-main appear">
       <div class="retro-titlebar">
-        <span class="retro-title story-title">発 祥 ス ト ー リ ー</span>
+        <span class="retro-title">発　祥　ス　ト　｜　リ　｜</span>
         <div class="retro-controls"><span class="ctrl">_</span><span class="ctrl">□</span><span class="ctrl close">×</span></div>
       </div>
       <div class="retro-pane">
         <h2 class="kaiki-sub chromatic">“B-33型《バーバラさん》”</h2>
         <div id="story-scroll" class="scrollbox phosphor">
-          <div id="story-text" class="story-body"></div>
+          <div id="story-text" class="story-fade"></div>
         </div>
         <button id="btn-to-warning" class="btn">過去の患者カルテを見る</button>
       </div>
     </div>
 
-    <!-- “たすけて”ミニウィンドウ：同じ挿入演出、本文はタイプライター -->
+    <!-- “たすけて”ミニウィンドウ（同じ挙動で出現／中身はタイプライター） -->
     <div id="win-chant" class="browser retro crt win-mini hidden appear">
       <div class="retro-titlebar">
         <span class="retro-title">受 信 ロ グ</span>
@@ -131,9 +138,16 @@ f=true;clearTimeout(t);try{Typekit.load(c)}catch(e){}};x.parentNode.insertBefore
 
 <!-- 6) カルテ一覧 -->
 <section id="screen-records" class="screen">
+  <!-- 背景ノイズ（カルテ用） -->
+  <div class="bg-noise" data-type="records">
+    <video playsinline autoplay muted loop preload="auto" class="bgv">
+      <source src="assets/noise_records.mp4" type="video/mp4">
+    </video>
+    <div class="bg-gif" style="background-image:url('assets/noise_records.gif')"></div>
+  </div>
+
   <div class="records crt">
     <h3 class="records-title chromatic">患者記録一覧</h3>
-    <p class="records-note warning">※ 個人情報に関わるため一部を伏せています。</p>
     <div id="records-list"></div>
     <div class="controls"><button id="btn-back-story" class="btn">発祥ストーリーに戻る</button></div>
   </div>
@@ -148,7 +162,6 @@ f=true;clearTimeout(t);try{Typekit.load(c)}catch(e){}};x.parentNode.insertBefore
   </div>
 </div>
 
-<script src="script.js?v=80"></script>
+<script src="script.js?v=92"></script>
 </body>
 </html>
-
