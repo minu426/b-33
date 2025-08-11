@@ -15,50 +15,52 @@ s.onload=s.onreadystatechange=function(){a=this.readyState;if(f||a&&a!="complete
 f=true;clearTimeout(t);try{Typekit.load(c)}catch(e){}};x.parentNode.insertBefore(s,x)})(document);
 </script>
 
-<link rel="stylesheet" href="style.css?v=80" />
+<link rel="stylesheet" href="style.css?v=91" />
 </head>
-<body>
+<body class="no-scroll">
 
-<!-- 常時ノイズ動画（全画面重ね） -->
-<video id="noise-layer" class="noise-layer" autoplay muted loop playsinline preload="auto"></video>
+<!-- トランジションノイズ（画面切替時） -->
+<div id="transition-noise" aria-hidden="true">
+  <div class="t-grain"></div>
+  <div class="t-scan"></div>
+</div>
 
-<!-- 追加：全画面エフェクトレイヤ -->
+<!-- FXレイヤ（スクラッチ/ロールバー） -->
 <div id="fx" aria-hidden="true">
   <div class="fx-grain"></div>
   <div class="fx-scratches"></div>
   <div class="fx-rollbar"></div>
 </div>
 
-<!-- -1) 前置き（真っ暗＋白文字、ノイズっぽい出方） -->
+<!-- 常時ノイズ動画（全体に重ねる・文字の上にも薄く掛ける） -->
+<video id="noise-layer" class="noise-layer" autoplay muted loop playsinline preload="auto"></video>
+
+<!-- -1) 前置き（真っ暗＋白文字、ノイズまとめフェード） -->
 <section id="screen-preamble" class="screen active">
   <div class="center">
     <div class="preamble-wrap">
-      <p class="preamble-line">本日はご来院、ありがとうございました。</p>
-      <p class="preamble-line">患者様の処方箋より怪異の詳細な情報を開示いたします。</p>
+      <p class="preamble all-ink" data-text="本日はご来院、ありがとうございました。">本日はご来院、ありがとうございました。</p>
+      <p class="preamble all-ink" data-text="患者様の処方箋より怪異の詳細な情報を開示いたします。">患者様の処方箋より怪異の詳細な情報を開示いたします。</p>
     </div>
   </div>
 </section>
 
 <!-- 0) 受付 -->
 <section id="screen-entry" class="screen">
-  <div class="browser retro crt win entry-win">
-    <div class="retro-titlebar">
-      <span class="retro-title">受　付</span>
-      <div class="retro-controls"><span class="ctrl">_</span><span class="ctrl">□</span><span class="ctrl close">×</span></div>
+  <div class="viewer win entry-win">
+    <div class="viewer-head">
+      <span class="led"></span>
+      <span class="viewer-title nowrap">受　付</span>
+      <span class="dots">···</span>
     </div>
-    <div class="retro-pane">
-      <p class="phosphor small-note" data-no-corrupt>
-        診断で使用したお名前を入力してください。<br>
-        <strong>※ 実名はお控えください（渾名・イニシャル推奨）</strong>
-      </p>
+    <div class="viewer-body">
+      <p class="small-note fw-gothic">診断で使用したお名前を入力してください。<br><strong>※ 実名はお控えください（渾名・イニシャル推奨）</strong></p>
       <div class="entry-form">
         <input id="nick-input" type="text" inputmode="text" autocomplete="off" autocapitalize="off" maxlength="20"
                placeholder="例）化神魔 / M.N / 来訪者" aria-label="お名前（渾名）">
         <button id="btn-start" class="btn">データの照合</button>
       </div>
-      <p class="entry-note small-note" data-no-corrupt>
-        入力されたお名前は画面表示のみに使用され、保存されません。
-      </p>
+      <p class="entry-note small-note fw-gothic">入力されたお名前は画面表示のみに使用され、保存されません。</p>
     </div>
   </div>
 </section>
@@ -66,7 +68,7 @@ f=true;clearTimeout(t);try{Typekit.load(c)}catch(e){}};x.parentNode.insertBefore
 <!-- 1) 初回ロード -->
 <section id="screen-loading" class="screen">
   <div class="center">
-    <p class="spaced">診断情報を準備しています…</p>
+    <p class="spaced ink-sm">診断情報を準備しています…</p>
     <p id="load-per" class="percent">0%</p>
   </div>
 </section>
@@ -74,42 +76,42 @@ f=true;clearTimeout(t);try{Typekit.load(c)}catch(e){}};x.parentNode.insertBefore
 <!-- 2) 名前＋見出し -->
 <section id="screen-name" class="screen">
   <div class="center">
-    <p class="who-line">―― <span id="who-name">来訪者</span> 様の診断結果 ――</p>
-    <h1 class="kaiki glow">
+    <p class="who-line ink-sm">―― <span id="who-name">来訪者</span> 様の診断結果 ――</p>
+    <h1 class="kaiki glow crt-bleed">
       <span class="kaiki-line1">B-33型</span><br>
       <span class="kaiki-line2">《バーバラさん》</span>
     </h1>
   </div>
 </section>
 
-<!-- 3) 発祥（本文ウィンドウ + “たすけて”ミニウィンドウ） -->
+<!-- 3) 発祥：本文ウィンドウ + “たすけて” -->
 <section id="screen-story" class="screen page-scroll">
   <div class="stack">
-    <!-- 本文ウィンドウ -->
-    <div class="browser retro crt win win-main">
-      <div class="retro-titlebar">
-        <span class="retro-title nowrap">発　祥　ス　ト　ー　リ　ー</span>
-        <div class="retro-controls"><span class="ctrl">_</span><span class="ctrl">□</span><span class="ctrl close">×</span></div>
+    <!-- 本文 -->
+    <div class="viewer win win-main">
+      <div class="viewer-head">
+        <span class="led"></span>
+        <span class="viewer-title nowrap">発 祥 ス ト ー リ ー</span>
+        <span class="dots">···</span>
       </div>
-      <div class="retro-pane">
+      <div class="viewer-body">
         <h2 class="kaiki-sub chromatic">“B-33型《バーバラさん》”</h2>
-        <div id="story-scroll" class="scrollbox phosphor fw-gothic">
-          <div id="story-text" class="story-block">
-            <!-- JSでフェードイン表示（固定文／タイプライターなし） -->
-          </div>
+        <div id="story-scroll" class="scrollbox fw-gothic">
+          <div id="story-text" class="story-block"></div>
         </div>
         <button id="btn-to-warning" class="btn">過去の患者カルテを見る</button>
       </div>
     </div>
 
-    <!-- “たすけて”ミニウィンドウ（遅れて表示） -->
-    <div id="win-chant" class="browser retro crt win win-mini hidden">
-      <div class="retro-titlebar">
-        <span class="retro-title">受 信 ロ グ</span>
-        <div class="retro-controls"><span class="ctrl">_</span><span class="ctrl">□</span><span class="ctrl close">×</span></div>
+    <!-- 受信ログ（遅れて表示） -->
+    <div id="win-chant" class="viewer win win-mini hidden">
+      <div class="viewer-head">
+        <span class="led"></span>
+        <span class="viewer-title">受 信 ロ グ</span>
+        <span class="dots">···</span>
       </div>
-      <div class="retro-pane">
-        <div id="chant-scroll" class="scrollbox phosphor fw-gothic">
+      <div class="viewer-body">
+        <div id="chant-scroll" class="scrollbox fw-gothic">
           <div id="chant-text" class="help-chant"></div>
         </div>
       </div>
@@ -136,15 +138,15 @@ f=true;clearTimeout(t);try{Typekit.load(c)}catch(e){}};x.parentNode.insertBefore
 <!-- 5) カルテロード -->
 <section id="screen-records-loading" class="screen">
   <div class="center">
-    <p class="spaced">カルテ情報を取得しています…</p>
+    <p class="spaced ink-sm">カルテ情報を取得しています…</p>
     <p id="rec-per" class="percent">0%</p>
   </div>
 </section>
 
 <!-- 6) カルテ一覧 -->
 <section id="screen-records" class="screen page-scroll">
-  <div class="records crt">
-    <h3 class="records-title chromatic">患者記録一覧</h3>
+  <div class="records">
+    <h3 class="records-title chromatic crt-bleed">患者記録一覧</h3>
     <div id="records-list"></div>
     <div class="controls"><button id="btn-back-story" class="btn">発祥ストーリーに戻る</button></div>
   </div>
@@ -159,6 +161,6 @@ f=true;clearTimeout(t);try{Typekit.load(c)}catch(e){}};x.parentNode.insertBefore
   </div>
 </div>
 
-<script src="script.js?v=80"></script>
+<script src="script.js?v=91"></script>
 </body>
 </html>
