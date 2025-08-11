@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>B-33型《バーバラさん》 診断記録</title>
 
-<!-- Adobe Fonts（秀英角ゴシック金 / 貂明朝） -->
+<!-- Adobe Fonts（秀英角ゴシック金） -->
 <script>
 (function(d){var c={kitId:'ouz3iep',scriptTimeout:3000,async:true},h=d.documentElement,
 t=setTimeout(function(){h.className=h.className.replace(/\bwf-loading\b/g,"")+" wf-inactive";},c.scriptTimeout),
@@ -15,51 +15,55 @@ s.onload=s.onreadystatechange=function(){a=this.readyState;if(f||a&&a!="complete
 f=true;clearTimeout(t);try{Typekit.load(c)}catch(e){}};x.parentNode.insertBefore(s,x)})(document);
 </script>
 
-<link rel="stylesheet" href="style.css?v=72" />
+<link rel="stylesheet" href="style.css?v=80" />
 </head>
 <body>
 
-<!-- 全体薄ノイズ（CSSで効果付け） -->
-<div id="noise" aria-hidden="true"></div>
+<!-- 常時ノイズ動画（全画面重ね） -->
+<video id="noise-layer" class="noise-layer" autoplay muted loop playsinline preload="auto"></video>
 
-<!-- FXレイヤ（走査線/ロールバー等） -->
+<!-- 追加：全画面エフェクトレイヤ -->
 <div id="fx" aria-hidden="true">
   <div class="fx-grain"></div>
   <div class="fx-scratches"></div>
   <div class="fx-rollbar"></div>
 </div>
 
-<!-- 0) 前置き（黒背景・白文字・ノイズ解読） -->
-<section id="screen-preface" class="screen active dark-center">
-  <div class="preface-wrap">
-    <p id="preface-line1" class="preface-line">本日はご来院、ありがとうございました。</p>
-    <p id="preface-line2" class="preface-line">患者様の処方箋より怪異の詳細な情報を開示いたします。</p>
+<!-- -1) 前置き（真っ暗＋白文字、ノイズっぽい出方） -->
+<section id="screen-preamble" class="screen active">
+  <div class="center">
+    <div class="preamble-wrap">
+      <p class="preamble-line">本日はご来院、ありがとうございました。</p>
+      <p class="preamble-line">患者様の処方箋より怪異の詳細な情報を開示いたします。</p>
+    </div>
   </div>
 </section>
 
-<!-- 1) 受付 -->
+<!-- 0) 受付 -->
 <section id="screen-entry" class="screen">
-  <div class="browser retro crt small rounded">
+  <div class="browser retro crt win entry-win">
     <div class="retro-titlebar">
       <span class="retro-title">受　付</span>
       <div class="retro-controls"><span class="ctrl">_</span><span class="ctrl">□</span><span class="ctrl close">×</span></div>
     </div>
     <div class="retro-pane">
-      <p class="phosphor" style="margin:.4rem 0 1rem 0;">
+      <p class="phosphor small-note" data-no-corrupt>
         診断で使用したお名前を入力してください。<br>
-        <strong data-no-corrupt>※ 実名はお控えください（渾名・イニシャル推奨）</strong>
+        <strong>※ 実名はお控えください（渾名・イニシャル推奨）</strong>
       </p>
-      <div class="entry-form big">
-        <input id="nick-input" type="text" autocomplete="off" autocapitalize="off" maxlength="20"
-               placeholder="例）ミヌ／M.N.／来訪者" aria-label="お名前（渾名）">
+      <div class="entry-form">
+        <input id="nick-input" type="text" inputmode="text" autocomplete="off" autocapitalize="off" maxlength="20"
+               placeholder="例）化神魔 / M.N / 来訪者" aria-label="お名前（渾名）">
         <button id="btn-start" class="btn">データの照合</button>
       </div>
-      <p class="entry-note" data-no-corrupt>入力されたお名前は画面表示のみに使用され、保存されません。</p>
+      <p class="entry-note small-note" data-no-corrupt>
+        入力されたお名前は画面表示のみに使用され、保存されません。
+      </p>
     </div>
   </div>
 </section>
 
-<!-- 2) ロード -->
+<!-- 1) 初回ロード -->
 <section id="screen-loading" class="screen">
   <div class="center">
     <p class="spaced">診断情報を準備しています…</p>
@@ -67,53 +71,45 @@ f=true;clearTimeout(t);try{Typekit.load(c)}catch(e){}};x.parentNode.insertBefore
   </div>
 </section>
 
-<!-- 3) 見出し -->
+<!-- 2) 名前＋見出し -->
 <section id="screen-name" class="screen">
   <div class="center">
     <p class="who-line">―― <span id="who-name">来訪者</span> 様の診断結果 ――</p>
-    <h1 class="kaiki glow">B-33型<br>《バーバラさん》</h1>
+    <h1 class="kaiki glow">
+      <span class="kaiki-line1">B-33型</span><br>
+      <span class="kaiki-line2">《バーバラさん》</span>
+    </h1>
   </div>
 </section>
 
-<!-- 4) 発祥（青ノイズ背景＋本文ウィンドウ＋受信ログ） -->
-<section id="screen-story" class="screen story-scroll">
-  <!-- 背景ノイズ動画（固定） -->
-  <video id="bg-story" class="bg-video" autoplay muted loop playsinline>
-    <source src="assets/noise_story.mp4" type="video/mp4">
-  </video>
-
+<!-- 3) 発祥（本文ウィンドウ + “たすけて”ミニウィンドウ） -->
+<section id="screen-story" class="screen page-scroll">
   <div class="stack">
-    <!-- 本文 -->
-    <div class="browser retro crt small rounded win-main will-pop">
+    <!-- 本文ウィンドウ -->
+    <div class="browser retro crt win win-main">
       <div class="retro-titlebar">
         <span class="retro-title nowrap">発　祥　ス　ト　ー　リ　ー</span>
         <div class="retro-controls"><span class="ctrl">_</span><span class="ctrl">□</span><span class="ctrl close">×</span></div>
       </div>
       <div class="retro-pane">
         <h2 class="kaiki-sub chromatic">“B-33型《バーバラさん》”</h2>
-        <div id="story-scroll" class="scrollbox phosphor">
-          <div id="story-text" class="typewriter no-type">
-            <p>昔、とある少女が惨殺され、その少女は赤い日記帳に日々の出来事を綴っていた。</p>
-            <p>少女の死後、その赤い日記帳は忽然と姿を消し、どこを探しても見つからなかった。</p>
-            <p>やがて、噂を聞いた者の家に見たことのない赤い日記帳が届くようになったが、決して開いてはならないと言われている。</p>
-            <p>その日記帳が届いた夜、バーバラさんと呼ばれる存在が現れる。</p>
-            <p>バーバラさんの顔を見ず、扉を開けて背中に乗せ、部屋の窓を開けて外に送り出さなければならない。</p>
-            <p>日記帳を開いたり、バーバラさんの顔を見てしまった者の運命や、バーバラさんの正体は謎に包まれている。</p>
-            <p>彼女は惨殺された少女の成れの果てなのか、犯人なのか、誰にもわからない。</p>
+        <div id="story-scroll" class="scrollbox phosphor fw-gothic">
+          <div id="story-text" class="story-block">
+            <!-- JSでフェードイン表示（固定文／タイプライターなし） -->
           </div>
         </div>
         <button id="btn-to-warning" class="btn">過去の患者カルテを見る</button>
       </div>
     </div>
 
-    <!-- 受信ログ（少し遅れて挿入） -->
-    <div id="win-chant" class="browser retro crt small rounded win-mini hidden will-pop">
+    <!-- “たすけて”ミニウィンドウ（遅れて表示） -->
+    <div id="win-chant" class="browser retro crt win win-mini hidden">
       <div class="retro-titlebar">
         <span class="retro-title">受 信 ロ グ</span>
         <div class="retro-controls"><span class="ctrl">_</span><span class="ctrl">□</span><span class="ctrl close">×</span></div>
       </div>
       <div class="retro-pane">
-        <div id="chant-scroll" class="scrollbox phosphor">
+        <div id="chant-scroll" class="scrollbox phosphor fw-gothic">
           <div id="chant-text" class="help-chant"></div>
         </div>
       </div>
@@ -121,19 +117,23 @@ f=true;clearTimeout(t);try{Typekit.load(c)}catch(e){}};x.parentNode.insertBefore
   </div>
 </section>
 
-<!-- 5) 注意 -->
+<!-- 4) 注意 -->
 <section id="screen-warning" class="screen">
   <div class="center">
-    <p class="warning spaced">
-      これから表示される内容は極めて危険です。<br>
-      閲覧によって発生したいかなる事象についても当院は責任を負いかねます。<br>
+    <p class="warning spaced warning-block">
+      これから表示される内容は<br>
+      極めて危険です。<br>
+      閲覧によって発生したいかなる<br>
+      事象についても当院は<br>
+      責任を負いかねます。<br>
       自己責任で閲覧してください。
     </p>
+    <p class="small-note red">※ 個人情報は伏せた上で、掲載許可を得た記録のみ表示しています。</p>
     <button id="btn-agree" class="btn">同意して閲覧</button>
   </div>
 </section>
 
-<!-- 6) カルテロード -->
+<!-- 5) カルテロード -->
 <section id="screen-records-loading" class="screen">
   <div class="center">
     <p class="spaced">カルテ情報を取得しています…</p>
@@ -141,21 +141,16 @@ f=true;clearTimeout(t);try{Typekit.load(c)}catch(e){}};x.parentNode.insertBefore
   </div>
 </section>
 
-<!-- 7) カルテ一覧（青ノイズ背景） -->
-<section id="screen-records" class="screen">
-  <video id="bg-records" class="bg-video" autoplay muted loop playsinline>
-    <source src="assets/noise_records.mp4" type="video/mp4">
-  </video>
-
+<!-- 6) カルテ一覧 -->
+<section id="screen-records" class="screen page-scroll">
   <div class="records crt">
     <h3 class="records-title chromatic">患者記録一覧</h3>
-    <p class="warning" style="text-align:center;margin:.2rem 0 1rem;">※ 個人情報は伏せた上で、掲載許可を得た記録のみ表示しています。</p>
     <div id="records-list"></div>
     <div class="controls"><button id="btn-back-story" class="btn">発祥ストーリーに戻る</button></div>
   </div>
 </section>
 
-<!-- 8) 詳細モーダル -->
+<!-- 7) 詳細モーダル -->
 <div id="modal" role="dialog" aria-hidden="true">
   <div class="modal-inner">
     <h4 id="modal-title" class="modal-title">患者記録</h4>
@@ -164,6 +159,6 @@ f=true;clearTimeout(t);try{Typekit.load(c)}catch(e){}};x.parentNode.insertBefore
   </div>
 </div>
 
-<script src="script.js?v=72"></script>
+<script src="script.js?v=80"></script>
 </body>
 </html>
