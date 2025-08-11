@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>B-33型《バーバラさん》 診断記録</title>
 
-<!-- Adobe Fonts（DNP 秀英角ゴシック金：あなたのキットIDのままでOK） -->
+<!-- Adobe Fonts（秀英角ゴシック金 / 貂明朝） -->
 <script>
 (function(d){var c={kitId:'ouz3iep',scriptTimeout:3000,async:true},h=d.documentElement,
 t=setTimeout(function(){h.className=h.className.replace(/\bwf-loading\b/g,"")+" wf-inactive";},c.scriptTimeout),
@@ -15,33 +15,31 @@ s.onload=s.onreadystatechange=function(){a=this.readyState;if(f||a&&a!="complete
 f=true;clearTimeout(t);try{Typekit.load(c)}catch(e){}};x.parentNode.insertBefore(s,x)})(document);
 </script>
 
-<link rel="stylesheet" href="style.css?v=80" />
+<link rel="stylesheet" href="style.css?v=72" />
 </head>
 <body>
 
-<!-- 全体ノイズ（うっすら）-->
+<!-- 全体薄ノイズ（CSSで効果付け） -->
 <div id="noise" aria-hidden="true"></div>
 
-<!-- 走査線/ロールバー等 全画面FX -->
+<!-- FXレイヤ（走査線/ロールバー等） -->
 <div id="fx" aria-hidden="true">
   <div class="fx-grain"></div>
   <div class="fx-scratches"></div>
   <div class="fx-rollbar"></div>
 </div>
 
-<!-- 0) 前置きフェードイン -->
-<section id="screen-preface" class="screen active blue-stage">
+<!-- 0) 前置き（黒背景・白文字・ノイズ解読） -->
+<section id="screen-preface" class="screen active dark-center">
   <div class="preface-wrap">
-    <p class="preface-text">
-      本日はご来院、ありがとうございました。<br>
-      患者様の処方箋より怪異の詳細な情報を開示いたします。
-    </p>
+    <p id="preface-line1" class="preface-line">本日はご来院、ありがとうございました。</p>
+    <p id="preface-line2" class="preface-line">患者様の処方箋より怪異の詳細な情報を開示いたします。</p>
   </div>
 </section>
 
 <!-- 1) 受付 -->
-<section id="screen-entry" class="screen blue-stage">
-  <div class="browser retro crt pop-from-bottom" data-pop>
+<section id="screen-entry" class="screen">
+  <div class="browser retro crt small rounded">
     <div class="retro-titlebar">
       <span class="retro-title">受　付</span>
       <div class="retro-controls"><span class="ctrl">_</span><span class="ctrl">□</span><span class="ctrl close">×</span></div>
@@ -51,17 +49,17 @@ f=true;clearTimeout(t);try{Typekit.load(c)}catch(e){}};x.parentNode.insertBefore
         診断で使用したお名前を入力してください。<br>
         <strong data-no-corrupt>※ 実名はお控えください（渾名・イニシャル推奨）</strong>
       </p>
-      <div class="entry-form bigger">
+      <div class="entry-form big">
         <input id="nick-input" type="text" autocomplete="off" autocapitalize="off" maxlength="20"
                placeholder="例）ミヌ／M.N.／来訪者" aria-label="お名前（渾名）">
         <button id="btn-start" class="btn">データの照合</button>
       </div>
       <p class="entry-note" data-no-corrupt>入力されたお名前は画面表示のみに使用され、保存されません。</p>
-  </div>
+    </div>
   </div>
 </section>
 
-<!-- 2) 初回ロード -->
+<!-- 2) ロード -->
 <section id="screen-loading" class="screen">
   <div class="center">
     <p class="spaced">診断情報を準備しています…</p>
@@ -69,32 +67,32 @@ f=true;clearTimeout(t);try{Typekit.load(c)}catch(e){}};x.parentNode.insertBefore
   </div>
 </section>
 
-<!-- 3) 名前＋見出し -->
+<!-- 3) 見出し -->
 <section id="screen-name" class="screen">
   <div class="center">
     <p class="who-line">―― <span id="who-name">来訪者</span> 様の診断結果 ――</p>
-    <!-- 指定箇所で改行 -->
-    <h1 class="kaiki">B-33型<br>《バーバラさん》</h1>
+    <h1 class="kaiki glow">B-33型<br>《バーバラさん》</h1>
   </div>
 </section>
 
-<!-- 4) 発祥ストーリー（本文ウィンドウ + “たすけて”ミニウィンドウ） -->
-<section id="screen-story" class="screen blue-stage">
-  <!-- 背景ノイズ映像（上に重ねる） -->
-  <video class="noise-video" id="vid-story" src="assets/noise_story.mp4" muted autoplay loop playsinline></video>
+<!-- 4) 発祥（青ノイズ背景＋本文ウィンドウ＋受信ログ） -->
+<section id="screen-story" class="screen story-scroll">
+  <!-- 背景ノイズ動画（固定） -->
+  <video id="bg-story" class="bg-video" autoplay muted loop playsinline>
+    <source src="assets/noise_story.mp4" type="video/mp4">
+  </video>
 
   <div class="stack">
-    <!-- 本文ウィンドウ -->
-    <div class="browser retro crt win-main" id="story-window">
+    <!-- 本文 -->
+    <div class="browser retro crt small rounded win-main will-pop">
       <div class="retro-titlebar">
-        <span class="retro-title tight">発　祥　ス　ト　ー　リ　ー</span>
+        <span class="retro-title nowrap">発　祥　ス　ト　ー　リ　ー</span>
         <div class="retro-controls"><span class="ctrl">_</span><span class="ctrl">□</span><span class="ctrl close">×</span></div>
       </div>
       <div class="retro-pane">
         <h2 class="kaiki-sub chromatic">“B-33型《バーバラさん》”</h2>
         <div id="story-scroll" class="scrollbox phosphor">
-          <!-- 完成文を後からフェードイン -->
-          <div id="story-fade" class="story-ready typewriter">
+          <div id="story-text" class="typewriter no-type">
             <p>昔、とある少女が惨殺され、その少女は赤い日記帳に日々の出来事を綴っていた。</p>
             <p>少女の死後、その赤い日記帳は忽然と姿を消し、どこを探しても見つからなかった。</p>
             <p>やがて、噂を聞いた者の家に見たことのない赤い日記帳が届くようになったが、決して開いてはならないと言われている。</p>
@@ -108,8 +106,8 @@ f=true;clearTimeout(t);try{Typekit.load(c)}catch(e){}};x.parentNode.insertBefore
       </div>
     </div>
 
-    <!-- “たすけて”ミニウィンドウ -->
-    <div id="win-chant" class="browser retro crt win-mini hidden">
+    <!-- 受信ログ（少し遅れて挿入） -->
+    <div id="win-chant" class="browser retro crt small rounded win-mini hidden will-pop">
       <div class="retro-titlebar">
         <span class="retro-title">受 信 ロ グ</span>
         <div class="retro-controls"><span class="ctrl">_</span><span class="ctrl">□</span><span class="ctrl close">×</span></div>
@@ -143,13 +141,15 @@ f=true;clearTimeout(t);try{Typekit.load(c)}catch(e){}};x.parentNode.insertBefore
   </div>
 </section>
 
-<!-- 7) カルテ一覧 -->
+<!-- 7) カルテ一覧（青ノイズ背景） -->
 <section id="screen-records" class="screen">
-  <!-- カルテ用 背景ノイズ映像 -->
-  <video class="noise-video" id="vid-records" src="assets/noise_records.mp4" muted autoplay loop playsinline></video>
+  <video id="bg-records" class="bg-video" autoplay muted loop playsinline>
+    <source src="assets/noise_records.mp4" type="video/mp4">
+  </video>
 
   <div class="records crt">
     <h3 class="records-title chromatic">患者記録一覧</h3>
+    <p class="warning" style="text-align:center;margin:.2rem 0 1rem;">※ 個人情報は伏せた上で、掲載許可を得た記録のみ表示しています。</p>
     <div id="records-list"></div>
     <div class="controls"><button id="btn-back-story" class="btn">発祥ストーリーに戻る</button></div>
   </div>
@@ -164,6 +164,6 @@ f=true;clearTimeout(t);try{Typekit.load(c)}catch(e){}};x.parentNode.insertBefore
   </div>
 </div>
 
-<script src="script.js?v=80"></script>
+<script src="script.js?v=72"></script>
 </body>
 </html>
