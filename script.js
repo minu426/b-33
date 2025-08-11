@@ -1,41 +1,44 @@
 document.addEventListener("DOMContentLoaded", () => {
-  /* 画面参照 */
+  /* ---------- 画面参照 ---------- */
   const scrPref   = document.getElementById("screen-preface");
   const scrEntry  = document.getElementById("screen-entry");
   const scrLoad   = document.getElementById("screen-loading");
   const scrName   = document.getElementById("screen-name");
   const scrStory  = document.getElementById("screen-story");
   const scrWarn   = document.getElementById("screen-warning");
-  const scrRLoad  = document.getElementById("screen-records-loading");
+  const scrRecLd  = document.getElementById("screen-records-loading");
   const scrRecs   = document.getElementById("screen-records");
 
-  /* 中身 */
-  const btnStart  = document.getElementById("btn-start");
+  /* ---------- 要素 ---------- */
   const nickInput = document.getElementById("nick-input");
+  const btnStart  = document.getElementById("btn-start");
   const whoNameEl = document.getElementById("who-name");
-  const loadPer   = document.getElementById("load-per");
+  const perEl     = document.getElementById("load-per");
   const recPer    = document.getElementById("rec-per");
+  const btnWarn   = document.getElementById("btn-to-warning");
+  const btnAgree  = document.getElementById("btn-agree");
+  const btnBack   = document.getElementById("btn-back-story");
 
-  const storyWindow = document.getElementById("story-window");
-  const storyFade   = document.getElementById("story-fade");
-  const winChant    = document.getElementById("win-chant");
-  const chantWrap   = document.getElementById("chant-scroll");
-  const chantText   = document.getElementById("chant-text");
-  const btnToWarn   = document.getElementById("btn-to-warning");
-  const btnAgree    = document.getElementById("btn-agree");
-  const btnBack     = document.getElementById("btn-back-story");
-  const recordsList = document.getElementById("records-list");
+  const winChant  = document.getElementById("win-chant");
+  const chantWrap = document.getElementById("chant-scroll");
+  const chantText = document.getElementById("chant-text");
 
-  /* FX */
+  const pre1 = document.getElementById("preface-line1");
+  const pre2 = document.getElementById("preface-line2");
+
+  /* ---------- FX ---------- */
   const FX = {
     roll: document.querySelector('#fx .fx-rollbar'),
-    noise: document.getElementById('noise'),
+    noise: document.getElementById('noise')
   };
-  function rollBarOnce(){ if(!FX.roll) return; FX.roll.classList.remove('run'); void FX.roll.offsetWidth; FX.roll.classList.add('run'); }
-  function globalBreak(){
-    const act = document.querySelector('.screen.active'); if(!act) return;
-    act.classList.add('global-break'); rollBarOnce();
-    setTimeout(()=> act.classList.remove('global-break'), 360);
+  function rollBarOnce(){
+    if(!FX.roll) return;
+    FX.roll.classList.remove('run'); void FX.roll.offsetWidth;
+    FX.roll.classList.add('run');
+  }
+  function joltActive(){
+    const a=document.querySelector('.screen.active');
+    if(a){ a.classList.add('jolt'); setTimeout(()=>a.classList.remove('jolt'), 220); }
   }
   (function randomFxLoop(){
     const c=Math.random();
@@ -43,115 +46,118 @@ document.addEventListener("DOMContentLoaded", () => {
     setTimeout(randomFxLoop, 1600 + Math.random()*3200);
   })();
 
-  function showScreen(target){
-    document.querySelectorAll(".screen").forEach(s=>{
-      s.classList.remove("active"); s.style.display="none";
-    });
-    target.style.display="flex";
-    target.classList.add("active");
+  /* ---------- 画面切替 ---------- */
+  function showScreen(el){
+    document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));
+    el.classList.add("active");
   }
 
-  /* 0) 前置き → 受付に遷移 */
-  // 1.5sほど見せてから受付を“ボワッ”
+  /* ---------- 前置き：グリッチ解読→受付へ ---------- */
+  glitchReveal(pre1, 1400);
+  setTimeout(()=>glitchReveal(pre2, 1600), 250);
+
+  // 前置きは十分に読めるように 5.2s 表示してから受付へ
   setTimeout(()=>{
     showScreen(scrEntry);
-    const pop = scrEntry.querySelector('[data-pop]');
-    pop && pop.classList.add('pop-show');
-  }, 1500);
+    // 受付ウィンドウ “ボワッ”
+    setTimeout(()=> {
+      document.querySelectorAll('.will-pop').forEach(n=>n.classList.remove('show'));
+      scrEntry.querySelector('.will-pop')?.classList.add('show');
+    }, 60);
+  }, 5200);
 
-  /* 1) 受付 → ロード → 見出し → ストーリー */
+  /* ---------- 受付 → ロード → 見出し → 発祥 ---------- */
   let visitorName = "来訪者";
   btnStart.addEventListener("click", ()=>{
-    const val = (nickInput.value||"").trim();
-    if (!val){
-      nickInput.classList.add("entry-error");
-      setTimeout(()=>nickInput.classList.remove("entry-error"), 220);
-      return;
-    }
-    visitorName = val.slice(0,20);
+    const v=(nickInput.value||"").trim();
+    if(!v){ nickInput.classList.add("jolt"); setTimeout(()=>nickInput.classList.remove("jolt"),220); return; }
+    visitorName = v.slice(0,20);
     whoNameEl.textContent = visitorName;
 
     showScreen(scrLoad);
-    startLoading(()=>{
+    startInitialLoading(()=>{
       showScreen(scrName);
+      // 見出しは中央に収まる
       setTimeout(()=>{
         showScreen(scrStory);
-        // ストーリー本文を遅れてフェードイン
-        setTimeout(()=> storyFade.classList.add('preface-show'), 300);
-        // “受信ログ”出現 & タイプ開始
+
+        // 発祥：本文ウィンドウを“ボワッ”表示（先に）
+        const mainWin = scrStory.querySelector('.win-main');
+        mainWin.classList.add('show');
+
+        // 少し遅れて受信ログウィンドウを“ボワッ”表示
         setTimeout(()=>{
           winChant.classList.remove("hidden");
-          startChant();
-        }, 1200);
-      }, 1200);
+          winChant.classList.add('show');
+          startChant(); // タイプライター開始
+        }, 1100);
+
+      }, 1500);
     });
   });
 
-  function startLoading(done){
+  function startInitialLoading(done){
     let p=0;
     (function step(){
       p += (p<40?1:(p<80?2:5));
       if (p>100) p=100;
-      loadPer.textContent = p+"%";
-      if (p<100){ setTimeout(step, Math.max(18, 120*Math.pow(0.85,p/10))); }
-      else { setTimeout(done, 420); }
+      perEl.textContent = p+"%";
+      if (p<100){
+        setTimeout(step, Math.max(18, 120*Math.pow(0.85,p/10)));
+      }else{
+        done&&done();
+      }
     })();
   }
 
-  /* ストーリー：“たすけて”タイプ */
-  function typeText(el, text, speed=18){
+  /* ---------- “たすけて” タイプライター ---------- */
+  function typeText(el, text, speed=16){
     return new Promise(resolve=>{
       let i=0; (function step(){
         if(i>=text.length){ resolve(); return; }
         el.textContent += text.charAt(i++);
         const box = el.closest('.scrollbox'); if (box) box.scrollTop = box.scrollHeight;
-        setTimeout(step, Math.max(8, speed + (Math.random()*8-4)));
+        setTimeout(step, Math.max(6, speed + (Math.random()*8-4)));
       })();
     });
   }
   function startChant(){
-    chantText.classList.add("show");
-    let running = true;
-    btnToWarn.addEventListener("click", ()=> running=false, {once:true});
+    chantText.style.opacity=1;
     (async function loop(){
-      while(running){
+      while(document.getElementById('screen-story').classList.contains('active')){
         const burst = 1 + Math.floor(Math.random()*3);
         for(let i=0;i<burst;i++){ await typeText(chantText, "たすけて", 12); }
         chantWrap.scrollTop = chantWrap.scrollHeight;
-        await new Promise(r=>setTimeout(r, 260 + Math.random()*420));
+        await wait(260 + Math.random()*420);
       }
     })();
   }
+  const wait = ms => new Promise(r=>setTimeout(r,ms));
 
-  /* ストーリー → 注意 → カルテロード → 一覧 */
-  btnToWarn.addEventListener("click", ()=>{ globalBreak(); showScreen(scrWarn); });
-  btnAgree.addEventListener("click", ()=>{ globalBreak(); startRecordLoading(); });
-  btnBack .addEventListener("click", ()=>{ globalBreak(); showScreen(scrStory); });
-
-  function startRecordLoading(){
-    showScreen(scrRLoad);
-    let p=0; const t = setInterval(()=>{
-      p += (p<60?4:8); if (p>100) p=100;
-      recPer.textContent = p+"%";
-      if (p>=100){ clearInterval(t); setTimeout(()=>{ showScreen(scrRecs); buildRecords(); }, 280); }
+  /* ---------- 注意 → カルテ ---------- */
+  btnWarn.addEventListener("click", ()=> showScreen(scrWarn));
+  btnAgree.addEventListener("click", ()=>{
+    showScreen(scrRecLd);
+    let p=0;
+    const t=setInterval(()=>{
+      p+=(p<60?4:8); if(p>100)p=100;
+      recPer.textContent=p+"%";
+      if(p>=100){ clearInterval(t); showScreen(scrRecs); buildRecords(); }
     }, 90);
-  }
+  });
+  btnBack.addEventListener("click", ()=> showScreen(scrStory));
 
-  /* カルテ */
+  /* ---------- カルテ：ダミーデータ ---------- */
+  const recordsList = document.getElementById("records-list");
   const recordsData = [
-    { no:"143", name:"<span class='mosaic'>████</span>", diag:"B-33型《バーバラさん》接触症", sym:"頭痛、悪夢、窓の外の気配", prog:"赤い日記帳が届いた夜から症状出現。夜間、窓から赤い日記が持ち去られるのを確認。", mosaic:true },
-    { no:"208", name:"██", diag:"窓辺幻視症", sym:"吐き気、視線恐怖", prog:"窓辺で赤い日記を確認。以後、睡眠障害が悪化。", mosaic:false },
-    { no:"555", name:"<span class='mosaic'>██</span>", diag:"接近過敏", sym:"首筋の寒気、肩圧迫感", prog:"夜半、背部に重量感。窓を開けると軽減。", mosaic:true },
+    { no:"132", name:"<span class='mosaic'>██</span>", diag:"B-33型《バーバラさん》接触症", sym:"頭痛、悪夢、窓の外の気配", prog:"赤い日記帳が届いた夜から症状出現。夜間、窓から赤い日記が持ち去られるのを確認。", mosaic:true },
+    { no:"247", name:"██", diag:"窓辺幻視症", sym:"吐き気、視線恐怖", prog:"窓辺で赤い日記を確認。以後、睡眠障害が悪化。", mosaic:false },
+    { no:"318", name:"<span class='mosaic'>██</span>", diag:"接近過敏", sym:"首筋の寒気、肩圧迫感", prog:"夜半、背部に重量感。窓を開けると軽減。", mosaic:true },
     { no:"666", name:"<span class='mosaic'>███</span>", diag:"呼称追跡性障害", sym:"耳鳴り、名を呼ばれる幻聴", prog:"呼ばれた翌日、窓に赤い日記が置かれていた。", mosaic:true },
-    { no:"719", name:"█", diag:"夜間接触症候群", sym:"過度の不安、失神", prog:"窓を開けた際、背中に何かを感じ赤い日記が消失。体調急変。", mosaic:false },
-    { no:"882", name:"<span class='mosaic'>████</span>", diag:"視覚残像症", sym:"視覚異常、残像", prog:"赤い日記帳の残像を複数回確認。頭痛増悪。", mosaic:true },
-    { no:"903", name:"██", diag:"急性幻視性不安", sym:"視覚異常、記憶欠落", prog:"証言と記録の齟齬が多発。最後に赤い日記帳を所持。", mosaic:false }
+    { no:"702", name:"█", diag:"夜間接触症候群", sym:"過度の不安、失神", prog:"窓を開けた際、背中に何かを感じ赤い日記が消失。体調急変。", mosaic:false },
+    { no:"845", name:"<span class='mosaic'>████</span>", diag:"視覚残像症", sym:"視覚異常、残像", prog:"赤い日記帳の残像を複数回確認。頭痛増悪。", mosaic:true },
+    { no:"921", name:"██", diag:"急性幻視性不安", sym:"視覚異常、記憶欠落", prog:"証言と記録の齟齬が多発。最後に赤い日記帳を所持。", mosaic:false }
   ];
-
-  const modal = document.getElementById("modal");
-  const modalTitle = document.getElementById("modal-title");
-  const modalBody  = document.getElementById("modal-body");
-  const modalClose = document.getElementById("modal-close");
 
   function buildRecords(){
     recordsList.innerHTML = "";
@@ -175,51 +181,63 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  /* 詳細モーダル（軽めの文字化け） */
-  let corruptTimer=null, session=[];
-  function collectTextNodes(root){
-    const out=[]; const w=document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
-      acceptNode:(n)=> (n.nodeValue && n.nodeValue.trim())? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT
-    });
-    let n; while((n=w.nextNode())) out.push(n); return out;
-  }
-  const GLITCH_SET = "◆※#＠■□△◎◢◣";
-  const HOMO = { "ー":"—","-":"－","・":"･","。":"｡","、":"､","口":"□","日":"■","〇":"○","○":"◯","人":"入","カ":"力","へ":"∧","ン":"ソ" };
-  function corruptString(src, rate){
-    let out=""; for(let i=0;i<src.length;i++){
-      const ch=src[i]; if(/\s/.test(ch)){out+=ch;continue;}
-      out += (Math.random()<rate) ? ((Math.random()<0.45&&HOMO[ch])?HOMO[ch]:GLITCH_SET[Math.floor(Math.random()*GLITCH_SET.length)]) : ch;
+  /* ---------- 詳細モーダル（軽め文字化け） ---------- */
+  const modal  = document.getElementById("modal");
+  const mTitle = document.getElementById("modal-title");
+  const mBody  = document.getElementById("modal-body");
+  const mClose = document.getElementById("modal-close");
+
+  const GLITCH_SET = "◆※#＠▓░╳■□△◎◢◣";
+  function corruptOnce(str, rate=0.09){
+    let out=""; for(let i=0;i<str.length;i++){
+      const ch=str[i]; if(/\s/.test(ch)){out+=ch;continue;}
+      out += Math.random()<rate ? GLITCH_SET[Math.floor(Math.random()*GLITCH_SET.length)] : ch;
     } return out;
-  }
-  function startModalCorruption(root,{start=.04,step=.03,max=.28,period=1100}={}){
-    stopModalCorruption();
-    session = collectTextNodes(root).map(n=>({node:n,orig:n.nodeValue}));
-    apply(start);
-    corruptTimer = setInterval(()=>{ start=Math.min(max,start+step); apply(start); }, period);
-    function apply(r){ session.forEach(it=> it.node.nodeValue = corruptString(it.orig, r)); }
-  }
-  function stopModalCorruption(){
-    if(corruptTimer){ clearInterval(corruptTimer); corruptTimer=null; }
-    if(session.length){ session.forEach(it=> it.node.nodeValue = it.orig); session=[]; }
   }
 
   function openDetailModal(data){
-    modalTitle.textContent = `患者記録 No.${data.no}`;
-    modalBody.innerHTML = `
+    mTitle.textContent = `患者記録 No.${data.no}`;
+    mBody.innerHTML = `
       <p><strong>患者名：</strong>${data.name}</p>
       <p><strong>診断名：</strong>${data.diag}</p>
       <p><strong>症状：</strong>${data.sym}</p>
       <p><strong>経過：</strong>${data.prog}</p>
-      ${data.mosaic ? `<p class="garbled">※ 記録の一部が読み取り不能です。</p>` : ``}
+      ${data.mosaic ? `<p>※ 記録の一部が読み取り不能です。</p>` : ``}
     `;
+    // 軽い文字化け発生→修復
+    const texts = Array.from(mBody.querySelectorAll('p'));
+    texts.forEach(p=>{
+      const org = p.textContent;
+      p.textContent = corruptOnce(org, .08);
+      setTimeout(()=> p.textContent = org, 900);
+    });
+
     modal.classList.add("open");
     modal.setAttribute("aria-hidden","false");
-    globalBreak();
-    startModalCorruption(modalBody);
   }
-  modalClose.addEventListener("click", ()=>{
-    stopModalCorruption();
+  mClose.addEventListener("click", ()=>{
     modal.classList.remove("open");
     modal.setAttribute("aria-hidden","true");
   });
+
+  /* ---------- 小道具 ---------- */
+  function glitchReveal(el, dur=1200){
+    const target = el.textContent;
+    const pool = "█▓▒░◎◇◆#*+%€@$";
+    let t=0;
+    (function loop(){
+      const prog = Math.min(1, t/dur);
+      const keep = Math.floor(target.length * prog);
+      let s = target.slice(0, keep);
+      for(let i=keep;i<target.length;i++){
+        s += pool[Math.floor(Math.random()*pool.length)];
+      }
+      el.textContent = s;
+      el.style.opacity = 1;
+      t += 30;
+      if (prog<1) setTimeout(loop, 30);
+      else el.textContent = target;
+    })();
+  }
+
 });
